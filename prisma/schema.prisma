@@ -1,0 +1,131 @@
+// IS4234 Group 26 — Sales Conduct & Incentive Risk Monitoring Platform
+// Prisma schema. Models map to the M1–M7 modules described in docs/.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Branch {
+  id        String    @id @default(cuid())
+  name      String
+  region    String?
+  bankers   Banker[]
+  accounts  Account[]
+  alerts    ConductAlert[]
+  cases     Case[]
+  createdAt DateTime  @default(now())
+}
+
+model Banker {
+  id         String    @id @default(cuid())
+  name       String
+  branch     Branch    @relation(fields: [branchId], references: [id])
+  branchId   String
+  accounts   Account[]
+  alerts     ConductAlert[]
+  cases      Case[]
+  createdAt  DateTime  @default(now())
+}
+
+model Account {
+  id               String    @id @default(cuid())
+  customerName     String
+  product          String    @default("Savings Account")
+  branch           Branch    @relation(fields: [branchId], references: [id])
+  branchId         String
+  banker           Banker    @relation(fields: [bankerId], references: [id])
+  bankerId         String
+
+  // M2 — Independent Consent Gate
+  status           String    @default("PENDING_CONSENT") // PENDING_CONSENT | ACTIVE | DECLINED | EXPIRED
+  consentRequest   ConsentRequest?
+
+  // M3 — Usage-Linked Incentive Engine
+  incentiveStatus  String    @default("PROVISIONAL")      // PROVISIONAL | PAID | LAPSED
+  activatedAt      DateTime?
+  lastUsedAt       DateTime?
+
+  alerts           ConductAlert[]
+  createdAt        DateTime  @default(now())
+}
+
+model ConsentRequest {
+  id          String    @id @default(cuid())
+  account     Account   @relation(fields: [accountId], references: [id])
+  accountId   String    @unique
+  channel     String    @default("SMS")   // SMS | DUAL_STAFF (no phone on file)
+  status      String    @default("PENDING") // PENDING | APPROVED | DECLINED | EXPIRED
+  sentAt      DateTime  @default(now())
+  respondedAt DateTime?
+}
+
+model ConductAlert {
+  id          String    @id @default(cuid())
+  type        String                     // e.g. BLOCKED_CONTACT_CHANGE, UNUSED_ACCOUNT_90D, BRANCH_WIDE_PATTERN, RETALIATION_FLAGGED
+  severity    String    @default("LOW")  // LOW | MEDIUM | HIGH
+  source      String                     // M1 | M2 | M3 | M4 | M5
+  description String
+
+  branch      Branch?   @relation(fields: [branchId], references: [id])
+  branchId    String?
+  banker      Banker?   @relation(fields: [bankerId], references: [id])
+  bankerId    String?
+  account     Account?  @relation(fields: [accountId], references: [id])
+  accountId   String?
+
+  status      String    @default("OPEN") // OPEN | ESCALATED | DISMISSED
+  caseRecord  Case?
+
+  createdAt   DateTime  @default(now())
+}
+
+model Case {
+  id          String      @id @default(cuid())
+  alert       ConductAlert @relation(fields: [alertId], references: [id])
+  alertId     String      @unique
+
+  branch      Branch?     @relation(fields: [branchId], references: [id])
+  branchId    String?
+  banker      Banker?     @relation(fields: [bankerId], references: [id])
+  bankerId    String?
+
+  level       String      @default("BRANCH") // BRANCH | CONDUCT_OFFICE | CRO
+  status      String      @default("OPEN")   // OPEN | OVERDUE | RESOLVED
+  deadlineAt  DateTime
+
+  events      CaseEvent[]
+  createdAt   DateTime    @default(now())
+}
+
+model CaseEvent {
+  id        String   @id @default(cuid())
+  caseRecord Case    @relation(fields: [caseId], references: [id])
+  caseId    String
+  action     String  // OPENED | ESCALATED | RESOLVED | NOTE
+  actor      String
+  note       String?
+  timestamp  DateTime @default(now())
+}
+
+model Report {
+  id              String   @id @default(cuid())
+  theme           String   // e.g. SALES_PRESSURE, UNAUTHORIZED_ACCOUNT, RETALIATION
+  description     String
+  status          String   @default("OPEN") // OPEN | REVIEWED | CLOSED
+  retaliationFlag Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+model ConfigChangeLog {
+  id          String   @id @default(cuid())
+  change      String   // e.g. "Raised unused-account threshold from 60 to 90 days"
+  changedBy   String
+  signedOffBy String   // second-line sign-off, required by M7
+  hash        String   // hash-chained entry — tamper-evidence
+  createdAt   DateTime @default(now())
+}

@@ -1,17 +1,36 @@
 # Project context for AI coding assistants
 
 This is the technology-enabled prototype for NUS IS4234 Group 26's report on the Wells Fargo
-cross-selling scandal (GRC case study). It is a scaffold only — see `docs/PROTOTYPE_OVERVIEW.md`
-for the four-layer control design and `docs/M1..M7` for the individual module specs.
+cross-selling scandal (GRC case study). See `docs/PROTOTYPE_OVERVIEW.md` for the four-layer
+control design and implementation status, and `docs/M1..M7` for per-module specs.
 
-Layout is a flat two-service structure (`backend/`, `frontend/`, `deploy/`), not a monorepo —
-follows the same conventions as the group's other NUS project (`is4228`): Makefile-driven
-install/dev/build, `start.sh` / `start.ps1` cross-platform launchers, Docker for hosting, and a
-README with Overview / Background / What it does / Tech stack / Setup / Architecture notes /
-Status / Limitations sections.
+## Stack and layout
 
-Stack is not yet chosen for `backend/` or `frontend/` — pick whatever the team can realistically
-demo within the course timeline (a working, hosted proof of concept, not production-grade
-code). When implementing a module, read its doc in `docs/` first — each one defines the problem
-it addresses, required data inputs, workflow/logic, outputs/alerts/escalation behaviour, and
-intended owner, matching the course's prototype-documentation rubric.
+Single Next.js 15 app (App Router, JavaScript — not TypeScript), Tailwind CSS, Prisma ORM
+against Postgres, deployed on Vercel. No separate `backend/`/`frontend/` split — pages, API
+routes and data access all live in one project:
+
+- `app/` — pages (`page.js`) and API route handlers (`app/api/**/route.js`)
+- `lib/` — `prisma.js` (singleton client), `kri.js` (Board KRI aggregation)
+- `prisma/` — `schema.prisma`, `seed.js`
+
+## Build scope
+
+Deep (fully interactive) on M2 Independent Consent Gate, M4 Conduct Analytics, M6 Escalation &
+Case Management, and the Board KRI dashboard. Light (seeded/logged demo data only, feeding the
+same alert/case/dashboard views) on M1 Contact-Integrity Guard, M3 Usage-Linked Incentive
+Engine, M5 Speak-Up Channel, M7 Tamper-Evident Control Governance. When touching a module, read
+its doc in `docs/` first — it states which depth it was built at and which files implement it.
+
+## Conventions
+
+- No TypeScript — keep new files `.js`/`.jsx`, not `.ts`/`.tsx`.
+- Mock/synthetic, committed seed data only (`prisma/seed.js`) — no live external data sync, so
+  demo/grading runs are reproducible. Any new seed data should go there, not hard-coded into
+  pages.
+- No auth layer by design (scoped course prototype) — don't add one unless asked.
+- Every Prisma write that changes a `Case`'s status or level should append a `CaseEvent` — that
+  table is the audit trail the UI renders, and the whole point of M6 is that every action is
+  time-stamped with evidence.
+- `lib/kri.js` is the single source of truth for Board dashboard numbers — compute new KRIs
+  there, not inline in `app/board/page.js`.

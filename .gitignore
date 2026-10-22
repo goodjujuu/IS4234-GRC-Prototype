@@ -1,16 +1,9 @@
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-*.egg-info/
-
-# Node / frontend
+# Dependencies
 node_modules/
+
+# Next.js
 .next/
 out/
-dist/
-build/
 
 # Env files — never commit real secrets
 .env
@@ -30,7 +23,3 @@ logs/
 
 # Testing
 coverage/
-
-# Data (commit sample/synthetic data deliberately, not generated caches)
-*.sqlite3
-*.db

@@ -7,9 +7,21 @@ on:
     branches: [main]
 
 jobs:
-  lint-test:
+  build:
     runs-on: ubuntu-latest
+    env:
+      # Dummy URL so `prisma generate` and `next build` succeed without a real
+      # database in CI — no queries run at build time.
+      DATABASE_URL: "postgresql://user:password@localhost:5432/dummy"
     steps:
       - uses: actions/checkout@v4
-      - name: Placeholder
-        run: echo "TODO: add backend (python) and frontend (node) lint/test steps once a stack is chosen"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
