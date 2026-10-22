@@ -1,15 +1,29 @@
-# API sketch (placeholder)
+# API routes
 
-Starter sketch only — adjust once the backend stack is chosen and modules are implemented.
+All routes are Next.js App Router route handlers under `app/api/`, returning JSON. No auth layer
+— this is a course prototype, not a production system (see README "Known limitations").
 
-| Endpoint | Purpose | Module |
-|---|---|---|
-| `POST /accounts/events` | Ingest an account-opening / contact-change / funding event | M1, M2 |
-| `GET /accounts/{id}/status` | Consent + usage-linked incentive status for an account | M2, M3 |
-| `GET /alerts` | List flagged conduct anomalies (filter by branch/banker/status) | M4 |
-| `POST /reports` | Submit a speak-up / whistleblower report | M5 |
-| `GET /cases` / `GET /cases/{id}` | Escalation case list / detail, with audit trail | M6 |
-| `POST /config/thresholds` | Change a detection threshold (requires second-line sign-off) | M7 |
-| `GET /kri` | Board conduct KRI summary (consent-decline rate, unused-account rate, etc.) | M6, M7 |
+| Method | Route | Purpose | Module |
+|---|---|---|---|
+| `GET` | `/api/branches` | List branches with their bankers | — |
+| `GET` | `/api/accounts` | List accounts (branch/banker/consent included) | M2 |
+| `POST` | `/api/accounts` | Open a new account; creates `Account` + `ConsentRequest` | M2 |
+| `POST` | `/api/accounts/[id]/consent` | Resolve consent: `{ action: 'approve'\|'decline'\|'expire' }` | M2 → M4 |
+| `GET` | `/api/alerts` | List conduct alerts (branch/banker/account/case included) | M4 |
+| `POST` | `/api/alerts/[id]/escalate` | Escalate an alert into a Branch-level `Case` | M4 → M6 |
+| `GET` | `/api/cases` | List cases with nested alert/branch/banker/events | M6 |
+| `GET` | `/api/cases/[id]` | Single case detail with full audit trail | M6 |
+| `POST` | `/api/cases/[id]/events` | `{ action: 'escalate'\|'resolve', actor, note }` | M6 |
+| `GET` | `/api/kri` | Board conduct KRI summary (`lib/kri.js`) | M7 |
 
-Default parameter values, auth, and request/response shapes: TODO once implemented.
+## Notes
+
+- `POST /api/accounts/[id]/consent` with `action: 'decline'` or `'expire'` creates a
+  `ConductAlert` (`source: "M2"`) automatically — this is how a blocked consent shows up on
+  `/alerts` without a separate call.
+- `POST /api/alerts/[id]/escalate` always opens the case at `level: "BRANCH"` with a 5-day
+  deadline; rejects with `409` if the alert already has a case.
+- `POST /api/cases/[id]/events` with `action: 'escalate'` moves `BRANCH → CONDUCT_OFFICE` (48h
+  deadline) or `CONDUCT_OFFICE → CRO` (24h deadline); rejects with `409` if already at `CRO`.
+- Every write that changes a `Case`'s level or status appends a `CaseEvent`, which is the audit
+  trail rendered on `/cases/[id]`.

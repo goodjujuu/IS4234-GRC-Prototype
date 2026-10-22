@@ -1,8 +1,0 @@
-.git
-.github
-docs
-*.md
-.env
-.venv
-node_modules
-__pycache__

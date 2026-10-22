@@ -1,6 +1,7 @@
 # Sales Conduct & Incentive Risk Monitoring Platform
 
-NUS IS4234 (Governance, Regulation and Compliance Technology), Sem 1 AY2026/2027 — Group 26.
+NUS IS4234 (Governance, Regulation and Compliance Technology), Sem 1 AY2026/2027 — Group 26
+(Garet Ang, Javier Yeow, Manimaran Pramoth, Reina Tng Xin Ru).
 
 ## Overview
 
@@ -22,7 +23,7 @@ pattern until it became national news. Full case analysis is in the group's IS42
 ## What the app does
 
 Four layers of defence, each with its own control module — see `docs/PROTOTYPE_OVERVIEW.md` for
-the full design and `docs/M1..M7` for per-module specs:
+the full design and `docs/M1..M7` for per-module specs and implementation status:
 
 1. **Prevent** — block the account from being created without independent customer consent
    (M1 Contact-Integrity Guard, M2 Independent Consent Gate)
@@ -34,43 +35,65 @@ the full design and `docs/M1..M7` for per-module specs:
    tamper-evident (M6 Escalation and Case Management, M7 Tamper-Evident Control Governance)
 
 Output: a Board Risk and Audit Committees conduct KRI dashboard (consent-decline rate,
-unused-account rate, complaints, dismissals by reason, threshold changes, overdue alerts).
+unused-account rate, complaints, open alerts, overdue/resolved cases, threshold changes).
+
+Build effort is deliberately uneven: **deep** (fully interactive) on M2, M4, M6 and the Board
+dashboard — the modules that demonstrate the control chain end-to-end — and **light** (seeded,
+logged demo events feeding the same views) on M1, M3, M5, M7. See
+`docs/PROTOTYPE_OVERVIEW.md#implementation-status` for the breakdown and file pointers.
 
 ## Tech stack
 
-Not yet chosen — pick whatever the team can realistically build and demo within the course
-timeline. `backend/` and `frontend/` are placeholders; see each folder's README.
+Single Next.js app (App Router, JavaScript, no TypeScript) — chosen over a separate
+backend/frontend split to minimise moving parts for a course-timeline build:
+
+- **Next.js 15** (App Router) — pages and API routes in one project
+- **Tailwind CSS** — styling
+- **Prisma ORM** + **Postgres** (free tier via Neon or Vercel Postgres) — data layer
+- **Vercel** — hosting (the course requires a working, hosted, accessible link)
 
 ## Setup
 
-Not yet runnable — this is a structure-only scaffold. Once a stack is chosen:
+```bash
+npm install
+cp .env.example .env        # fill in DATABASE_URL — see docs/DEPLOYMENT.md
+npx prisma migrate dev --name init
+npm run seed
+npm run dev
+```
 
-1. Fill in `backend/` and `frontend/` with real app code
-2. Wire up `Makefile` targets (`install`, `dev`, `build`) and `start.sh` / `start.ps1` for your
-   chosen stack
-3. Copy `.env.example` to `.env` and fill in any required values
-4. `make install && make dev` (macOS/Linux) or `./start.ps1 -Install` (Windows) — once those
-   scripts actually do something
+Open http://localhost:3000 — the home page lays out a demo path through all four layers. Full
+hosting steps (Neon + Vercel) are in `docs/DEPLOYMENT.md`.
 
 ## Architecture notes
 
-- Flat two-service layout (`backend/`, `frontend/`) rather than a monorepo — this is a scoped
-  course prototype, not a production system, so the simpler layout matches the project's size.
-- `deploy/` holds whatever hosting setup the team picks (the course requires a working, hosted,
-  accessible link for the technology demonstrator submission).
-- Mock/synthetic data is acceptable and expected for the demo — see each module doc's "Data
-  inputs" section.
+- One Next.js project at repo root — no `backend/`/`frontend/` split, no Docker, no Makefile.
+  Earlier scaffolding iterations used a flatter two-service layout (inspired by the group's
+  other NUS project, `is4228`); this was simplified further once the stack was chosen, since a
+  single Next.js app already keeps pages, API routes and data access co-located.
+- Mock/synthetic, committed seed data (`prisma/seed.js`) rather than any live external sync —
+  same reproducibility rationale as `is4228`: a demo or grading run should always show the same
+  thing. Re-running `npm run seed` resets to a known state.
+- No auth layer. Every page and API route is open — acceptable for a scoped course prototype
+  demonstrating a control *design*, not a production access-control model.
 
 ## Status
 
-Scaffold only. See `docs/` for the module specs — each is templated against the course's
+Built. See `docs/` for the module specs — each is templated against the course's
 prototype-documentation rubric (intended users, problem, data inputs, workflow/logic,
-outputs/alerts/escalation, ownership, evaluation, feasibility) so they can be lifted straight
-into the report's Technology-enabled prototype section once filled in.
+outputs/alerts/escalation, ownership, evaluation) plus an implementation-status note, so they
+can be lifted straight into the report's Technology-enabled prototype section.
 
-## Known limitations (fill in as the prototype develops)
+## Known limitations
 
-- TODO — needed for `GroupID_Demonstrator_Guide.pdf`
+- No authentication/authorization — anyone with the URL can act as any role.
+- M6's "overdue case" escalation is a UI-visible state (comparing the deadline to the current
+  time) plus a manual escalate action, not a background job automatically bumping the tier —
+  there's no long-running server process in a serverless deployment to run one.
+- M7's hash-chaining is a simple demo stand-in (`fakeHash()` in `prisma/seed.js`), not a real
+  cryptographic chain; its suppression-alert and coverage-report behaviours are not built.
+- M1/M3/M5 are represented as seeded events feeding the same alert/case/dashboard views a real
+  implementation would use, not as standalone interactive flows — see `docs/PROTOTYPE_OVERVIEW.md`.
 
 ## Acknowledging AI use
 
