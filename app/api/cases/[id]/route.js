@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   const caseRecord = await prisma.case.findUnique({
     where: { id },
     include: {

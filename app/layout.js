@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import './globals.css';
 
 export const metadata = {
@@ -22,9 +23,9 @@ export default function RootLayout({ children }) {
             <span className="font-semibold">Sales Conduct & Incentive Risk Monitoring</span>
             <div className="flex gap-4 text-sm">
               {navLinks.map((link) => (
-                <a key={link.href} href={link.href} className="hover:text-amber-300">
+                <Link key={link.href} href={link.href} className="hover:text-amber-300">
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

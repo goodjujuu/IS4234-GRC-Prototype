@@ -1,22 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 
-export default function CaseDetailPage({ params }) {
-  const { id } = params;
+export default function CaseDetailPage() {
+  const { id } = useParams();
   const [caseRecord, setCaseRecord] = useState(null);
   const [actor, setActor] = useState('');
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
 
-  async function load() {
+  const load = useCallback(async () => {
     const res = await fetch(`/api/cases/${id}`);
     if (res.ok) setCaseRecord(await res.json());
-  }
+  }, [id]);
 
   useEffect(() => {
     load();
-  }, [id]);
+  }, [load]);
 
   async function handleAction(action) {
     setError('');

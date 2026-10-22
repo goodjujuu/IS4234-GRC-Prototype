@@ -11,16 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Dummy URL so `prisma generate` and `next build` succeed without a real
-      # database in CI — no queries run at build time.
+      # database in CI — no queries run at build time (data routes/pages are
+      # force-dynamic).
       DATABASE_URL: "postgresql://user:password@localhost:5432/dummy"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
-      - name: Install dependencies
-        run: npm install
+      - name: Install dependencies (from package-lock.json)
+        run: npm ci
       - name: Lint
         run: npm run lint
       - name: Build

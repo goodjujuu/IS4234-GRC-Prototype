@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 const BRANCH_DEADLINE_DAYS = 5;
 
 export async function POST(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   const alert = await prisma.conductAlert.findUnique({
     where: { id },
