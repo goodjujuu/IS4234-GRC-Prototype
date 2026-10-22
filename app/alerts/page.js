@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const severityColor = {
@@ -78,9 +79,9 @@ export default function AlertsPage() {
                       </button>
                     )}
                     {alert.caseRecord && (
-                      <a href={`/cases/${alert.caseRecord.id}`} className="text-xs underline text-slate-600">
+                      <Link href={`/cases/${alert.caseRecord.id}`} className="text-xs underline text-slate-600">
                         View case
-                      </a>
+                      </Link>
                     )}
                   </td>
                 </tr>

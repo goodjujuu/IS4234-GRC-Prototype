@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 function isOverdue(caseRecord) {
@@ -57,7 +58,7 @@ export default function CasesPage() {
                   </td>
                   <td className="px-4 py-2 text-slate-600">{new Date(c.deadlineAt).toLocaleString()}</td>
                   <td className="px-4 py-2">
-                    <a href={`/cases/${c.id}`} className="text-xs underline text-slate-600">Open</a>
+                    <Link href={`/cases/${c.id}`} className="text-xs underline text-slate-600">Open</Link>
                   </td>
                 </tr>
               ))}

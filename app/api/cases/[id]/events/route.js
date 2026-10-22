@@ -14,7 +14,7 @@ const NEXT_DEADLINE_HOURS = {
 };
 
 export async function POST(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   const body = await request.json();
   const { action, actor, note } = body; // action: 'escalate' | 'resolve'
 

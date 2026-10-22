@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function NewAccountPage() {
@@ -139,7 +140,7 @@ export default function NewAccountPage() {
           {(account.status === 'DECLINED' || account.status === 'EXPIRED') && (
             <p className="text-sm text-red-700">
               Account blocked. A conduct alert has been logged against this banker and branch — check{' '}
-              <a className="underline" href="/alerts">Alerts</a>.
+              <Link className="underline" href="/alerts">Alerts</Link>.
             </p>
           )}
 

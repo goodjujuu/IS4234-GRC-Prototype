@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const layers = [
   {
     title: '1. Prevent',
@@ -51,16 +53,16 @@ export default function HomePage() {
         <h3 className="font-semibold text-amber-900">Demo path</h3>
         <ol className="mt-2 list-decimal list-inside text-sm text-amber-900 space-y-1">
           <li>
-            Open a new account on <a className="underline" href="/accounts/new">New Account</a> — this starts the M2
+            Open a new account on <Link className="underline" href="/accounts/new">New Account</Link> — this starts the M2
             consent gate.
           </li>
           <li>Simulate a decline or expiry — notice it gets blocked and logged.</li>
           <li>
-            See it surface as a conduct signal on <a className="underline" href="/alerts">Alerts</a> (M4), alongside
+            See it surface as a conduct signal on <Link className="underline" href="/alerts">Alerts</Link> (M4), alongside
             seeded M1/M3/M5 events.
           </li>
-          <li>Escalate an alert into a <a className="underline" href="/cases">Case</a> (M6) and walk it through the tiers.</li>
-          <li>Check the <a className="underline" href="/board">Board Dashboard</a> (M7) — the KRIs move as you act.</li>
+          <li>Escalate an alert into a <Link className="underline" href="/cases">Case</Link> (M6) and walk it through the tiers.</li>
+          <li>Check the <Link className="underline" href="/board">Board Dashboard</Link> (M7) — the KRIs move as you act.</li>
         </ol>
       </div>
     </div>

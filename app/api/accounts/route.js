@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 // M2 — Independent Consent Gate starts here: opening an account creates a
 // PENDING_CONSENT account plus a ConsentRequest that must be approved on the
 // customer's own registered channel before the account can go ACTIVE.
@@ -23,7 +25,6 @@ export async function POST(request) {
     );
   }
 
-  const banker = await prisma.banker.findUnique({ where: { id: bankerId } });
   const hasPhoneOnFile = true; // demo: assume phone on file unless told otherwise
   const channel = hasPhoneOnFile ? 'SMS' : 'DUAL_STAFF';
 

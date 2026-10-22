@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 // expiry blocks the account and is logged against the banker and branch —
 // this is the "no" branch out of M2 in the module flow.
 export async function POST(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   const body = await request.json();
   const { action } = body; // 'approve' | 'decline' | 'expire'
 
