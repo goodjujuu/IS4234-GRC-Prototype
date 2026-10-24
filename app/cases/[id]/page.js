@@ -35,7 +35,9 @@ export default function CaseDetailPage() {
       setError(body.error || 'Action failed.');
       return;
     }
-    setCaseRecord(await res.json());
+    // Re-fetch the full case: the events endpoint returns only the case + its
+    // events, without the alert/branch/banker details shown in the header.
+    await load();
     setNote('');
   }
 
