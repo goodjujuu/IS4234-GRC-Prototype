@@ -16,13 +16,14 @@ routes and data access all live in one project:
 
 ## Build scope
 
-Deep (fully interactive) on M1 Contact-Integrity Guard, M2 Independent Consent Gate, M4 Conduct
-Analytics, M6 Escalation & Case Management, and the Board KRI dashboard. Light (seeded/logged
-demo data only, feeding the same alert/case/dashboard views) on M3 Usage-Linked Incentive
-Engine, M5 Speak-Up Channel, M7 Tamper-Evident Control Governance. M1 and M2 pages pair the
-banker's screen with a simulated customer phone (`components/CustomerPhone.js`, state in
-`components/usePhoneSimulator.js`); the customer's side must stay visually separate from staff
-controls — never put a customer action on the banker's panel. When touching a module, read
+All seven modules (M1–M7) and the Board KRI dashboard are fully interactive. Customer- and
+employee-facing steps run on a simulated phone (`components/CustomerPhone.js`, state in
+`components/usePhoneSimulator.js`, app screens in `components/*AppScreen.js`); staff systems use
+`SystemWindow`; demo-only shortcuts live in `PresenterPanel`. Keep those three visually separate —
+never put a customer action on a staff panel. Shared UI primitives are in `components/ui.js`
+(PageHeader, Card, Badge, Button, Callout, StatCard…) and navigation in `components/nav.js`;
+use them rather than ad-hoc styling. Server-side rules (maker-checker, routing, SLA) live in the
+API routes and `lib/`, not just the UI. When touching a module, read
 its doc in `docs/` first — it states which depth it was built at and which files implement it.
 
 ## Conventions

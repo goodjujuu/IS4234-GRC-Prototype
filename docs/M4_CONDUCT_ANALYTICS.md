@@ -2,41 +2,37 @@
 
 **Layer:** 3 — Detect
 
-**Implementation status:** DEEP — fully interactive. View and escalate alerts at `/alerts`,
-backed by `app/api/alerts/route.js` and `app/api/alerts/[id]/escalate/route.js`.
+**Implementation status:** DEEP — fully interactive at `/alerts` ("Conduct analytics"), with a
+**Risk map** tab and an **Alert queue** tab.
 
-**Problem it addresses:** Data on complaints, dismissals and unused accounts was held
-separately at Wells Fargo, so no one saw the full pattern — misconduct was treated as isolated
-"gaming" rather than a systemic risk.
+**Problem it addresses:** Complaints, dismissals and unused accounts were held separately at
+Wells Fargo, so no one saw the full pattern — misconduct was treated as isolated "gaming".
 
-**Intended users / decisions supported:** Second-line risk function, branch/regional managers
-(network view); feeds the Board conduct KRI pack.
+**Intended users / decisions supported:** Second-line risk / Conduct Office (triage, escalate,
+dismiss); feeds the Board KRI pack.
 
-**Data inputs:**
-- Flags from M1 (contact-integrity blocks), M2 (consent declines/expiries), M3 (unused-at-90-
-  days), M5 (retaliation-flagged reports) — all land in the single `ConductAlert` table, tagged
-  by `source`
-- Other data feeds: complaints, HR records, mystery-shopping results (represented by the
-  `Report` model / seeded data, not separately integrated in this build)
+**Data inputs** (`lib/analytics.js`): per banker — consent declined/ignored rate (M2), unused
+after 90 days rate (M3), blocked or disputed contact changes (M1), staff transfer-and-reverse
+fundings (M3); per branch — speak-up reports in 90 days (M5). Thresholds come from the
+`Threshold` table, changeable only through M7.
 
 **Workflow / rules / analytical logic:**
-- Flags red-flag patterns: unused accounts, transfer-then-reverse funding, declines, contact-
-  detail anomalies
-- Branch- and manager-level network view (aggregated at branch level first, for privacy)
-- Complaint text analysis for theme grouping (represented by `Report.theme`, not NLP in this
-  build)
-- Detection thresholds are governed by M7 (second-line sign-off required to change them) — in
-  this build, represented by the `ConfigChangeLog` table and the Board dashboard's change log,
-  rather than a live threshold-editing UI
+- Risk map: every banker's metrics against the governed thresholds; red cells breach; risk score
+  = number of breached thresholds (0–4). Branch view aggregates first, for privacy.
+- "Run analytics now" raises one `BANKER_PATTERN` / `BRANCH_PATTERN` alert per breaching banker
+  or branch (no duplicates while one is open) and records an `AnalyticsRun` (feeds M7 coverage).
+- Alert queue: filter by source module and status; **Escalate to case** (→ M6) or **Dismiss**
+  with a mandatory reason from a fixed list — dismissals are reported to the Board by reason.
 
-**Outputs / alerts / escalation:**
-- Flagged anomalies → M6 Escalation and Case Management (`/alerts` → "Escalate" button →
-  `app/api/alerts/[id]/escalate/route.js` opens a `Case`)
+**Outputs / alerts / escalation:** pattern alerts; escalations open M6 cases; dismissals by
+reason → Board.
 
-**Ownership:** TODO — assign to a team member
+**Demo:** with fresh seed data, Ben Lim breaches all 4 banker thresholds and Riverside breaches
+the speak-up threshold. "Run analytics now" raises a new HIGH alert for Ben.
 
-**How effectiveness would be evaluated:** TODO (e.g. precision/recall against labelled test
-cases; time from pattern onset to first flag)
+**Ownership:** TODO · **Effectiveness:** TODO (precision/recall on labelled test cases; time from
+pattern onset to first flag)
 
-**Status:** Built — `app/alerts/page.js`, `app/api/alerts/route.js`,
-`app/api/alerts/[id]/escalate/route.js`, `prisma/schema.prisma` (`ConductAlert`).
+**Files:** `app/alerts/page.js`, `lib/analytics.js`, `lib/thresholds.js`,
+`app/api/analytics/route.js`, `app/api/analytics/run/route.js`, `app/api/alerts/route.js`,
+`app/api/alerts/[id]/dismiss/route.js`, `app/api/alerts/[id]/escalate/route.js`.

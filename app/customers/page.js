@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import CustomerPhone from '@/components/CustomerPhone';
 import PinSetupScreen from '@/components/PinSetupScreen';
+import { Button, PageHeader, PresenterButton, PresenterPanel, SectionLabel, SystemWindow, inputClass } from '@/components/ui';
 import usePhoneSimulator from '@/components/usePhoneSimulator';
 import {
   STAFF_EMAIL_DOMAIN,
@@ -256,34 +257,29 @@ export default function CustomerDetailsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-slate-900">Customer Details — M1 Contact-Integrity Guard</h1>
-        <p className="mt-1 max-w-3xl text-sm text-slate-600">
-          Staff cannot quietly swap a customer’s contact details or choose their PIN. Fake, placeholder, staff-owned or
-          shared contact details are blocked outright. Any other change is announced to the customer’s{' '}
-          <span className="font-medium">existing</span> mobile and only takes effect after a 48-hour cooling-off period.
-        </p>
-      </div>
+    <div>
+      <PageHeader
+        module="M1"
+        title="Contact details staff can’t quietly swap"
+        description="Wells Fargo staff used placeholder emails and their own numbers so customers never heard about accounts opened in their name, and set customers’ PINs themselves. Here fake, staff-owned or shared contact details are blocked outright, any other change is announced to the customer’s existing mobile with a 48-hour cooling-off period, and only the customer can set a PIN."
+      />
 
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
         {/* ---------------- Banker's screen ---------------- */}
-        <section className="min-w-0 flex-1">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Banker’s screen</p>
-          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div className="flex items-center justify-between gap-4 bg-slate-800 px-4 py-2 text-xs text-slate-200">
-              <span className="font-semibold">Branch Customer Servicing System</span>
-              <span className="truncate">{banker ? `Logged in: ${banker.name}` : 'Select a banker to log in'}</span>
-            </div>
-
-            <div className="space-y-5 p-5">
+        <section className="min-w-0">
+          <SectionLabel>Banker’s screen</SectionLabel>
+          <SystemWindow
+            title="Branch Customer Servicing System"
+            right={banker ? `Logged in: ${banker.name}` : 'Select a banker to log in'}
+          >
+            <div className="space-y-5">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Logged in as</label>
+                  <label className="block text-[13px] font-medium text-slate-700">Logged in as</label>
                   <select
                     value={bankerId}
                     onChange={(e) => setBankerId(e.target.value)}
-                    className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                    className={`mt-1.5 ${inputClass}`}
                   >
                     {branches.map((b) => (
                       <optgroup key={b.id} label={b.name}>
@@ -297,11 +293,11 @@ export default function CustomerDetailsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Customer</label>
+                  <label className="block text-[13px] font-medium text-slate-700">Customer</label>
                   <select
                     value={accountId}
                     onChange={(e) => setAccountId(e.target.value)}
-                    className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                    className={`mt-1.5 ${inputClass}`}
                   >
                     <option value="">Select customer…</option>
                     {customers.map((a) => (
@@ -316,7 +312,7 @@ export default function CustomerDetailsPage() {
               {detail && (
                 <>
                   {/* Customer record */}
-                  <dl className="grid grid-cols-1 gap-3 rounded border border-slate-200 bg-slate-50 p-4 text-sm sm:grid-cols-3">
+                  <dl className="grid grid-cols-1 gap-3 rounded-xl bg-slate-50 p-4 text-sm ring-1 ring-inset ring-slate-200/70 sm:grid-cols-3">
                     <div>
                       <dt className="text-xs text-slate-500">Registered mobile</dt>
                       <dd className="font-medium text-slate-900">{maskMobile(detail.mobile)}</dd>
@@ -333,7 +329,7 @@ export default function CustomerDetailsPage() {
 
                   {/* Contact change */}
                   <form onSubmit={handleSubmit} className="space-y-3">
-                    <h2 className="text-sm font-semibold text-slate-800">Update contact details</h2>
+                    <h2 className="text-[15px] font-semibold text-slate-900">Update contact details</h2>
                     <div className="flex gap-4 text-sm">
                       {['MOBILE', 'EMAIL'].map((f) => (
                         <label key={f} className="flex items-center gap-2">
@@ -358,15 +354,11 @@ export default function CustomerDetailsPage() {
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                         placeholder={field === 'MOBILE' ? 'New mobile, e.g. 9876 5432' : 'New email, e.g. name@gmail.com'}
-                        className="min-w-0 flex-1 rounded border border-slate-300 px-3 py-2 text-sm"
+                        className={`min-w-0 flex-1 ${inputClass}`}
                       />
-                      <button
-                        type="submit"
-                        disabled={busy || !!pendingChange}
-                        className="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-60"
-                      >
+                      <Button type="submit" disabled={busy || !!pendingChange}>
                         Request change
-                      </button>
+                      </Button>
                     </div>
                     {error && <p className="text-sm text-red-600">{error}</p>}
                   </form>
@@ -376,7 +368,7 @@ export default function CustomerDetailsPage() {
 
                   {/* PIN */}
                   <div className="space-y-2 border-t border-slate-100 pt-4">
-                    <h2 className="text-sm font-semibold text-slate-800">Debit card PIN</h2>
+                    <h2 className="text-[15px] font-semibold text-slate-900">Debit card PIN</h2>
                     <p className="text-sm text-slate-700">
                       Status: <span className="font-medium">{pinStatusText[detail.pinStatus]}</span>
                     </p>
@@ -388,7 +380,7 @@ export default function CustomerDetailsPage() {
                       type="button"
                       onClick={sendPinLink}
                       disabled={busy || detail.pinStatus === 'LINK_SENT'}
-                      className="rounded border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                      className="inline-flex h-8 items-center rounded-lg bg-white px-3 text-[13px] font-medium text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 disabled:opacity-50"
                     >
                       {detail.pinStatus === 'SET_BY_CUSTOMER' ? 'Send PIN reset link to customer' : 'Send PIN setup link to customer'}
                     </button>
@@ -397,7 +389,7 @@ export default function CustomerDetailsPage() {
                   {/* History */}
                   {detail.contactChanges?.length > 0 && (
                     <div className="space-y-2 border-t border-slate-100 pt-4">
-                      <h2 className="text-sm font-semibold text-slate-800">Contact change history</h2>
+                      <h2 className="text-[15px] font-semibold text-slate-900">Contact change history</h2>
                       <div className="overflow-x-auto">
                         <table className="min-w-full text-sm">
                           <thead className="text-left text-xs uppercase text-slate-500">
@@ -431,14 +423,12 @@ export default function CustomerDetailsPage() {
                 </>
               )}
             </div>
-          </div>
+          </SystemWindow>
         </section>
 
         {/* ---------------- Customer's phone ---------------- */}
-        <section className="flex flex-col items-center gap-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            {detail ? `${detail.customerName}’s phone` : 'Customer’s phone'}
-          </p>
+        <section className="flex flex-col items-center gap-4">
+          <SectionLabel className="w-[300px]">{detail ? `${detail.customerName}’s phone` : 'Customer’s phone'}</SectionLabel>
           <CustomerPhone
             {...phoneProps}
             bankName={BANK_NAME}
@@ -458,12 +448,8 @@ export default function CustomerDetailsPage() {
             }
           />
 
-          <div className="w-[300px] space-y-2 rounded-lg border border-dashed border-slate-300 bg-white p-3 text-xs text-slate-500">
-            <div>
-              <p className="font-semibold text-slate-700">Presenter controls</p>
-              <p className="mt-0.5">For the demo only. Neither the banker nor the customer sees this.</p>
-            </div>
-            <p className="pt-1 font-medium text-slate-600">Fill the banker’s form with…</p>
+          <PresenterPanel className="w-[300px]">
+            <p className="text-[12px] font-medium text-indigo-900/80">Fill the banker’s form with…</p>
             <div className="grid grid-cols-1 gap-1.5">
               <Shortcut
                 label="Banker’s own mobile"
@@ -481,15 +467,10 @@ export default function CustomerDetailsPage() {
               <Shortcut label="Staff email" hint={staffEmail} onClick={() => fill('EMAIL', staffEmail)} />
               <Shortcut label="Genuine new mobile" hint="random 9xxx xxxx" onClick={() => fill('MOBILE', formatMobile(randomGenuineMobile()))} />
             </div>
-            <button
-              type="button"
-              onClick={() => resolveChange('cooling-off-elapsed')}
-              disabled={!pendingChange || busy}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Fast-forward 48 hours with no reply
-            </button>
-          </div>
+            <PresenterButton onClick={() => resolveChange('cooling-off-elapsed')} disabled={!pendingChange || busy} hint="+48 hours">
+              No reply from the customer
+            </PresenterButton>
+          </PresenterPanel>
         </section>
       </div>
     </div>
@@ -502,10 +483,10 @@ function Shortcut({ label, hint, onClick, disabled }) {
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="flex items-center justify-between gap-2 rounded border border-slate-200 px-2 py-1 text-left hover:bg-slate-50 disabled:opacity-50"
+      className="flex items-center justify-between gap-2 rounded-lg bg-white px-2.5 py-1.5 text-left text-xs ring-1 ring-inset ring-indigo-100 hover:bg-indigo-50 disabled:opacity-50"
     >
       <span className="font-medium text-slate-700">{label}</span>
-      <span className="truncate text-slate-400">{hint}</span>
+      <span className="truncate text-[11px] text-slate-400">{hint}</span>
     </button>
   );
 }
@@ -517,7 +498,7 @@ function Outcome({ result, pendingChange, detail }) {
 
   if (status === 'BLOCKED') {
     return (
-      <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+      <div className="animate-fade-up rounded-xl bg-red-50 p-3.5 text-sm text-red-900 ring-1 ring-inset ring-red-200">
         <p className="font-semibold">Change blocked</p>
         <p className="mt-1">
           {shown}: {c.blockReason}
@@ -535,7 +516,7 @@ function Outcome({ result, pendingChange, detail }) {
 
   if (status === 'PENDING_COOLING_OFF' && pendingChange) {
     return (
-      <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+      <div className="animate-fade-up rounded-xl bg-amber-50 p-3.5 text-sm text-amber-900 ring-1 ring-inset ring-amber-200">
         <p className="flex items-center gap-3 font-medium">
           <Spinner className="border-amber-500" />
           Waiting out the 48-hour cooling-off period…
@@ -550,7 +531,7 @@ function Outcome({ result, pendingChange, detail }) {
 
   if (status === 'CONFIRMED_BY_CUSTOMER' || status === 'APPLIED_AFTER_COOLING_OFF') {
     return (
-      <div className="rounded border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+      <div className="animate-fade-up rounded-xl bg-emerald-50 p-3.5 text-sm text-emerald-900 ring-1 ring-inset ring-emerald-200">
         {status === 'CONFIRMED_BY_CUSTOMER'
           ? `The customer confirmed the change on their existing mobile. The ${label} is now ${shown}.`
           : `No objection within 48 hours. The ${label} is now ${shown}.`}
@@ -560,7 +541,7 @@ function Outcome({ result, pendingChange, detail }) {
 
   if (status === 'CANCELLED_BY_CUSTOMER') {
     return (
-      <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+      <div className="animate-fade-up rounded-xl bg-red-50 p-3.5 text-sm text-red-900 ring-1 ring-inset ring-red-200">
         <p className="font-semibold">Customer replied NO</p>
         <p className="mt-1">
           They did not ask for this change. It has been cancelled and logged against {bankerName} and {branchName} for

@@ -18,6 +18,7 @@ model Branch {
   accounts  Account[]
   alerts    ConductAlert[]
   cases     Case[]
+  reports   Report[]
   createdAt DateTime  @default(now())
 }
 
@@ -31,6 +32,8 @@ model Banker {
   alerts     ConductAlert[]
   cases      Case[]
   contactChanges ContactChangeRequest[]
+  incentiveEvents IncentiveEvent[]
+  reportsFiled Report[] @relation("ReportReporter")
   createdAt  DateTime  @default(now())
 }
 
@@ -49,8 +52,11 @@ model Account {
 
   // M3 — Usage-Linked Incentive Engine
   incentiveStatus  String    @default("PROVISIONAL")      // PROVISIONAL | PAID | LAPSED
+  incentiveAmount  Int       @default(50)                 // SGD sales credit for opening the account
   activatedAt      DateTime?
   lastUsedAt       DateTime?
+  transactions     Transaction[]
+  incentiveEvents  IncentiveEvent[]
 
   // M1 — Contact-Integrity Guard
   mobile           String?   // 8 digits, no spaces
@@ -88,6 +94,9 @@ model ConductAlert {
   accountId   String?
 
   status      String    @default("OPEN") // OPEN | ESCALATED | DISMISSED
+  dismissReason String?                  // M4/M7: dismissals are reported to the Board by reason
+  dismissedBy   String?
+  dismissedAt   DateTime?
   caseRecord  Case?
 
   createdAt   DateTime  @default(now())
@@ -121,12 +130,22 @@ model CaseEvent {
   timestamp  DateTime @default(now())
 }
 
+// M5 — Speak-Up Channel. Reports go straight to the second line and the
+// Audit Committee; business-line management has no access.
 model Report {
   id              String   @id @default(cuid())
-  theme           String   // e.g. SALES_PRESSURE, UNAUTHORIZED_ACCOUNT, RETALIATION
+  theme           String   // SALES_PRESSURE | UNAUTHORISED_ACCOUNTS | MISSELLING | RETALIATION | OTHER
   description     String
   status          String   @default("OPEN") // OPEN | REVIEWED | CLOSED
+  branch          Branch?  @relation(fields: [branchId], references: [id])
+  branchId        String?
+  anonymous       Boolean  @default(true)
+  reporter        Banker?  @relation("ReportReporter", fields: [reporterId], references: [id])
+  reporterId      String?  // only set when the reporter chose to be named
+  trackingCode    String?
+  routedTo        String   @default("Second-line Risk & Audit Committee")
   retaliationFlag Boolean  @default(false)
+  retaliationNote String?
   createdAt       DateTime @default(now())
 }
 
@@ -135,7 +154,8 @@ model ConfigChangeLog {
   change      String   // e.g. "Raised unused-account threshold from 60 to 90 days"
   changedBy   String
   signedOffBy String   // second-line sign-off, required by M7
-  hash        String   // hash-chained entry — tamper-evidence
+  prevHash    String?  // hash of the previous entry — links the chain
+  hash        String   // SHA-256 over this entry + prevHash — tamper-evidence
   createdAt   DateTime @default(now())
 }
 
@@ -155,4 +175,68 @@ model ContactChangeRequest {
   effectiveAt DateTime? // end of the 48-hour cooling-off period
   resolvedAt  DateTime?
   createdAt   DateTime  @default(now())
+}
+
+// M3 — account activity. Only customer-initiated activity counts as genuine
+// use; staff-initiated funding (e.g. transfer-in then reversal) does not.
+model Transaction {
+  id          String   @id @default(cuid())
+  account     Account  @relation(fields: [accountId], references: [id])
+  accountId   String
+  kind        String   // CARD_PAYMENT | SALARY_CREDIT | BILL_PAYMENT | STAFF_TRANSFER_IN | STAFF_REVERSAL
+  amountCents Int      // positive = money in, negative = money out
+  description String
+  initiatedBy String   // CUSTOMER | STAFF
+  createdAt   DateTime @default(now())
+}
+
+// M3 — the banker's incentive ledger: credit is provisional until the
+// customer genuinely uses the account, then paid or lapsed.
+model IncentiveEvent {
+  id        String   @id @default(cuid())
+  banker    Banker   @relation(fields: [bankerId], references: [id])
+  bankerId  String
+  account   Account? @relation(fields: [accountId], references: [id])
+  accountId String?
+  kind      String   // PROVISIONAL | PAID | LAPSED | RETENTION_BONUS
+  amount    Int      // SGD
+  note      String
+  createdAt DateTime @default(now())
+}
+
+// M4 detection thresholds — changed only through M7 (maker-checker sign-off).
+model Threshold {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  label       String
+  value       Float
+  unit        String   // PERCENT | COUNT
+  description String
+  updatedAt   DateTime @updatedAt
+}
+
+// M7 — a proposed threshold change awaiting independent second-line sign-off.
+model ThresholdChangeRequest {
+  id           String    @id @default(cuid())
+  thresholdKey String
+  oldValue     Float
+  newValue     Float
+  reason       String
+  requestedBy  String
+  status       String    @default("PENDING") // PENDING | APPROVED | REJECTED
+  reviewedBy   String?
+  reviewNote   String?
+  flagsBefore  Int       // M4 breaches under the current value
+  flagsAfter   Int       // ... under the proposed value (suppression check)
+  createdAt    DateTime  @default(now())
+  reviewedAt   DateTime?
+}
+
+// M4 — each run of the conduct analytics engine (feeds M7's coverage report).
+model AnalyticsRun {
+  id              String   @id @default(cuid())
+  alertsRaised    Int
+  bankersScanned  Int
+  branchesScanned Int
+  createdAt       DateTime @default(now())
 }

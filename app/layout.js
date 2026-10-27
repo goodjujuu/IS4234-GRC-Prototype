@@ -1,37 +1,24 @@
-import Link from 'next/link';
+import { Inter } from 'next/font/google';
+import Sidebar from '@/components/Sidebar';
 import './globals.css';
 
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+
 export const metadata = {
-  title: 'Sales Conduct & Incentive Risk Monitoring Platform',
+  title: 'ConductGuard — Sales Conduct & Incentive Risk Monitoring',
   description: 'IS4234 Group 26 — Wells Fargo cross-selling GRC prototype',
 };
 
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/accounts/new', label: 'New Account' },
-  { href: '/customers', label: 'Customer Details' },
-  { href: '/alerts', label: 'Alerts' },
-  { href: '/cases', label: 'Cases' },
-  { href: '/board', label: 'Board Dashboard' },
-];
-
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>
-        <nav className="bg-slate-900 text-white">
-          <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-            <span className="font-semibold">Sales Conduct & Incentive Risk Monitoring</span>
-            <div className="flex gap-4 text-sm">
-              {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} className="hover:text-amber-300">
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+    <html lang="en" className={inter.variable}>
+      <body className="font-sans text-slate-900 antialiased">
+        <div className="min-h-screen lg:flex">
+          <Sidebar />
+          <div className="min-w-0 flex-1">
+            <main className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:px-10 lg:py-9">{children}</main>
           </div>
-        </nav>
-        <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
+        </div>
       </body>
     </html>
   );

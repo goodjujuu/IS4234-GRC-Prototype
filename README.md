@@ -37,10 +37,11 @@ the full design and `docs/M1..M7` for per-module specs and implementation status
 Output: a Board Risk and Audit Committees conduct KRI dashboard (consent-decline rate,
 unused-account rate, complaints, open alerts, overdue/resolved cases, threshold changes).
 
-Build effort is deliberately uneven: **deep** (fully interactive) on M1, M2, M4, M6 and the Board
-dashboard — the modules that demonstrate the control chain end-to-end — and **light** (seeded,
-logged demo events feeding the same views) on M3, M5, M7. M1 and M2 put the banker's screen
-next to a simulated customer phone, so the customer's independent role is visible on screen. See
+All seven modules and the Board dashboard are fully interactive. Customer and employee steps
+(consent replies, contact-change objections, PIN setup, using a new account, speak-up reports)
+happen on a simulated phone beside the staff system, so each control's independence is visible
+on screen. Presenter-only controls (clearly marked) fast-forward time for the 90-day review,
+SLA deadlines and cooling-off periods. See
 `docs/PROTOTYPE_OVERVIEW.md#implementation-status` for the breakdown and file pointers.
 
 ## Tech stack
@@ -88,13 +89,12 @@ can be lifted straight into the report's Technology-enabled prototype section.
 ## Known limitations
 
 - No authentication/authorization — anyone with the URL can act as any role.
-- M6's "overdue case" escalation is a UI-visible state (comparing the deadline to the current
-  time) plus a manual escalate action, not a background job automatically bumping the tier —
-  there's no long-running server process in a serverless deployment to run one.
-- M7's hash-chaining is a simple demo stand-in (`fakeHash()` in `prisma/seed.js`), not a real
-  cryptographic chain; its suppression-alert and coverage-report behaviours are not built.
-- M3/M5 are represented as seeded events feeding the same alert/case/dashboard views a real
-  implementation would use, not as standalone interactive flows — see `docs/PROTOTYPE_OVERVIEW.md`.
+- M7's hash chain is real SHA-256 but lives in the same database it protects; a production
+  build would anchor it externally (e.g. a write-once store) so a database admin could not
+  rewrite the whole chain.
+- Time-based rules (90-day usage review, SLA deadlines, cooling-off) run on demand from presenter
+  controls rather than on a scheduler — a production build would run them as scheduled jobs.
+- Customer and employee phones are simulations; no real SMS or banking app is involved.
 
 ## Acknowledging AI use
 

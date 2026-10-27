@@ -33,6 +33,16 @@ export async function POST(request, { params }) {
       data: { status: 'ACTIVE', activatedAt: new Date() },
       include: { branch: true, banker: true, consentRequest: true },
     });
+    // M3: opening an account earns only a provisional credit until the customer uses it.
+    await prisma.incentiveEvent.create({
+      data: {
+        bankerId: updated.bankerId,
+        accountId: updated.id,
+        kind: 'PROVISIONAL',
+        amount: updated.incentiveAmount,
+        note: `Provisional credit for opening ${updated.customerName}’s ${updated.product}. Paid only if the customer uses it within 90 days.`,
+      },
+    });
     return NextResponse.json(updated);
   }
 

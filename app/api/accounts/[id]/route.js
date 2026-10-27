@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
-// Single account with its M1 contact-change history (newest first).
+// Single account with its M1 contact-change history and M3 activity (newest first).
 export async function GET(request, { params }) {
   const { id } = await params;
   const account = await prisma.account.findUnique({
@@ -12,6 +12,8 @@ export async function GET(request, { params }) {
       branch: true,
       banker: true,
       contactChanges: { include: { banker: true }, orderBy: { createdAt: 'desc' } },
+      transactions: { orderBy: { createdAt: 'desc' } },
+      incentiveEvents: { orderBy: { createdAt: 'desc' } },
     },
   });
   if (!account) {

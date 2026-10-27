@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CustomerPhone from '@/components/CustomerPhone';
+import { Button, PageHeader, PresenterButton, PresenterPanel, SectionLabel, SystemWindow, inputClass } from '@/components/ui';
 
 // Fictional bank name used in the simulated SMS (deliberately not a real bank).
 const BANK_NAME = 'Northbridge Bank';
@@ -217,33 +218,26 @@ export default function NewAccountPage() {
   const pill = account ? STATUS_PILL[account.status] : null;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-slate-900">New Account — M2 Independent Consent Gate</h1>
-        <p className="mt-1 max-w-3xl text-sm text-slate-600">
-          The banker can submit an application, but only the customer can activate it, by replying to an SMS sent to
-          their own registered mobile. The branch system has no approve button. A decline or a missed reply blocks the
-          account and logs it against the banker and branch.
-        </p>
-      </div>
+    <div>
+      <PageHeader
+        module="M2"
+        title="No account goes live without the customer"
+        description="The banker can submit an application, but only the customer can activate it, by replying to an SMS on their own registered mobile. The branch system has no approve button. A decline or a missed reply blocks the account and logs it against the banker and branch."
+      />
 
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
         {/* ---------------- Banker's screen ---------------- */}
-        <section className="min-w-0 flex-1">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Banker’s screen</p>
-          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div className="flex items-center justify-between gap-4 bg-slate-800 px-4 py-2 text-xs text-slate-200">
-              <span className="font-semibold">Branch Account Opening System</span>
-              <span className="truncate">
-                {loggedInBanker ? `Logged in: ${loggedInBanker.name}` : 'Select a banker to log in'}
-              </span>
-            </div>
-
-            <div className="p-5">
+        <section className="min-w-0">
+          <SectionLabel>Banker’s screen</SectionLabel>
+          <SystemWindow
+            title="Branch Account Opening System"
+            right={loggedInBanker ? `Logged in: ${loggedInBanker.name}` : 'Select a banker to log in'}
+          >
+            <div>
               {!account && (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700">Branch</label>
+                    <label className="block text-[13px] font-medium text-slate-700">Branch</label>
                     <select
                       required
                       value={branchId}
@@ -251,7 +245,7 @@ export default function NewAccountPage() {
                         setBranchId(e.target.value);
                         setBankerId('');
                       }}
-                      className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                      className={`mt-1.5 ${inputClass}`}
                     >
                       <option value="">Select branch…</option>
                       {branches.map((b) => (
@@ -262,13 +256,13 @@ export default function NewAccountPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700">Banker</label>
+                    <label className="block text-[13px] font-medium text-slate-700">Banker</label>
                     <select
                       required
                       value={bankerId}
                       onChange={(e) => setBankerId(e.target.value)}
                       disabled={!selectedBranch}
-                      className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-50"
+                      className={`mt-1.5 ${inputClass}`}
                     >
                       <option value="">Select banker…</option>
                       {selectedBranch?.bankers.map((banker) => (
@@ -279,35 +273,31 @@ export default function NewAccountPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700">Customer name</label>
+                    <label className="block text-[13px] font-medium text-slate-700">Customer name</label>
                     <input
                       required
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+                      className={`mt-1.5 ${inputClass}`}
                       placeholder="e.g. Priya Raman"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700">Product</label>
+                    <label className="block text-[13px] font-medium text-slate-700">Product</label>
                     <input
                       readOnly
                       value="Savings Account"
-                      className="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600"
+                      className={`mt-1.5 ${inputClass}`} disabled
                     />
                   </div>
-                  <p className="rounded bg-slate-50 px-3 py-2 text-xs text-slate-500">
+                  <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500 ring-1 ring-inset ring-slate-200/70">
                     Submitting sends a consent request to the customer’s registered mobile. The account stays inactive
                     until the customer approves it there.
                   </p>
                   {error && <p className="text-sm text-red-600">{error}</p>}
-                  <button
-                    type="submit"
-                    disabled={busy}
-                    className="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-60"
-                  >
+                  <Button type="submit" disabled={busy} icon="arrowRight">
                     {busy ? 'Submitting…' : 'Submit application'}
-                  </button>
+                  </Button>
                 </form>
               )}
 
@@ -321,20 +311,20 @@ export default function NewAccountPage() {
                         {account.product} · {account.branch?.name}
                       </p>
                     </div>
-                    <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${pill.className}`}>
+                    <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${pill.className}`}>
                       {pill.label}
                     </span>
                   </div>
 
                   {phase === 'sending' && (
-                    <div className="flex items-center gap-3 rounded border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+                    <div className="animate-fade-up flex items-center gap-3 rounded-xl bg-slate-50 p-3.5 text-sm text-slate-700 ring-1 ring-inset ring-slate-200">
                       <Spinner className="border-slate-500" />
                       Sending consent request to the customer’s registered mobile ending {mobile}…
                     </div>
                   )}
 
                   {phase === 'awaiting' && account.status === 'PENDING_CONSENT' && (
-                    <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                    <div className="animate-fade-up rounded-xl bg-amber-50 p-3.5 text-sm text-amber-900 ring-1 ring-inset ring-amber-200">
                       <p className="flex items-center gap-3 font-medium">
                         <Spinner className="border-amber-500" />
                         Waiting for customer approval…
@@ -348,7 +338,7 @@ export default function NewAccountPage() {
                   )}
 
                   {account.status === 'ACTIVE' && (
-                    <div className="rounded border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+                    <div className="animate-fade-up rounded-xl bg-emerald-50 p-3.5 text-sm text-emerald-900 ring-1 ring-inset ring-emerald-200">
                       The customer approved on their registered mobile. The account is now active. Your sales credit is
                       held as <span className="font-medium">provisional</span> until the customer actually uses the
                       account (M3).
@@ -356,7 +346,7 @@ export default function NewAccountPage() {
                   )}
 
                   {account.status === 'DECLINED' && (
-                    <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+                    <div className="animate-fade-up rounded-xl bg-red-50 p-3.5 text-sm text-red-900 ring-1 ring-inset ring-red-200">
                       The customer replied that they did not request this account. It has been blocked, and this attempt
                       is logged against {account.banker?.name} and {account.branch?.name} for Conduct review.{' '}
                       <Link className="font-medium underline" href="/alerts">
@@ -366,7 +356,7 @@ export default function NewAccountPage() {
                   )}
 
                   {account.status === 'EXPIRED' && (
-                    <div className="rounded border border-slate-300 bg-slate-50 p-3 text-sm text-slate-800">
+                    <div className="animate-fade-up rounded-xl bg-slate-50 p-3.5 text-sm text-slate-800 ring-1 ring-inset ring-slate-300">
                       No reply from the customer within 7 days. The request expired and no account was opened. This is
                       logged against {account.banker?.name} and {account.branch?.name} for Conduct review.{' '}
                       <Link className="font-medium underline" href="/alerts">
@@ -391,19 +381,19 @@ export default function NewAccountPage() {
                   {error && <p className="text-sm text-red-600">{error}</p>}
 
                   {phase === 'resolved' && (
-                    <button onClick={reset} className="text-sm text-slate-600 underline">
+                    <button onClick={reset} className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
                       Start another application
                     </button>
                   )}
                 </div>
               )}
             </div>
-          </div>
+          </SystemWindow>
         </section>
 
         {/* ---------------- Customer's phone ---------------- */}
-        <section className="flex flex-col items-center gap-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Customer’s phone</p>
+        <section className="flex flex-col items-center gap-4">
+          <SectionLabel className="w-[300px]">Customer’s phone</SectionLabel>
           <CustomerPhone
             time={time}
             date={date}
@@ -422,18 +412,11 @@ export default function NewAccountPage() {
             onSend={handleCustomerReply}
           />
 
-          <div className="w-[300px] rounded-lg border border-dashed border-slate-300 bg-white p-3 text-xs text-slate-500">
-            <p className="font-semibold text-slate-700">Presenter controls</p>
-            <p className="mt-0.5">For the demo only. Neither the banker nor the customer sees this.</p>
-            <button
-              type="button"
-              onClick={() => resolveConsent('expire')}
-              disabled={phase !== 'awaiting' || busy}
-              className="mt-2 w-full rounded border border-slate-300 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Fast-forward 7 days with no reply
-            </button>
-          </div>
+          <PresenterPanel className="w-[300px]">
+            <PresenterButton onClick={() => resolveConsent('expire')} disabled={phase !== 'awaiting' || busy} hint="+7 days">
+              No reply from the customer
+            </PresenterButton>
+          </PresenterPanel>
         </section>
       </div>
     </div>

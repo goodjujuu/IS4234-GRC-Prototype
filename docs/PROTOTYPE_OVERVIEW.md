@@ -23,22 +23,22 @@ same line-of-business chain with the conflict of interest that caused them to fa
 ## Implementation status
 
 Built as a single Next.js app (JavaScript, App Router, Tailwind, Prisma + Postgres) rather than
-the earlier two-service scaffold — see the repo root `README.md` for why. Build effort was
-deliberately uneven across modules, agreed as deep on the modules that best demonstrate the
-control chain end-to-end, light (seeded/logged) on the rest:
+the earlier two-service scaffold — see the repo root `README.md` for why. All seven modules
+are fully interactive. Customer- and employee-facing steps happen on a simulated phone, kept
+visually separate from the staff systems, so each control's independence is visible on screen:
 
 | Module | Depth | Where |
 |---|---|---|
 | M1 Contact-Integrity Guard | **Deep** | `app/customers/`, `lib/contactRules.js`, `app/api/accounts/[id]/contact-change`, `app/api/contact-changes/[id]`, `app/api/accounts/[id]/pin` |
 | M2 Independent Consent Gate | **Deep** | `app/accounts/new/`, `app/api/accounts/**`, `components/CustomerPhone.js` |
-| M3 Usage-Linked Incentive Engine | Light (seeded) | `prisma/seed.js` → `Account.incentiveStatus` |
-| M4 Conduct Analytics | **Deep** | `app/alerts/`, `app/api/alerts/**` |
-| M5 Speak-Up Channel | Light (seeded) | `prisma/seed.js` → `Report`, linked `ConductAlert` |
-| M6 Escalation and Case Management | **Deep** | `app/cases/`, `app/api/cases/**` |
-| M7 Tamper-Evident Control Governance | Light (seeded) | `prisma/seed.js` → `ConfigChangeLog` |
+| M3 Usage-Linked Incentive Engine | **Deep** | `app/incentives/`, `lib/incentives.js`, `components/BankingAppScreen.js`, `app/api/incentives/**`, `app/api/accounts/[id]/transactions` |
+| M4 Conduct Analytics | **Deep** | `app/alerts/` (risk map + alert queue), `lib/analytics.js`, `lib/thresholds.js`, `app/api/analytics/**`, `app/api/alerts/**` |
+| M5 Speak-Up Channel | **Deep** | `app/speak-up/`, `components/SpeakUpAppScreen.js`, `app/api/reports/**` |
+| M6 Escalation and Case Management | **Deep** | `app/cases/` (tier board, SLA sweep), `app/cases/[id]`, `app/api/cases/**` |
+| M7 Tamper-Evident Control Governance | **Deep** | `app/governance/`, `lib/governance.js`, `lib/hashChain.js`, `app/api/governance/**` |
 | Board KRI dashboard | **Deep** | `app/board/`, `lib/kri.js`, `app/api/kri/` |
 
-Every module's data — deep or light — flows into the same Prisma tables and the same live Board
+Every module's data flows into the same Prisma tables and the same live Board
 dashboard calculation (`lib/kri.js`), so the KRI numbers always reflect real rows, not hard-coded
 demo text.
 

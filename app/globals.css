@@ -2,9 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #f8fafc;
+:root {
+  color-scheme: light;
 }
+
+body {
+  background-color: #f6f7f9;
+}
+
+/* Subtle scrollbars inside panels */
+.scroll-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.3); border-radius: 999px; }
 
 /* Simulated customer phone (components/CustomerPhone.js) */
 @keyframes slide-down {
@@ -22,6 +30,11 @@ body {
   from { transform: scale(0.92); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+@keyframes fade-up {
+  from { transform: translateY(6px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 .animate-slide-down { animation: slide-down 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .animate-phone-buzz { animation: phone-buzz 0.5s ease-in-out; }
 .animate-pop-in { animation: pop-in 0.2s ease-out; }
+.animate-fade-up { animation: fade-up 0.35s ease-out both; }

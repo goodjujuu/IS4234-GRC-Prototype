@@ -2,38 +2,33 @@
 
 **Layer:** 3 — Detect
 
-**Implementation status:** LIGHT — represented as seeded/logged demo data. `prisma/seed.js`
-creates two `Report` rows (one routine, one with `retaliationFlag: true`). Per the module flow,
-the retaliation-flagged report also creates a `ConductAlert` (`source: "M5"`) so it visibly
-feeds M4 Conduct Analytics on `/alerts`, not just a standalone complaints count.
+**Implementation status:** DEEP — fully interactive at `/speak-up`. An employee's phone runs the
+independent SpeakUp app (`components/SpeakUpAppScreen.js`); beside it are the second-line /
+Audit Committee inbox and a locked branch-manager view.
 
-**Problem it addresses:** The real-world whistleblower hotline routed complaints back through
-the same regional management chain that benefited from the sales numbers — a structural
-conflict of interest that suppressed escalation for years.
+**Problem it addresses:** The real hotline routed complaints back through the same regional
+management that benefited from the sales numbers, and employees who spoke up faced retaliation.
 
-**Intended users / decisions supported:** Any employee (reporter); second-line risk function
-and Audit Committee (recipients — not branch/business management).
+**Intended users / decisions supported:** Any employee (reporter); second-line Risk and the
+Audit Committee (the only recipients).
 
-**Data inputs:**
-- Hotline report submissions — modelled as the `Report` table (`theme`, `description`,
-  `status`, `retaliationFlag`)
+**Data inputs:** `Report` (theme, branch, description, anonymous / named reporter, tracking
+code, retaliation flag); HR adverse-action events (simulated by a presenter control).
 
 **Workflow / rules / analytical logic:**
-- Reports route directly to the second line of defence and the Audit Committee, bypassing
-  branch/business management entirely
-- Reports are grouped by theme
-- Retaliation against reporters (e.g. a reporter's own performance flags spiking shortly after
-  a report) is automatically flagged
+- Reports route straight to second-line Risk & the Audit Committee; business-line managers
+  cannot see, count or search them (shown as a locked dashboard)
+- Anonymous by default; a tracking code lets the reporter follow up without revealing identity
+- Grouped by theme so repeated concerns stand out
+- A report themed "Retaliation", or an adverse HR action against a named reporter, raises a HIGH
+  `RETALIATION_FLAGGED` alert automatically; anonymous reporters cannot be targeted
+- Branch report counts feed M4's `SPEAK_UP_REPORTS` threshold
 
-**Outputs / alerts / escalation:**
-- Reports feed M4 Conduct Analytics as an additional data source (counted in the Board
-  dashboard's "Complaints logged" KRI); retaliation flags also create a `ConductAlert` so they
-  can be escalated via M6 like any other conduct alert
+**Outputs / alerts / escalation:** retaliation alerts start at the Conduct Office in M6
+(branch level skipped); report counts and retaliation flags → Board KRI pack.
 
-**Ownership:** TODO — assign to a team member
-
-**How effectiveness would be evaluated:** TODO (e.g. time from report to independent review;
+**Ownership:** TODO · **Effectiveness:** TODO (time from report to independent review;
 retaliation-flag false-positive rate)
 
-**Status:** Represented via seeded data (see above); the resulting `ConductAlert` and KRI count
-are live, computed from the real `Report`/`ConductAlert` tables.
+**Files:** `app/speak-up/page.js`, `components/SpeakUpAppScreen.js`, `app/api/reports/route.js`,
+`app/api/reports/[id]/route.js`, `prisma/schema.prisma` (`Report`).
