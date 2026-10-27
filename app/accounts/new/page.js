@@ -213,7 +213,7 @@ export default function NewAccountPage() {
     showScreen('lock');
   }
 
-  const mobile = account ? maskedMobile(account.id) : '';
+  const mobile = account ? (account.mobile ? account.mobile.slice(-4) : maskedMobile(account.id)) : '';
   const pill = account ? STATUS_PILL[account.status] : null;
 
   return (

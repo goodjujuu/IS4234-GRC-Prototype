@@ -24,11 +24,13 @@ model Branch {
 model Banker {
   id         String    @id @default(cuid())
   name       String
+  mobile     String?   // staff mobile — M1 blocks it being put on a customer account
   branch     Branch    @relation(fields: [branchId], references: [id])
   branchId   String
   accounts   Account[]
   alerts     ConductAlert[]
   cases      Case[]
+  contactChanges ContactChangeRequest[]
   createdAt  DateTime  @default(now())
 }
 
@@ -49,6 +51,13 @@ model Account {
   incentiveStatus  String    @default("PROVISIONAL")      // PROVISIONAL | PAID | LAPSED
   activatedAt      DateTime?
   lastUsedAt       DateTime?
+
+  // M1 — Contact-Integrity Guard
+  mobile           String?   // 8 digits, no spaces
+  email            String?
+  pinStatus        String    @default("NOT_SET")          // NOT_SET | LINK_SENT | SET_BY_CUSTOMER (the PIN itself is never stored here)
+  pinSetAt         DateTime?
+  contactChanges   ContactChangeRequest[]
 
   alerts           ConductAlert[]
   createdAt        DateTime  @default(now())
@@ -128,4 +137,22 @@ model ConfigChangeLog {
   signedOffBy String   // second-line sign-off, required by M7
   hash        String   // hash-chained entry — tamper-evidence
   createdAt   DateTime @default(now())
+}
+
+// M1 — every staff-initiated change to a customer's mobile or email, whether
+// blocked by the rules, cancelled by the customer, or applied.
+model ContactChangeRequest {
+  id          String    @id @default(cuid())
+  account     Account   @relation(fields: [accountId], references: [id])
+  accountId   String
+  banker      Banker    @relation(fields: [bankerId], references: [id])
+  bankerId    String
+  field       String    // MOBILE | EMAIL
+  oldValue    String?
+  newValue    String
+  status      String    // BLOCKED | PENDING_COOLING_OFF | CONFIRMED_BY_CUSTOMER | APPLIED_AFTER_COOLING_OFF | CANCELLED_BY_CUSTOMER
+  blockReason String?
+  effectiveAt DateTime? // end of the 48-hour cooling-off period
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
 }

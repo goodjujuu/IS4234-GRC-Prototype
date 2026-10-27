@@ -9,6 +9,7 @@ export const metadata = {
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/accounts/new', label: 'New Account' },
+  { href: '/customers', label: 'Customer Details' },
   { href: '/alerts', label: 'Alerts' },
   { href: '/cases', label: 'Cases' },
   { href: '/board', label: 'Board Dashboard' },

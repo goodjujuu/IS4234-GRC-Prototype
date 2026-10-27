@@ -81,6 +81,9 @@ export default function CustomerPhone({
   onOpenNotification,
   onBack,
   onSend,
+  quickReplies = ['YES', 'NO'],
+  onLinkTap,
+  appContent = null,
 }) {
   const [draft, setDraft] = useState('');
   const [buzzing, setBuzzing] = useState(false);
@@ -179,6 +182,12 @@ export default function CustomerPhone({
               </span>
             </div>
           </div>
+        ) : screen === 'app' ? (
+          // A web page or app opened from a link in an SMS (e.g. the PIN setup page).
+          <div className="flex h-full flex-col bg-slate-50">
+            <StatusBar time={phoneTime} />
+            {appContent}
+          </div>
         ) : (
           <div className="flex h-full flex-col bg-white">
             <StatusBar time={phoneTime} />
@@ -219,6 +228,15 @@ export default function CustomerPhone({
                       }`}
                     >
                       {m.text}
+                      {m.link && (
+                        <button
+                          type="button"
+                          onClick={() => onLinkTap?.(m)}
+                          className="mt-1.5 block break-all text-left text-blue-600 underline"
+                        >
+                          {m.link.label}
+                        </button>
+                      )}
                     </div>
                     {i === lastCustomerIndex && (
                       <span className="mr-1 mt-0.5 text-[10px] text-slate-400">Delivered</span>
@@ -240,7 +258,7 @@ export default function CustomerPhone({
             {/* Quick replies (like the suggested replies a phone keyboard offers) */}
             {canReply && (
               <div className="flex shrink-0 gap-2 px-3 pb-1">
-                {['YES', 'NO'].map((reply) => (
+                {quickReplies.map((reply) => (
                   <button
                     key={reply}
                     type="button"

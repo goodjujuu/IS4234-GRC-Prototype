@@ -16,10 +16,13 @@ routes and data access all live in one project:
 
 ## Build scope
 
-Deep (fully interactive) on M2 Independent Consent Gate, M4 Conduct Analytics, M6 Escalation &
-Case Management, and the Board KRI dashboard. Light (seeded/logged demo data only, feeding the
-same alert/case/dashboard views) on M1 Contact-Integrity Guard, M3 Usage-Linked Incentive
-Engine, M5 Speak-Up Channel, M7 Tamper-Evident Control Governance. When touching a module, read
+Deep (fully interactive) on M1 Contact-Integrity Guard, M2 Independent Consent Gate, M4 Conduct
+Analytics, M6 Escalation & Case Management, and the Board KRI dashboard. Light (seeded/logged
+demo data only, feeding the same alert/case/dashboard views) on M3 Usage-Linked Incentive
+Engine, M5 Speak-Up Channel, M7 Tamper-Evident Control Governance. M1 and M2 pages pair the
+banker's screen with a simulated customer phone (`components/CustomerPhone.js`, state in
+`components/usePhoneSimulator.js`); the customer's side must stay visually separate from staff
+controls — never put a customer action on the banker's panel. When touching a module, read
 its doc in `docs/` first — it states which depth it was built at and which files implement it.
 
 ## Conventions

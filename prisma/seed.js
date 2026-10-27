@@ -25,6 +25,7 @@ async function main() {
 
   // Clear existing data (idempotent re-seeding for local/demo use).
   await prisma.caseEvent.deleteMany();
+  await prisma.contactChangeRequest.deleteMany();
   await prisma.case.deleteMany();
   await prisma.conductAlert.deleteMany();
   await prisma.consentRequest.deleteMany();
@@ -42,10 +43,10 @@ async function main() {
   });
 
   const alice = await prisma.banker.create({
-    data: { name: 'Alice Tan', branchId: downtown.id },
+    data: { name: 'Alice Tan', mobile: '90012233', branchId: downtown.id },
   });
   const ben = await prisma.banker.create({
-    data: { name: 'Ben Lim', branchId: riverside.id },
+    data: { name: 'Ben Lim', mobile: '90045566', branchId: riverside.id },
   });
 
   // 1) Healthy account: consented, active, incentive paid (M2 + M3 working as intended).
@@ -54,6 +55,10 @@ async function main() {
       customerName: 'Chandra Wijaya',
       branchId: downtown.id,
       bankerId: alice.id,
+      mobile: '91234567',
+      email: 'chandra.wijaya@gmail.com',
+      pinStatus: 'SET_BY_CUSTOMER',
+      pinSetAt: daysAgo(118),
       status: 'ACTIVE',
       incentiveStatus: 'PAID',
       activatedAt: daysAgo(120),
@@ -70,6 +75,8 @@ async function main() {
       customerName: 'Marcus Lee',
       branchId: riverside.id,
       bankerId: ben.id,
+      mobile: '81234567',
+      email: 'marcus.lee@outlook.com',
       status: 'ACTIVE',
       incentiveStatus: 'LAPSED',
       activatedAt: daysAgo(95),
@@ -94,17 +101,34 @@ async function main() {
   });
 
   // 3) Blocked contact-change attempt — M1 Contact-Integrity Guard stopping a
-  //    takeover-style change before it reaches consent.
+  //    banker putting their own number on a customer's account (the Wells
+  //    Fargo pattern: customers never received the notifications).
+  const blockedReason =
+    'This number belongs to staff member Ben Lim. Staff contact details can never be put on a customer account.';
+  await prisma.contactChangeRequest.create({
+    data: {
+      accountId: lapsedAccount.id,
+      bankerId: ben.id,
+      field: 'MOBILE',
+      oldValue: '81234567',
+      newValue: '90045566',
+      status: 'BLOCKED',
+      blockReason: blockedReason,
+      createdAt: daysAgo(2),
+      resolvedAt: daysAgo(2),
+    },
+  });
   await prisma.conductAlert.create({
     data: {
       type: 'BLOCKED_CONTACT_CHANGE',
       severity: 'HIGH',
       source: 'M1',
-      description:
-        'Attempted phone number change on an active account used a number already linked to 6 other customer profiles at this branch — blocked, old contact notified.',
+      description: `Ben Lim tried to change Marcus Lee's mobile number to 9004 5566. Blocked: ${blockedReason} Customer notified on their existing mobile.`,
       branchId: riverside.id,
       bankerId: ben.id,
+      accountId: lapsedAccount.id,
       status: 'OPEN',
+      createdAt: daysAgo(2),
     },
   });
 

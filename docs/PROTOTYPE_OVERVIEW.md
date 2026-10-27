@@ -29,8 +29,8 @@ control chain end-to-end, light (seeded/logged) on the rest:
 
 | Module | Depth | Where |
 |---|---|---|
-| M1 Contact-Integrity Guard | Light (seeded) | `prisma/seed.js` → `ConductAlert(source: "M1")` |
-| M2 Independent Consent Gate | **Deep** | `app/accounts/new/`, `app/api/accounts/**` |
+| M1 Contact-Integrity Guard | **Deep** | `app/customers/`, `lib/contactRules.js`, `app/api/accounts/[id]/contact-change`, `app/api/contact-changes/[id]`, `app/api/accounts/[id]/pin` |
+| M2 Independent Consent Gate | **Deep** | `app/accounts/new/`, `app/api/accounts/**`, `components/CustomerPhone.js` |
 | M3 Usage-Linked Incentive Engine | Light (seeded) | `prisma/seed.js` → `Account.incentiveStatus` |
 | M4 Conduct Analytics | **Deep** | `app/alerts/`, `app/api/alerts/**` |
 | M5 Speak-Up Channel | Light (seeded) | `prisma/seed.js` → `Report`, linked `ConductAlert` |

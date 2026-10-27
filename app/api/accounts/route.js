@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isValidMobile, normaliseMobile } from '@/lib/contactRules';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,7 @@ export async function GET() {
 
 export async function POST(request) {
   const body = await request.json();
-  const { customerName, branchId, bankerId, product } = body;
+  const { customerName, branchId, bankerId, product, mobile } = body;
 
   if (!customerName || !branchId || !bankerId) {
     return NextResponse.json(
@@ -25,8 +26,18 @@ export async function POST(request) {
     );
   }
 
-  const hasPhoneOnFile = true; // demo: assume phone on file unless told otherwise
-  const channel = hasPhoneOnFile ? 'SMS' : 'DUAL_STAFF';
+  // The customer's registered mobile (used for M2 consent and M1 notifications).
+  // The demo form doesn't ask for one, so generate an unused synthetic number.
+  let registeredMobile = mobile ? normaliseMobile(mobile) : null;
+  if (registeredMobile && !isValidMobile(registeredMobile)) {
+    return NextResponse.json({ error: 'mobile must be an 8-digit number starting with 8 or 9.' }, { status: 400 });
+  }
+  for (let i = 0; !registeredMobile && i < 10; i++) {
+    const candidate = `9${String(Math.floor(Math.random() * 1e7)).padStart(7, '0')}`;
+    const taken = await prisma.account.count({ where: { mobile: candidate } });
+    if (!taken) registeredMobile = candidate;
+  }
+  const channel = registeredMobile ? 'SMS' : 'DUAL_STAFF'; // no phone on file -> dual staff verification
 
   const account = await prisma.account.create({
     data: {
@@ -34,6 +45,7 @@ export async function POST(request) {
       product: product || 'Savings Account',
       branchId,
       bankerId,
+      mobile: registeredMobile,
       status: 'PENDING_CONSENT',
       incentiveStatus: 'PROVISIONAL',
       consentRequest: {

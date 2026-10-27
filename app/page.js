@@ -5,7 +5,7 @@ const layers = [
     title: '1. Prevent',
     modules: 'M1 Contact-Integrity Guard · M2 Independent Consent Gate',
     desc: 'Blocks contact-change takeovers and requires the customer to approve the account on their own registered channel before it goes live.',
-    status: 'M2 built. M1 shown as seeded/logged events.',
+    status: 'M1 and M2 built.',
   },
   {
     title: '2. Remove the reward',
@@ -58,8 +58,12 @@ export default function HomePage() {
           </li>
           <li>Simulate a decline or expiry — notice it gets blocked and logged.</li>
           <li>
-            See it surface as a conduct signal on <Link className="underline" href="/alerts">Alerts</Link> (M4), alongside
-            seeded M1/M3/M5 events.
+            On <Link className="underline" href="/customers">Customer Details</Link> (M1), try to put a fake email or the
+            banker’s own phone number on a customer’s account — it is blocked and the customer is told.
+          </li>
+          <li>
+            See both surface as conduct signals on <Link className="underline" href="/alerts">Alerts</Link> (M4), alongside
+            seeded M3/M5 events.
           </li>
           <li>Escalate an alert into a <Link className="underline" href="/cases">Case</Link> (M6) and walk it through the tiers.</li>
           <li>Check the <Link className="underline" href="/board">Board Dashboard</Link> (M7) — the KRIs move as you act.</li>

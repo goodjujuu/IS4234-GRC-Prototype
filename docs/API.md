@@ -9,6 +9,10 @@ All routes are Next.js App Router route handlers under `app/api/`, returning JSO
 | `GET` | `/api/accounts` | List accounts (branch/banker/consent included) | M2 |
 | `POST` | `/api/accounts` | Open a new account; creates `Account` + `ConsentRequest` | M2 |
 | `POST` | `/api/accounts/[id]/consent` | Resolve consent: `{ action: 'approve'\|'decline'\|'expire' }` | M2 → M4 |
+| `GET` | `/api/accounts/[id]` | One account with its contact-change history | M1 |
+| `POST` | `/api/accounts/[id]/contact-change` | Staff request to change mobile/email: `{ field: 'MOBILE'\|'EMAIL', value, bankerId }` → blocked + alert, or 48h cooling-off | M1 → M4 |
+| `POST` | `/api/contact-changes/[id]` | Resolve a cooling-off change: `{ action: 'confirm'\|'cancel'\|'cooling-off-elapsed' }` | M1 → M4 |
+| `POST` | `/api/accounts/[id]/pin` | `{ action: 'send-link'\|'customer-set' }` — staff can only send a link; the PIN itself never reaches the server | M1 |
 | `GET` | `/api/alerts` | List conduct alerts (branch/banker/account/case included) | M4 |
 | `POST` | `/api/alerts/[id]/escalate` | Escalate an alert into a Branch-level `Case` | M4 → M6 |
 | `GET` | `/api/cases` | List cases with nested alert/branch/banker/events | M6 |

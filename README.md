@@ -37,9 +37,10 @@ the full design and `docs/M1..M7` for per-module specs and implementation status
 Output: a Board Risk and Audit Committees conduct KRI dashboard (consent-decline rate,
 unused-account rate, complaints, open alerts, overdue/resolved cases, threshold changes).
 
-Build effort is deliberately uneven: **deep** (fully interactive) on M2, M4, M6 and the Board
+Build effort is deliberately uneven: **deep** (fully interactive) on M1, M2, M4, M6 and the Board
 dashboard — the modules that demonstrate the control chain end-to-end — and **light** (seeded,
-logged demo events feeding the same views) on M1, M3, M5, M7. See
+logged demo events feeding the same views) on M3, M5, M7. M1 and M2 put the banker's screen
+next to a simulated customer phone, so the customer's independent role is visible on screen. See
 `docs/PROTOTYPE_OVERVIEW.md#implementation-status` for the breakdown and file pointers.
 
 ## Tech stack
@@ -92,7 +93,7 @@ can be lifted straight into the report's Technology-enabled prototype section.
   there's no long-running server process in a serverless deployment to run one.
 - M7's hash-chaining is a simple demo stand-in (`fakeHash()` in `prisma/seed.js`), not a real
   cryptographic chain; its suppression-alert and coverage-report behaviours are not built.
-- M1/M3/M5 are represented as seeded events feeding the same alert/case/dashboard views a real
+- M3/M5 are represented as seeded events feeding the same alert/case/dashboard views a real
   implementation would use, not as standalone interactive flows — see `docs/PROTOTYPE_OVERVIEW.md`.
 
 ## Acknowledging AI use
