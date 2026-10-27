@@ -2,9 +2,12 @@
 
 **Layer:** 1 — Prevent
 
-**Implementation status:** DEEP — fully interactive. Open an account at `/accounts/new`, then
-simulate the customer's response (approve / decline / no-reply-expire). Backed by
-`app/api/accounts/route.js` (create) and `app/api/accounts/[id]/consent/route.js` (resolve).
+**Implementation status:** DEEP — fully interactive. `/accounts/new` shows two separate
+screens side by side: the banker's branch system (submit only, no approve button) and a simulated
+customer phone (`components/CustomerPhone.js`). Submitting sends an SMS to the phone's lock
+screen; the customer opens it and replies YES or NO (any other reply gets an "I didn't
+understand" response). A presenter-only "Fast-forward 7 days" control simulates no reply. Backed
+by `app/api/accounts/route.js` (create) and `app/api/accounts/[id]/consent/route.js` (resolve).
 
 **Problem it addresses:** Account-opening systems recorded an account as a sale the moment it
 was entered, with no independent proof the customer had authorised it — the core verification
@@ -35,5 +38,5 @@ declined/expired/dual-verification cases).
 **How effectiveness would be evaluated:** TODO (e.g. consent-decline rate tracked on the Board
 KRI dashboard; time-to-expiry distribution)
 
-**Status:** Built — `app/accounts/new/page.js`, `app/api/accounts/route.js`,
+**Status:** Built — `app/accounts/new/page.js`, `components/CustomerPhone.js`, `app/api/accounts/route.js`,
 `app/api/accounts/[id]/consent/route.js`, `prisma/schema.prisma` (`Account`, `ConsentRequest`).

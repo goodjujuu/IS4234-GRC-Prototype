@@ -5,3 +5,23 @@
 body {
   background-color: #f8fafc;
 }
+
+/* Simulated customer phone (components/CustomerPhone.js) */
+@keyframes slide-down {
+  from { transform: translateY(-120%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes phone-buzz {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  20% { transform: translateX(-3px) rotate(-0.6deg); }
+  40% { transform: translateX(3px) rotate(0.6deg); }
+  60% { transform: translateX(-3px) rotate(-0.6deg); }
+  80% { transform: translateX(3px) rotate(0.6deg); }
+}
+@keyframes pop-in {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.animate-slide-down { animation: slide-down 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.animate-phone-buzz { animation: phone-buzz 0.5s ease-in-out; }
+.animate-pop-in { animation: pop-in 0.2s ease-out; }
