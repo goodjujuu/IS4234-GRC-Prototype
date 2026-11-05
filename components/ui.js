@@ -1,6 +1,5 @@
 import Icon from '@/components/Icon';
-import { LAYER_STYLES, MODULE_LAYER } from '@/components/nav';
-import { MODULES } from '@/lib/format';
+import { LEVEL_TONE } from '@/lib/format';
 
 // Shared presentational components (usable from server and client components).
 
@@ -8,18 +7,18 @@ export function cx(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export function PageHeader({ module, eyebrow, title, description, actions }) {
-  const layer = module ? MODULE_LAYER[module] : 'overview';
-  const style = LAYER_STYLES[layer];
+const LEVEL_TEXT = {
+  overview: 'text-slate-600',
+  employee: 'text-sky-700',
+  manager: 'text-amber-700',
+  monitoring: 'text-violet-700',
+};
+
+export function PageHeader({ level = 'overview', eyebrow, title, description, actions }) {
   return (
     <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
-        <div className="mb-2 flex flex-wrap items-center gap-2 text-xs font-medium">
-          {module && (
-            <span className={cx('rounded-md px-2 py-0.5 font-semibold ring-1 ring-inset', style.soft, style.ring)}>{module}</span>
-          )}
-          <span className={style.text}>{eyebrow || (module ? `${MODULES[module].layer} · ${MODULES[module].name}` : 'Overview')}</span>
-        </div>
+        {eyebrow && <p className={cx('mb-2 text-xs font-medium', LEVEL_TEXT[level])}>{eyebrow}</p>}
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-[28px]">{title}</h1>
         {description && <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-slate-600">{description}</p>}
       </div>
@@ -30,7 +29,7 @@ export function PageHeader({ module, eyebrow, title, description, actions }) {
 
 export function Card({ className, children, padded = true, ...rest }) {
   return (
-    <div className={cx('rounded-2xl border border-slate-200/80 bg-white shadow-card', padded && 'p-5', className)} {...rest}>
+    <div className={cx('min-w-0 rounded-2xl border border-slate-200/80 bg-white shadow-card', padded && 'p-5', className)} {...rest}>
       {children}
     </div>
   );
@@ -81,14 +80,15 @@ export function Badge({ tone = 'neutral', children, dot = false, className }) {
   );
 }
 
-export function ModuleBadge({ module }) {
-  const style = LAYER_STYLES[MODULE_LAYER[module]] || LAYER_STYLES.overview;
+// Level colour always comes with the word, never colour alone.
+export function RiskBadge({ level }) {
+  const label = { HIGH: 'High', MEDIUM: 'Medium', LOW: 'Low' }[level] || level;
   return (
-    <span className={cx('rounded-md px-1.5 py-0.5 text-[10px] font-bold ring-1 ring-inset', style.soft, style.ring)}>{module}</span>
+    <Badge tone={LEVEL_TONE[level] || 'neutral'} dot>
+      {label}
+    </Badge>
   );
 }
-
-export const SEVERITY_TONE = { HIGH: 'red', MEDIUM: 'amber', LOW: 'neutral' };
 
 const BUTTON_VARIANTS = {
   primary: 'bg-slate-900 text-white hover:bg-slate-800 shadow-sm',
@@ -173,7 +173,7 @@ export function Callout({ tone = 'neutral', icon, title, children, className }) 
   );
 }
 
-// The "staff system" window used on the banker-facing side of a page.
+// The "staff system" window used for staff-facing tools on a page.
 export function SystemWindow({ title, subtitle, right, children, className }) {
   return (
     <div className={cx('overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-card', className)}>
@@ -194,7 +194,7 @@ export function SystemWindow({ title, subtitle, right, children, className }) {
   );
 }
 
-// Presenter-only controls box (clearly separated from banker and customer UIs).
+// Presenter-only controls box (clearly separated from every user's screen).
 export function PresenterPanel({ children, className }) {
   return (
     <div className={cx('rounded-2xl border border-dashed border-indigo-300 bg-indigo-50/40 p-4', className)}>
@@ -291,3 +291,62 @@ export function Avatar({ name, className }) {
     </span>
   );
 }
+
+// A trend line. The final value is labelled directly and each point has a hover tooltip.
+// `compare` adds a dashed reference series (for example the peer median) on the same axis.
+export function TrendLine({ points, compare, format = (v) => v, max, height = 56, label }) {
+  if (!points.length) return null;
+  const W = 240;
+  const top = max ?? Math.max(...points.map((p) => p.value), ...(compare || []).map((p) => p.value), 1);
+  const x = (i) => (points.length === 1 ? W / 2 : 6 + (i * (W - 12)) / (points.length - 1));
+  const y = (v) => height - 6 - (Math.min(v, top) / (top || 1)) * (height - 12);
+  const path = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(p.value).toFixed(1)}`).join(' ');
+  return (
+    <div className="flex items-center gap-3">
+      <svg viewBox={`0 0 ${W} ${height}`} className="h-14 w-full min-w-0" preserveAspectRatio="none" role="img" aria-label={label}>
+        <line x1="0" x2={W} y1={height - 6} y2={height - 6} stroke="#e2e8f0" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        {compare && (
+          <path
+            d={compare.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(p.value).toFixed(1)}`).join(' ')}
+            fill="none"
+            stroke="#94a3b8"
+            strokeWidth="1.5"
+            strokeDasharray="4 3"
+            vectorEffect="non-scaling-stroke"
+          />
+        )}
+        <path d={path} fill="none" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+        {points.map((p, i) => (
+          <g key={i}>
+            <circle cx={x(i)} cy={y(p.value)} r="10" fill="transparent">
+              <title>{`${p.label}: ${format(p.value)}${compare ? `, peers ${format(compare[i].value)}` : ''}`}</title>
+            </circle>
+          </g>
+        ))}
+      </svg>
+      <span className="shrink-0 text-[13px] font-semibold tabular-nums text-slate-800">{format(points[points.length - 1].value)}</span>
+    </div>
+  );
+}
+
+// Where a value sits against the peer range (25th to 75th percentile) and median.
+export function PeerRange({ value, p25, p75, median, max, formatted, medianText }) {
+  const top = Math.max(max || 0, value, p75, 0.0001);
+  const pos = (v) => `${Math.min(100, (v / top) * 100)}%`;
+  return (
+    <div className="relative h-5 w-full min-w-[120px]" title={`You ${formatted}. Peer median ${medianText}.`}>
+      <div className="absolute left-0 right-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-slate-100" />
+      <div className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-slate-300" style={{ left: pos(p25), width: `calc(${pos(p75)} - ${pos(p25)})` }} />
+      <div className="absolute top-1/2 h-3 w-0.5 -translate-y-1/2 bg-slate-500" style={{ left: pos(median) }} />
+      <div className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600 ring-2 ring-white" style={{ left: pos(value) }} />
+    </div>
+  );
+}
+
+// A table wrapper that scrolls by itself on a phone rather than widening the page.
+export function TableWrap({ children }) {
+  return <div className="scroll-thin -mx-1 overflow-x-auto px-1">{children}</div>;
+}
+
+export const thClass = 'whitespace-nowrap border-b border-slate-200 px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500';
+export const tdClass = 'border-b border-slate-100 px-3 py-2.5 text-[13px] text-slate-700';

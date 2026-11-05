@@ -1,100 +1,102 @@
-# Sales Conduct & Incentive Risk Monitoring Platform
+# ConductGuard
 
-NUS IS4234 (Governance, Regulation and Compliance Technology), Sem 1 AY2026/2027 — Group 26
+NUS IS4234 (Governance, Regulation and Compliance Technology), Sem 1 AY2026/2027, Group 26
 (Garet Ang, Javier Yeow, Manimaran Pramoth, Reina Tng Xin Ru).
 
-## Overview
+An observability platform for conduct risk in retail banking, built as the technology demonstrator
+for the group's case study of the Wells Fargo cross-selling scandal. ConductGuard targets the sales
+pressure created by managers and targets, not only the behaviour of employees.
 
-A technology-enabled prototype for the group's GRC case study: the Wells Fargo cross-selling
-scandal. It asks a narrower, buildable version of the report's research question — *can
-account-opening consent, incentive payout and escalation be linked into one control chain, so
-that an unauthorised account can't go undetected the way it did at Wells Fargo for over a
-decade?*
+1. **Conduct Surveillance** monitors three levels. Employee Conduct scores seven peer-relative
+   metrics from 0 to 100. Managers and Targets combines seven measures into a Pressure Index and
+   links it to employee flags. Threshold Governance protects the detection thresholds.
+2. **Alerting and Case Management** opens a case with a named reviewer and a deadline, escalates
+   overdue or repeated cases, handles disputes and appeals, and records every action.
+3. **Risk Reporting** provides a live dashboard, a daily morning briefing and a monthly audit
+   committee summary.
 
-## Background
-
-Between 2002 and 2016, Wells Fargo employees opened millions of unauthorised accounts to meet
-sales quotas. The bank had a code of ethics, a whistleblower hotline, sales-quality monitoring
-and internal audit — but no control verified customer consent at account opening, and
-complaint/hotline/HR data was never linked to account-behaviour data, so no one saw the full
-pattern until it became national news. Full case analysis is in the group's IS4234 report
-(Section 2–3); this repo implements only the Section 4 prototype.
-
-## What the app does
-
-Four layers of defence, each with its own control module — see `docs/PROTOTYPE_OVERVIEW.md` for
-the full design and `docs/M1..M7` for per-module specs and implementation status:
-
-1. **Prevent** — block the account from being created without independent customer consent
-   (M1 Contact-Integrity Guard, M2 Independent Consent Gate)
-2. **Remove the reward** — hold sales credit as provisional until the account is genuinely used
-   (M3 Usage-Linked Incentive Engine)
-3. **Detect** — flag anomalous patterns and route whistleblower reports around the
-   line-of-business chain (M4 Conduct Analytics, M5 Speak-Up Channel)
-4. **Govern** — escalate on a tiered deadline and make the monitoring system itself
-   tamper-evident (M6 Escalation and Case Management, M7 Tamper-Evident Control Governance)
-
-Output: a Board Risk and Audit Committees conduct KRI dashboard (consent-decline rate,
-unused-account rate, complaints, open alerts, overdue/resolved cases, threshold changes).
-
-All seven modules and the Board dashboard are fully interactive. Customer and employee steps
-(consent replies, contact-change objections, PIN setup, using a new account, speak-up reports)
-happen on a simulated phone beside the staff system, so each control's independence is visible
-on screen. Presenter-only controls (clearly marked) fast-forward time for the 90-day review,
-SLA deadlines and cooling-off periods. See
-`docs/PROTOTYPE_OVERVIEW.md#implementation-status` for the breakdown and file pointers.
-
-## Tech stack
-
-Single Next.js app (App Router, JavaScript, no TypeScript) — chosen over a separate
-backend/frontend split to minimise moving parts for a course-timeline build:
-
-- **Next.js 15** (App Router) — pages and API routes in one project
-- **Tailwind CSS** — styling
-- **Prisma ORM** + **Postgres** (free tier via Neon or Vercel Postgres) — data layer
-- **Vercel** — hosting (the course requires a working, hosted, accessible link)
+`solution.md` is the source of truth for the design, and `CLAUDE.md` summarises it for building.
+`docs/PROTOTYPE_OVERVIEW.md` and `docs/M1..M7` describe an earlier design and are kept for reference
+only.
 
 ## Setup
 
 ```bash
 npm install
-cp .env.example .env        # fill in DATABASE_URL — see docs/DEPLOYMENT.md
-npx prisma migrate dev --name init
+cp .env.example .env        # fill in DATABASE_URL and SESSION_SECRET
+npx prisma migrate deploy
 npm run seed
 npm run dev
 ```
 
-Open http://localhost:3000 — the home page lays out a demo path through all four layers. Full
-hosting steps (Neon + Vercel) are in `docs/DEPLOYMENT.md`.
+Open http://localhost:3000. Hosting steps are in `docs/DEPLOYMENT.md`.
+
+## Demo accounts
+
+Every account uses the password `demo1234`. The login page also has one-click buttons.
+
+| Role | Name | Email |
+| --- | --- | --- |
+| Employee (High risk) | Maya Lindqvist | `maya.lindqvist@conductguard.demo` |
+| Employee (Low risk) | Mei Tanaka | `mei.tanaka@conductguard.demo` |
+| Team lead, Branch 12 | Daniel Okafor | `daniel.okafor@conductguard.demo` |
+| Team lead, Branch 7 | Victor Nakamura | `victor.nakamura@conductguard.demo` |
+| Conduct risk analyst | Priya Raman | `priya.raman@conductguard.demo` |
+| Head of Conduct Risk | Helen Cho | `helen.cho@conductguard.demo` |
+| Chief Risk Officer | Rosalind Keane | `rosalind.keane@conductguard.demo` |
+| Internal auditor | Samuel Ito | `samuel.ito@conductguard.demo` |
+| Audit committee chair | Margaret Flynn | `margaret.flynn@conductguard.demo` |
+
+## Demo scenario
+
+1. **Priya**, Morning briefing. Branch 12 moved to High overnight, and unused accounts nearly doubled
+   following target increases. Confirm or correct the AI draft.
+2. **Priya**, Pressure Index. 80% of Branch 12 staff are missing the target, so the manager and the
+   target are flagged.
+3. **Maya**, My dashboard. Read the explanation, dispute the flag with evidence, then report pressure
+   anonymously.
+4. **Daniel**, Thresholds. Try to raise the High risk threshold from 70 to 85. It is blocked and
+   logged, and internal audit is alerted.
+5. **Margaret**, Monthly summary. The case appears with its full audit trail.
+
+Other things to show:
+
+- **Second High case.** Isla Brennan had a High case 24 days ago, so her new one goes to the audit
+  committee.
+- **Maker and checker.** Priya proposes a change on Thresholds, and Rosalind approves or rejects it.
+- **Escalation.** On the Live dashboard, move time forward 49 hours. Overdue High cases move to the
+  Chief Risk Officer.
+- **Retaliation guard.** On Dismissals, dismissing Ravi Menon also opens a case for the audit
+  committee, because a sealed report in the seed data belongs to Ravi.
+- **Tamper checks.** On Warning signs, the presenter buttons edit the database directly, and Run
+  checks catches both edits.
+
+`npm run seed` restores the exact starting state.
 
 ## Architecture notes
 
-- One Next.js project at repo root — no `backend/`/`frontend/` split, no Docker, no Makefile.
-  Earlier scaffolding iterations used a flatter two-service layout (inspired by the group's
-  other NUS project, `is4228`); this was simplified further once the stack was chosen, since a
-  single Next.js app already keeps pages, API routes and data access co-located.
-- Mock/synthetic, committed seed data (`prisma/seed.js`) rather than any live external sync —
-  same reproducibility rationale as `is4228`: a demo or grading run should always show the same
-  thing. Re-running `npm run seed` resets to a known state.
-- No auth layer. Every page and API route is open — acceptable for a scoped course prototype
-  demonstrating a control *design*, not a production access-control model.
-
-## Status
-
-Built. See `docs/` for the module specs — each is templated against the course's
-prototype-documentation rubric (intended users, problem, data inputs, workflow/logic,
-outputs/alerts/escalation, ownership, evaluation) plus an implementation-status note, so they
-can be lifted straight into the report's Technology-enabled prototype section.
+- One Next.js 15 project (App Router, JavaScript), Tailwind CSS, Prisma and Postgres, hosted on
+  Vercel. API routes hold the server-side rules.
+- `lib/scoring.js`, `lib/pressure.js`, `lib/engine.js`, `lib/hashChain.js` and `lib/briefing.js` are
+  CommonJS so `prisma/seed.js` runs the same engine as the app and cannot drift from it.
+- `lib/kri.js` is the single source of truth for dashboard and effectiveness numbers.
+- Seed data is synthetic and deterministic, using a fixed random seed and a demo clock starting
+  Monday 9 November 2026, 8:30 am. Actions tick the clock forward, and presenter controls move it
+  further, so deadlines and windows give the same results on every run.
+- The AI draft calls Claude when `ANTHROPIC_API_KEY` is set, sending only aggregate facts and no
+  employee names. Without a key it uses a template, and the page labels it as simulated.
 
 ## Known limitations
 
-- No authentication/authorization — anyone with the URL can act as any role.
-- M7's hash chain is real SHA-256 but lives in the same database it protects; a production
-  build would anchor it externally (e.g. a write-once store) so a database admin could not
-  rewrite the whole chain.
-- Time-based rules (90-day usage review, SLA deadlines, cooling-off) run on demand from presenter
-  controls rather than on a scheduler — a production build would run them as scheduled jobs.
-- Customer and employee phones are simulations; no real SMS or banking app is involved.
+- Demo logins share a password, and sessions are simple signed cookies. Not a production access model.
+- Scores are indicators, not proof. Metrics and the Pressure Index can be gamed.
+- An AI summary can be wrong, so it stays unconfirmed until a reviewer confirms or corrects it.
+- The hash chain lives in the same database it protects. A production build would anchor it in a
+  write-once store. Editing and deleting are detected, not prevented.
+- A speak-up seal could be tested by someone holding both the secret and the employee list. A
+  production build would need independent key custody.
+- Scoring and deadline sweeps run from presenter controls rather than a scheduler, and the morning
+  briefing is an on-screen email preview that is not actually sent.
 
 ## Acknowledging AI use
 

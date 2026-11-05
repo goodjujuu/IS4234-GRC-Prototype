@@ -1,5 +1,5 @@
-// IS4234 Group 26 — Sales Conduct & Incentive Risk Monitoring Platform
-// Prisma schema. Models map to the M1–M7 modules described in docs/.
+// ConductGuard data model. The platform only reads account activity, and never creates or
+// verifies accounts.
 
 generator client {
   provider = "prisma-client-js"
@@ -10,233 +10,277 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// A single demo clock keeps deadlines and rolling windows reproducible.
+model DemoClock {
+  id  Int      @id @default(1)
+  now DateTime
+}
+
 model Branch {
-  id        String    @id @default(cuid())
-  name      String
-  region    String?
-  bankers   Banker[]
-  accounts  Account[]
-  alerts    ConductAlert[]
-  cases     Case[]
-  reports   Report[]
-  createdAt DateTime  @default(now())
+  id           String          @id @default(cuid())
+  code         Int             @unique
+  name         String
+  region       String
+  weeklyTarget Int             // accounts per employee per week, set by the business
+  employees    Employee[]
+  accounts     AccountRecord[]
+  complaints   Complaint[]
+  targets      TargetChange[]
+  cases        Case[]
+  reports      SpeakUpReport[]
+  dismissals   Dismissal[]
+  users        User[]
 }
 
-model Banker {
-  id         String    @id @default(cuid())
+model Employee {
+  id         String          @id @default(cuid())
   name       String
-  mobile     String?   // staff mobile — M1 blocks it being put on a customer account
-  branch     Branch    @relation(fields: [branchId], references: [id])
+  position   String          // peer group, e.g. "Personal Banker"
+  isManager  Boolean         @default(false)
+  status     String          @default("ACTIVE") // ACTIVE | DISMISSED
+  branch     Branch          @relation(fields: [branchId], references: [id])
   branchId   String
-  accounts   Account[]
-  alerts     ConductAlert[]
+  accounts   AccountRecord[]
+  complaints Complaint[]
+  scores     RiskScore[]
   cases      Case[]
-  contactChanges ContactChangeRequest[]
-  incentiveEvents IncentiveEvent[]
-  reportsFiled Report[] @relation("ReportReporter")
-  createdAt  DateTime  @default(now())
+  disputes   Dispute[]
+  dismissals Dismissal[]
+  user       User?
 }
 
-model Account {
-  id               String    @id @default(cuid())
-  customerName     String
-  product          String    @default("Savings Account")
-  branch           Branch    @relation(fields: [branchId], references: [id])
-  branchId         String
-  banker           Banker    @relation(fields: [bankerId], references: [id])
-  bankerId         String
-
-  // M2 — Independent Consent Gate
-  status           String    @default("PENDING_CONSENT") // PENDING_CONSENT | ACTIVE | DECLINED | EXPIRED
-  consentRequest   ConsentRequest?
-
-  // M3 — Usage-Linked Incentive Engine
-  incentiveStatus  String    @default("PROVISIONAL")      // PROVISIONAL | PAID | LAPSED
-  incentiveAmount  Int       @default(50)                 // SGD sales credit for opening the account
-  activatedAt      DateTime?
-  lastUsedAt       DateTime?
-  transactions     Transaction[]
-  incentiveEvents  IncentiveEvent[]
-
-  // M1 — Contact-Integrity Guard
-  mobile           String?   // 8 digits, no spaces
-  email            String?
-  pinStatus        String    @default("NOT_SET")          // NOT_SET | LINK_SENT | SET_BY_CUSTOMER (the PIN itself is never stored here)
-  pinSetAt         DateTime?
-  contactChanges   ContactChangeRequest[]
-
-  alerts           ConductAlert[]
-  createdAt        DateTime  @default(now())
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  name          String
+  title         String
+  role          String         // EMPLOYEE | TEAM_LEAD | CONDUCT_RISK | CHIEF_RISK_OFFICER | INTERNAL_AUDIT | AUDIT_COMMITTEE
+  employee      Employee?      @relation(fields: [employeeId], references: [id])
+  employeeId    String?        @unique
+  branch        Branch?        @relation(fields: [branchId], references: [id])
+  branchId      String?        // the team a team lead is scoped to
+  notifications Notification[]
 }
 
-model ConsentRequest {
-  id          String    @id @default(cuid())
-  account     Account   @relation(fields: [accountId], references: [id])
-  accountId   String    @unique
-  channel     String    @default("SMS")   // SMS | DUAL_STAFF (no phone on file)
-  status      String    @default("PENDING") // PENDING | APPROVED | DECLINED | EXPIRED
-  sentAt      DateTime  @default(now())
-  respondedAt DateTime?
+// Account activity, read-only to the platform. Customers appear only as pseudonymous references.
+model AccountRecord {
+  id                     String      @id @default(cuid())
+  ref                    String      @unique
+  customerRef            String
+  product                String
+  employee               Employee    @relation(fields: [employeeId], references: [id])
+  employeeId             String
+  branch                 Branch      @relation(fields: [branchId], references: [id])
+  branchId               String
+  openedAt               DateTime
+  firstGenuineActivityAt DateTime?
+  fundingSource          String      // EXTERNAL | INTERNAL_TRANSFER_ONLY | NONE
+  closedAt               DateTime?
+  contactChangeAt        DateTime?
+  complaints             Complaint[]
+
+  @@index([employeeId, openedAt])
+  @@index([branchId, openedAt])
+  @@index([openedAt])
 }
 
-model ConductAlert {
-  id          String    @id @default(cuid())
-  type        String                     // e.g. BLOCKED_CONTACT_CHANGE, UNUSED_ACCOUNT_90D, BRANCH_WIDE_PATTERN, RETALIATION_FLAGGED
-  severity    String    @default("LOW")  // LOW | MEDIUM | HIGH
-  source      String                     // M1 | M2 | M3 | M4 | M5
-  description String
+model Complaint {
+  id         String        @id @default(cuid())
+  category   String        // DID_NOT_AUTHORISE | SERVICE | OTHER
+  summary    String
+  receivedAt DateTime
+  account    AccountRecord @relation(fields: [accountId], references: [id])
+  accountId  String
+  employee   Employee      @relation(fields: [employeeId], references: [id])
+  employeeId String
+  branch     Branch        @relation(fields: [branchId], references: [id])
+  branchId   String
 
-  branch      Branch?   @relation(fields: [branchId], references: [id])
-  branchId    String?
-  banker      Banker?   @relation(fields: [bankerId], references: [id])
-  bankerId    String?
-  account     Account?  @relation(fields: [accountId], references: [id])
-  accountId   String?
+  @@index([employeeId, receivedAt])
+}
 
-  status      String    @default("OPEN") // OPEN | ESCALATED | DISMISSED
-  dismissReason String?                  // M4/M7: dismissals are reported to the Board by reason
-  dismissedBy   String?
-  dismissedAt   DateTime?
-  caseRecord  Case?
+model TargetChange {
+  id          String   @id @default(cuid())
+  branch      Branch   @relation(fields: [branchId], references: [id])
+  branchId    String
+  oldTarget   Int
+  newTarget   Int
+  effectiveAt DateTime
+  setBy       String
+}
 
-  createdAt   DateTime  @default(now())
+// One row per employee per scoring run. `metrics` keeps the full evidence for
+// that score, so a past score still explains itself after config changes.
+model RiskScore {
+  id         String   @id @default(cuid())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+  branchId   String
+  asOf       DateTime
+  score      Int
+  level      String   // LOW | MEDIUM | HIGH
+  metrics    Json
+
+  @@unique([employeeId, asOf])
+  @@index([asOf])
 }
 
 model Case {
-  id          String      @id @default(cuid())
-  alert       ConductAlert @relation(fields: [alertId], references: [id])
-  alertId     String      @unique
+  id                 String      @id @default(cuid())
+  ref                String      @unique
+  kind               String      // EMPLOYEE_FLAG | BRANCH_PRESSURE | DISMISSAL_REVIEW | RETALIATION_GUARD
+  title              String
+  summary            String
+  riskLevel          String      // MEDIUM | HIGH
+  tier               String      // TEAM_LEAD | CONDUCT_RISK | CHIEF_RISK_OFFICER | AUDIT_COMMITTEE
+  status             String      @default("OPEN") // OPEN | IN_REVIEW | CLOSED
+  assignee           String?
+  outcome            String?     // CLEARED | COACHING | INVESTIGATION | TARGET_REVIEW (manager and target cases only)
+  closeReason        String?
+  inCommitteeSummary Boolean     @default(false)
+  evidence           Json?
+  employee           Employee?   @relation(fields: [employeeId], references: [id])
+  employeeId         String?
+  branch             Branch?     @relation(fields: [branchId], references: [id])
+  branchId           String?
+  openedAt           DateTime
+  firstActionAt      DateTime?
+  deadlineAt         DateTime
+  closedAt           DateTime?
+  events             CaseEvent[]
+  disputes           Dispute[]
 
-  branch      Branch?     @relation(fields: [branchId], references: [id])
-  branchId    String?
-  banker      Banker?     @relation(fields: [bankerId], references: [id])
-  bankerId    String?
-
-  level       String      @default("BRANCH") // BRANCH | CONDUCT_OFFICE | CRO
-  status      String      @default("OPEN")   // OPEN | OVERDUE | RESOLVED
-  deadlineAt  DateTime
-
-  events      CaseEvent[]
-  createdAt   DateTime    @default(now())
+  @@index([status, deadlineAt])
 }
 
+// The audit trail. Every change to a case's status or level appends a row.
 model CaseEvent {
   id        String   @id @default(cuid())
-  caseRecord Case    @relation(fields: [caseId], references: [id])
+  case      Case     @relation(fields: [caseId], references: [id])
   caseId    String
-  action     String  // OPENED | ESCALATED | RESOLVED | NOTE
-  actor      String
-  note       String?
-  timestamp  DateTime @default(now())
+  action    String   // OPENED | ASSIGNED | REVIEW_STARTED | NOTE | ESCALATED | DISPUTED | DISPUTE_DECIDED | CLOSED | APPEALED | APPEAL_DECIDED
+  actor     String
+  note      String?
+  evidence  Json?
+  timestamp DateTime
 }
 
-// M5 — Speak-Up Channel. Reports go straight to the second line and the
-// Audit Committee; business-line management has no access.
-model Report {
-  id              String   @id @default(cuid())
-  theme           String   // SALES_PRESSURE | UNAUTHORISED_ACCOUNTS | MISSELLING | RETALIATION | OTHER
-  description     String
-  status          String   @default("OPEN") // OPEN | REVIEWED | CLOSED
-  branch          Branch?  @relation(fields: [branchId], references: [id])
-  branchId        String?
-  anonymous       Boolean  @default(true)
-  reporter        Banker?  @relation("ReportReporter", fields: [reporterId], references: [id])
-  reporterId      String?  // only set when the reporter chose to be named
-  trackingCode    String?
-  routedTo        String   @default("Second-line Risk & Audit Committee")
-  retaliationFlag Boolean  @default(false)
-  retaliationNote String?
-  createdAt       DateTime @default(now())
+model Dispute {
+  id           String    @id @default(cuid())
+  case         Case      @relation(fields: [caseId], references: [id])
+  caseId       String
+  employee     Employee  @relation(fields: [employeeId], references: [id])
+  employeeId   String
+  type         String    @default("DISPUTE") // DISPUTE (decided by the reviewer) | APPEAL (decided by the audit committee)
+  metricKey    String?
+  statement    String
+  evidence     String?
+  status       String    @default("OPEN") // OPEN | UPHELD | REJECTED
+  decidedBy    String?
+  decisionNote String?
+  createdAt    DateTime
+  decidedAt    DateTime?
 }
 
+// Anonymous by design. `reporterSeal` is a one-way keyed hash, never a name, so
+// the retaliation guard can recognise a reporter without revealing who they are.
+model SpeakUpReport {
+  id           String   @id @default(cuid())
+  trackingCode String   @unique
+  theme        String   // TARGET_PRESSURE | INSTRUCTED_MISCONDUCT | RETALIATION | OTHER
+  message      String
+  reporterSeal String?
+  branch       Branch   @relation(fields: [branchId], references: [id])
+  branchId     String
+  createdAt    DateTime
+}
+
+model Dismissal {
+  id         String   @id @default(cuid())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+  branch     Branch   @relation(fields: [branchId], references: [id])
+  branchId   String
+  category   String   // SALES_MISCONDUCT | OTHER
+  reason     String
+  dismissedAt DateTime
+}
+
+// Weights and thresholds. Only changed through an approved change request.
+model ScoringConfig {
+  key         String @id
+  label       String
+  group       String // WEIGHT | LEVEL | RULE | WATCH
+  value       Float
+  unit        String
+  description String
+}
+
+model ThresholdChangeRequest {
+  id            String    @id @default(cuid())
+  configKey     String
+  oldValue      Float
+  newValue      Float
+  reason        String
+  requestedBy   String
+  requesterRole String
+  flagsBefore   Int
+  flagsAfter    Int
+  status        String    @default("PENDING") // PENDING | APPROVED | REJECTED | BLOCKED
+  reviewedBy    String?
+  reviewNote    String?
+  createdAt     DateTime
+  reviewedAt    DateTime?
+}
+
+// Append-only and hash-chained. Each hash covers the previous one.
 model ConfigChangeLog {
   id          String   @id @default(cuid())
-  change      String   // e.g. "Raised unused-account threshold from 60 to 90 days"
+  seq         Int      @unique
+  event       String   // PROPOSED | APPROVED | REJECTED | BLOCKED | SEEDED
+  change      String
   changedBy   String
-  signedOffBy String   // second-line sign-off, required by M7
-  prevHash    String?  // hash of the previous entry — links the chain
-  hash        String   // SHA-256 over this entry + prevHash — tamper-evidence
-  createdAt   DateTime @default(now())
+  signedOffBy String?
+  prevHash    String?
+  hash        String
+  createdAt   DateTime
 }
 
-// M1 — every staff-initiated change to a customer's mobile or email, whether
-// blocked by the rules, cancelled by the customer, or applied.
-model ContactChangeRequest {
-  id          String    @id @default(cuid())
-  account     Account   @relation(fields: [accountId], references: [id])
-  accountId   String
-  banker      Banker    @relation(fields: [bankerId], references: [id])
-  bankerId    String
-  field       String    // MOBILE | EMAIL
-  oldValue    String?
-  newValue    String
-  status      String    // BLOCKED | PENDING_COOLING_OFF | CONFIRMED_BY_CUSTOMER | APPLIED_AFTER_COOLING_OFF | CANCELLED_BY_CUSTOMER
-  blockReason String?
-  effectiveAt DateTime? // end of the 48-hour cooling-off period
-  resolvedAt  DateTime?
-  createdAt   DateTime  @default(now())
+model WatcherAlert {
+  id             String    @id @default(cuid())
+  type           String    // THRESHOLD_CHANGE | UNAPPROVED_CHANGE | FLAG_VOLUME_DROP | FAST_REVIEWS | LOG_TAMPERING
+  severity       String    // MEDIUM | HIGH
+  title          String
+  detail         String
+  status         String    @default("OPEN") // OPEN | ACKNOWLEDGED
+  acknowledgedBy String?
+  createdAt      DateTime
 }
 
-// M3 — account activity. Only customer-initiated activity counts as genuine
-// use; staff-initiated funding (e.g. transfer-in then reversal) does not.
-model Transaction {
-  id          String   @id @default(cuid())
-  account     Account  @relation(fields: [accountId], references: [id])
-  accountId   String
-  kind        String   // CARD_PAYMENT | SALARY_CREDIT | BILL_PAYMENT | STAFF_TRANSFER_IN | STAFF_REVERSAL
-  amountCents Int      // positive = money in, negative = money out
-  description String
-  initiatedBy String   // CUSTOMER | STAFF
-  createdAt   DateTime @default(now())
-}
-
-// M3 — the banker's incentive ledger: credit is provisional until the
-// customer genuinely uses the account, then paid or lapsed.
-model IncentiveEvent {
+model Notification {
   id        String   @id @default(cuid())
-  banker    Banker   @relation(fields: [bankerId], references: [id])
-  bankerId  String
-  account   Account? @relation(fields: [accountId], references: [id])
-  accountId String?
-  kind      String   // PROVISIONAL | PAID | LAPSED | RETENTION_BONUS
-  amount    Int      // SGD
-  note      String
-  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  title     String
+  body      String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime
+
+  @@index([userId, read])
 }
 
-// M4 detection thresholds — changed only through M7 (maker-checker sign-off).
-model Threshold {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  label       String
-  value       Float
-  unit        String   // PERCENT | COUNT
-  description String
-  updatedAt   DateTime @updatedAt
-}
-
-// M7 — a proposed threshold change awaiting independent second-line sign-off.
-model ThresholdChangeRequest {
-  id           String    @id @default(cuid())
-  thresholdKey String
-  oldValue     Float
-  newValue     Float
-  reason       String
-  requestedBy  String
-  status       String    @default("PENDING") // PENDING | APPROVED | REJECTED
-  reviewedBy   String?
-  reviewNote   String?
-  flagsBefore  Int       // M4 breaches under the current value
-  flagsAfter   Int       // ... under the proposed value (suppression check)
-  createdAt    DateTime  @default(now())
-  reviewedAt   DateTime?
-}
-
-// M4 — each run of the conduct analytics engine (feeds M7's coverage report).
-model AnalyticsRun {
-  id              String   @id @default(cuid())
-  alertsRaised    Int
-  bankersScanned  Int
-  branchesScanned Int
-  createdAt       DateTime @default(now())
+model Briefing {
+  id          String    @id @default(cuid())
+  asOf        DateTime
+  facts       Json
+  draft       String    // the AI draft, kept unchanged even if a reviewer corrects it
+  summary     String    // what readers see: the draft, or the reviewer's correction
+  source      String    // AI_MODEL | SIMULATED
+  status      String    @default("PENDING") // PENDING | CONFIRMED | CORRECTED
+  confirmedBy String?
+  confirmNote String?
+  confirmedAt DateTime?
+  createdAt   DateTime
 }

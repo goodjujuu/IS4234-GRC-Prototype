@@ -1,217 +1,168 @@
-'use client';
-
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
-import Icon from '@/components/Icon';
-import {
-  Badge,
-  Button,
-  Callout,
-  Card,
-  CardHeader,
-  Field,
-  ModuleBadge,
-  PageHeader,
-  SEVERITY_TONE,
-  cx,
-  inputClass,
-} from '@/components/ui';
-import { alertTypeLabel, formatDateTime, timeLeft } from '@/lib/format';
+import { notFound, redirect } from 'next/navigation';
+import { ActionButton, ActionForm } from '@/components/actions';
+import { CaseTimeline } from '@/components/CaseRows';
+import { Badge, Callout, Card, CardHeader, PageHeader, RiskBadge, TableWrap, tdClass, thClass } from '@/components/ui';
+import { canActOnCase, canViewCase } from '@/lib/access';
+import { getNow } from '@/lib/engine';
+import { CASE_KINDS, OUTCOMES, TIER_LABELS, deadlineText, formatDate, formatDateTime, formatHours, isOverdue, outcomesFor, percent } from '@/lib/format';
+import { prisma } from '@/lib/prisma';
+import { METRICS, formatMetric } from '@/lib/scoring';
+import { requireUser } from '@/lib/session';
 
-const TIERS = [
-  { key: 'BRANCH', label: 'Branch', sla: '5 days' },
-  { key: 'CONDUCT_OFFICE', label: 'Conduct Office', sla: '48 hours' },
-  { key: 'CRO', label: 'Chief Risk Officer', sla: '24 hours' },
-];
-
-const ROLES = ['Branch Manager', 'Conduct Office Analyst', 'Chief Risk Officer'];
-
-const EVENT_STYLE = {
-  OPENED: { icon: 'briefcase', color: 'bg-sky-100 text-sky-700' },
-  ESCALATED: { icon: 'arrowUp', color: 'bg-amber-100 text-amber-700' },
-  RESOLVED: { icon: 'check', color: 'bg-emerald-100 text-emerald-700' },
-  NOTE: { icon: 'consent', color: 'bg-slate-100 text-slate-600' },
-  BOARD_NOTIFIED: { icon: 'alert', color: 'bg-red-100 text-red-700' },
-};
-
-export default function CaseDetailPage() {
-  const { id } = useParams();
-  const [c, setCase] = useState(null);
-  const [actor, setActor] = useState(ROLES[1]);
-  const [note, setNote] = useState('');
-  const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
-
-  const load = useCallback(async () => {
-    const res = await fetch(`/api/cases/${id}`);
-    if (res.ok) setCase(await res.json());
-  }, [id]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  async function act(action) {
-    setError('');
-    setBusy(true);
-    const res = await fetch(`/api/cases/${id}/events`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, actor, note }),
-    });
-    setBusy(false);
-    if (!res.ok) {
-      const body = await res.json();
-      setError(body.error || 'Action failed.');
-      return;
-    }
-    setNote('');
-    await load();
-  }
-
-  if (!c) return <p className="text-sm text-slate-500">Loading…</p>;
-
-  const resolved = c.status === 'RESOLVED';
-  const overdue = !resolved && new Date(c.deadlineAt) < new Date();
-  const tierIndex = TIERS.findIndex((t) => t.key === c.level);
+export default async function CasePage({ params }) {
+  const { id } = await params;
+  const user = await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  const [c, now] = await Promise.all([
+    prisma.case.findUnique({ where: { id }, include: { employee: true, branch: true, events: { orderBy: { timestamp: 'asc' } }, disputes: { include: { employee: true } } } }),
+    getNow(prisma),
+  ]);
+  if (!c) notFound();
+  if (!canViewCase(user, c)) redirect('/cases');
+  const canAct = canActOnCase(user, c);
+  const metrics = c.evidence?.metrics;
+  const p = c.evidence?.pressure;
+  const showEmployeeLink = c.employee && c.kind === 'EMPLOYEE_FLAG';
 
   return (
-    <div>
-      <Link href="/cases" className="mb-4 inline-flex items-center gap-1 text-[13px] font-medium text-slate-500 hover:text-slate-800">
-        ← All cases
-      </Link>
+    <div className="space-y-6">
       <PageHeader
-        module="M6"
-        title={alertTypeLabel(c.alert.type)}
-        description={[c.banker?.name, c.branch?.name].filter(Boolean).join(' · ') || undefined}
-        actions={
-          resolved ? (
-            <Badge tone="green" dot>
-              Resolved
-            </Badge>
-          ) : (
-            <Badge tone={overdue ? 'red' : 'amber'} dot>
-              {timeLeft(c.deadlineAt)}
-            </Badge>
-          )
-        }
+        level="employee"
+        eyebrow={`${c.ref}, ${CASE_KINDS[c.kind]}`}
+        title={c.title}
+        description="The evidence, audit trail and review actions for this case."
+        actions={showEmployeeLink && <Link href={`/employees/${c.employeeId}`} className="text-sm font-medium text-indigo-700 hover:underline">Open employee profile</Link>}
       />
+      <div className="flex flex-wrap items-center gap-2 text-[13px]">
+        <RiskBadge level={c.riskLevel} />
+        <Badge tone={c.status === 'CLOSED' ? 'neutral' : c.status === 'IN_REVIEW' ? 'blue' : 'amber'}>{c.status === 'CLOSED' ? `Closed, ${OUTCOMES[c.outcome]?.toLowerCase()}` : c.status === 'IN_REVIEW' ? 'In review' : 'Open'}</Badge>
+        <Badge tone="neutral">Routed to {TIER_LABELS[c.tier]}</Badge>
+        {c.inCommitteeSummary && <Badge tone="violet">In audit committee summary</Badge>}
+        {c.status !== 'CLOSED' && <span className={isOverdue(c, now) ? 'font-semibold text-red-700' : 'text-slate-500'}>{deadlineText(c, now)}</span>}
+        {c.assignee && <span className="text-slate-500">Reviewer {c.assignee}</span>}
+      </div>
 
-      {/* Tier stepper */}
-      <Card className="mb-6">
-        <ol className="grid gap-3 sm:grid-cols-3">
-          {TIERS.map((t, i) => {
-            const done = resolved || i < tierIndex;
-            const current = !resolved && i === tierIndex;
-            return (
-              <li
-                key={t.key}
-                className={cx(
-                  'rounded-xl p-3 ring-1 ring-inset',
-                  current ? (overdue ? 'bg-red-50 ring-red-200' : 'bg-indigo-50 ring-indigo-200') : done ? 'bg-slate-50 ring-slate-200' : 'ring-slate-200',
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <span
-                    className={cx(
-                      'flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold',
-                      current ? (overdue ? 'bg-red-600 text-white' : 'bg-indigo-600 text-white') : done ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500',
-                    )}
-                  >
-                    {done && !current ? <Icon name="check" className="h-3.5 w-3.5" /> : i + 1}
-                  </span>
-                  <span className="text-sm font-semibold text-slate-900">{t.label}</span>
-                </div>
-                <p className="mt-1 pl-8 text-xs text-slate-500">
-                  {current ? `Deadline ${formatDateTime(c.deadlineAt)}` : `SLA ${t.sla}`}
-                </p>
-              </li>
-            );
-          })}
-        </ol>
-      </Card>
+      {c.kind === 'RETALIATION_GUARD' && (
+        <Callout tone="violet" icon="shield" title="The reporter stays anonymous">
+          This case records that a protected reporter has since been flagged or dismissed. The content of any report is not linked here.
+        </Callout>
+      )}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="space-y-6">
+      <div className="grid gap-5 lg:grid-cols-[1.25fr_1fr]">
+        <div className="space-y-5">
           <Card>
-            <CardHeader icon="radar" title="Source alert" />
-            <div className="flex flex-wrap items-center gap-2">
-              <ModuleBadge module={c.alert.source} />
-              <Badge tone={SEVERITY_TONE[c.alert.severity]}>{c.alert.severity}</Badge>
-              <span className="text-xs text-slate-400">Raised {formatDateTime(c.alert.createdAt)}</span>
-            </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">{c.alert.description}</p>
+            <CardHeader icon="alert" title="Why this case opened" />
+            <p className="text-[13px] leading-relaxed text-slate-600">{c.summary}</p>
           </Card>
-
+          {metrics && (
+            <Card>
+              <CardHeader icon="sliders" title={`Evidence, score ${c.evidence.score}`} subtitle={`As calculated when this case opened, ${formatDateTime(c.evidence.asOf)}. It does not change if thresholds change later.`} />
+              <TableWrap>
+                <table className="w-full min-w-[460px] border-collapse">
+                  <thead><tr><th className={thClass}>Metric</th><th className={thClass}>Employee</th><th className={thClass}>Peers</th><th className={thClass}>Points</th></tr></thead>
+                  <tbody>
+                    {METRICS.map((m) => (
+                      <tr key={m.key}>
+                        <td className={tdClass}>{m.label}</td>
+                        <td className={`${tdClass} tabular-nums font-medium`}>{formatMetric(m.unit, metrics[m.key].value)}</td>
+                        <td className={`${tdClass} tabular-nums`}>{formatMetric(m.unit, metrics[m.key].median)}</td>
+                        <td className={`${tdClass} tabular-nums`}>{metrics[m.key].contribution}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </TableWrap>
+            </Card>
+          )}
+          {p && (
+            <Card>
+              <CardHeader icon="radar" title={`Evidence, Pressure Index ${p.index}`} />
+              <ul className="space-y-1 text-[13px] text-slate-600">
+                <li>{percent(p.pctMissing)} of staff are missing target ({p.missing} of {p.staff}).</li>
+                <li>The target rose {percent(p.targetIncrease)} in 180 days.</li>
+                <li>End-of-month sales run at {p.spikeRatio.toFixed(1)} times an even spread.</li>
+                <li>{p.speakUps} anonymous speak-up reports in 90 days.</li>
+                <li>{percent(p.flaggedShare)} of the team are rated Medium or High{p.flagsRising ? ', and flags are rising' : ''}.</li>
+                <li>The manager acts on flags in {formatHours(p.avgHours)} on average.</li>
+                <li>{p.dismissed} sales misconduct dismissals in 90 days.</li>
+              </ul>
+            </Card>
+          )}
+          {c.evidence?.accounts?.length > 0 && (
+            <Card>
+              <CardHeader icon="filter" title="Accounts behind this flag" subtitle="Customers appear only as pseudonymous references." />
+              <TableWrap>
+                <table className="w-full min-w-[460px] border-collapse">
+                  <thead><tr><th className={thClass}>Account</th><th className={thClass}>Opened</th><th className={thClass}>Why flagged</th></tr></thead>
+                  <tbody>
+                    {c.evidence.accounts.map((a) => (
+                      <tr key={a.ref}>
+                        <td className={`${tdClass} whitespace-nowrap tabular-nums`}>{a.ref}</td>
+                        <td className={`${tdClass} whitespace-nowrap`}>{formatDate(a.openedAt)}</td>
+                        <td className={tdClass}>{a.reasons.join(', ')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </TableWrap>
+            </Card>
+          )}
+          {c.disputes.length > 0 && (
+            <Card>
+              <CardHeader icon="filter" title="Disputes and appeals" />
+              {c.disputes.map((d) => (
+                <div key={d.id} className="text-[13px] text-slate-600">
+                  <p><span className="font-semibold text-slate-800">{d.employee.name}</span> {d.type === 'APPEAL' ? 'appealed the outcome' : `disputes ${METRICS.find((m) => m.key === d.metricKey)?.label.toLowerCase()}`}. <Badge tone="neutral">{d.status}</Badge></p>
+                  <p className="mt-1">{d.statement}</p>
+                  {d.evidence && <p className="mt-1"><span className="font-medium">Supporting evidence.</span> {d.evidence}</p>}
+                  {d.decisionNote && <p className="mt-1">Decision by {d.decidedBy}: {d.decisionNote}</p>}
+                </div>
+              ))}
+              {['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'AUDIT_COMMITTEE'].includes(user.role) && <Link href="/disputes" className="mt-2 inline-block text-[13px] font-medium text-indigo-700 hover:underline">Open disputes</Link>}
+            </Card>
+          )}
           <Card>
-            <CardHeader icon="clock" title="Audit trail" subtitle="Every action is timestamped and cannot be edited." />
-            <ol className="relative space-y-5 pl-1">
-              <span className="absolute bottom-2 left-[15px] top-2 w-px bg-slate-200" aria-hidden="true" />
-              {c.events.map((e) => {
-                const style = EVENT_STYLE[e.action] || EVENT_STYLE.NOTE;
-                return (
-                  <li key={e.id} className="relative flex gap-3">
-                    <span className={cx('relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-4 ring-white', style.color)}>
-                      <Icon name={style.icon} className="h-4 w-4" />
-                    </span>
-                    <div className="min-w-0 pt-0.5">
-                      <p className="text-sm">
-                        <span className="font-semibold text-slate-900">{e.action.replace('_', ' ').toLowerCase().replace(/^./, (x) => x.toUpperCase())}</span>
-                        <span className="text-slate-500"> · {e.actor}</span>
-                      </p>
-                      {e.note && <p className="mt-0.5 text-[13px] leading-relaxed text-slate-600">{e.note}</p>}
-                      <p className="mt-0.5 text-[11px] text-slate-400">{formatDateTime(e.timestamp)}</p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
+            <CardHeader icon="clock" title="Audit trail" subtitle="Every action, with its time and who took it." />
+            <CaseTimeline events={c.events} format={formatDateTime} />
           </Card>
         </div>
 
-        <div>
-          {!resolved ? (
-            <Card className="lg:sticky lg:top-6">
-              <CardHeader icon="briefcase" title="Take action" subtitle="Your role is recorded against the action." />
-              <div className="space-y-3">
-                <Field label="Acting as">
-                  <select value={actor} onChange={(e) => setActor(e.target.value)} className={inputClass}>
-                    {ROLES.map((r) => (
-                      <option key={r}>{r}</option>
-                    ))}
-                  </select>
-                </Field>
-                <Field label="Note or evidence">
-                  <textarea
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    rows={3}
-                    placeholder="e.g. Interviewed banker; 3 customers confirmed they never asked for accounts"
-                    className={inputClass}
-                  />
-                </Field>
-                {error && <p className="text-sm text-red-600">{error}</p>}
-                <div className="grid gap-2">
-                  {c.level !== 'CRO' && (
-                    <Button variant="secondary" icon="arrowUp" disabled={busy} onClick={() => act('escalate')}>
-                      Escalate to {TIERS[tierIndex + 1]?.label}
-                    </Button>
-                  )}
-                  <Button variant="secondary" icon="consent" disabled={busy || !note} onClick={() => act('note')}>
-                    Add to audit trail
-                  </Button>
-                  <Button variant="success" icon="check" disabled={busy} onClick={() => act('resolve')}>
-                    Resolve case
-                  </Button>
-                </div>
-              </div>
+        <div className="space-y-5">
+          {c.status === 'CLOSED' && (
+            <Card>
+              <CardHeader icon="check" title={`Closed, ${OUTCOMES[c.outcome]?.toLowerCase()}`} subtitle={formatDateTime(c.closedAt)} />
+              <p className="text-[13px] text-slate-600">{c.closeReason}</p>
             </Card>
-          ) : (
-            <Callout tone="green" icon="checkCircle" title="Case resolved">
-              The full history stays in the audit trail and is counted on the Board dashboard.
-            </Callout>
           )}
+          {canAct ? (
+            <>
+              <Card>
+                <CardHeader icon="user" title="Review" />
+                <div className="flex flex-wrap gap-2">
+                  {c.assignee !== user.name && <ActionButton url={`/api/cases/${c.id}`} body={{ action: 'assign', assignee: user.name }} icon="user">Assign to me</ActionButton>}
+                  {c.status === 'OPEN' && <ActionButton url={`/api/cases/${c.id}`} body={{ action: 'start' }} icon="play">Start review</ActionButton>}
+                </div>
+                <div className="mt-4">
+                  <ActionForm url={`/api/cases/${c.id}`} extra={{ action: 'note' }} submitLabel="Add note" variant="secondary" fields={[{ name: 'note', label: 'Note for the audit trail', type: 'textarea', rows: 2, required: true }]} />
+                </div>
+              </Card>
+              <Card>
+                <CardHeader icon="checkCircle" title="Close with a reason" />
+                <ActionForm
+                  url={`/api/cases/${c.id}`}
+                  extra={{ action: 'close' }}
+                  submitLabel="Close case"
+                  resultTone="amber"
+                  fields={[
+                    { name: 'outcome', label: 'Outcome', type: 'select', options: outcomesFor(c.kind), hint: outcomesFor(c.kind).length > 3 ? 'A target review sends the target for adjustment, which fixes the cause of the pressure.' : undefined },
+                    { name: 'reason', label: 'Reason', type: 'textarea', rows: 3, required: true },
+                  ]}
+                />
+              </Card>
+            </>
+          ) : c.status !== 'CLOSED' ? (
+            <Callout tone="neutral" icon="lock">This case is routed to {TIER_LABELS[c.tier]}. Your access is read-only.</Callout>
+          ) : null}
         </div>
       </div>
     </div>
