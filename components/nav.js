@@ -20,7 +20,8 @@ export const NAV_BY_ROLE = {
   EMPLOYEE: [
     { level: 'employee', title: 'My conduct record', items: [
       { href: '/me', label: 'My dashboard', icon: 'user' },
-      { href: '/me/data', label: 'Data held about me', icon: 'eye' },
+      { href: '/me/disputes', label: 'Disputes and appeals', icon: 'filter' },
+      { href: '/me/data', label: 'My personal data', icon: 'eye' },
     ] },
     { level: 'manager', title: 'Speak up', items: [{ href: '/speak-up', label: 'Protected speak-up', icon: 'megaphone' }] },
     OPEN('General', [notifications]),

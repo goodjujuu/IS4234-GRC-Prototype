@@ -32,7 +32,7 @@ export async function POST(request, { params }) {
     },
   });
   if (d.employee.user) {
-    await notifyUser(prisma, d.employee.user.id, { title: `Your dispute on ${d.case.ref} was ${upheld ? 'upheld' : 'rejected'}`, body: trimmed, link: '/me', createdAt: now });
+    await notifyUser(prisma, d.employee.user.id, { title: `Your dispute on ${d.case.ref} was ${upheld ? 'upheld' : 'rejected'}`, body: trimmed, link: '/me/disputes', createdAt: now });
   }
   return NextResponse.json({ message: upheld ? 'Dispute upheld. The case closed as cleared and counts as a false alarm.' : 'Dispute rejected. The case stays open until you record an outcome.' });
 }

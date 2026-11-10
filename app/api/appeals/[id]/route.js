@@ -28,6 +28,6 @@ export async function POST(request, { params }) {
       events: { create: [{ action: 'APPEAL_DECIDED', actor: user.name, note: `${upheld ? 'Upheld, outcome overturned and recorded as a false alarm' : 'Rejected, outcome stands'}. ${trimmed}`, timestamp: now }] },
     },
   });
-  if (a.employee.user) await notifyUser(prisma, a.employee.user.id, { title: `Your appeal on ${a.case.ref} was ${upheld ? 'upheld' : 'rejected'}`, body: trimmed, link: '/me', createdAt: now });
+  if (a.employee.user) await notifyUser(prisma, a.employee.user.id, { title: `Your appeal on ${a.case.ref} was ${upheld ? 'upheld' : 'rejected'}`, body: trimmed, link: '/me/disputes', createdAt: now });
   return NextResponse.json({ message: upheld ? 'Appeal upheld. The outcome was overturned.' : 'Appeal rejected. The outcome stands.' });
 }

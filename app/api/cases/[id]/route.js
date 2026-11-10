@@ -72,7 +72,7 @@ export async function POST(request, { params }) {
     }
     if (c.employeeId) {
       const subject = await prisma.user.findFirst({ where: { employeeId: c.employeeId, role: 'EMPLOYEE' } });
-      if (subject) await notifyUser(prisma, subject.id, { title: `${c.ref} was closed`, body: `Outcome: ${OUTCOMES[outcome]}. ${reason.trim()} If you disagree, you can appeal to the audit committee.`, link: '/me', createdAt: now });
+      if (subject) await notifyUser(prisma, subject.id, { title: `${c.ref} was closed`, body: `Outcome: ${OUTCOMES[outcome]}. ${reason.trim()} If you disagree, you can appeal to the audit committee.`, link: '/me/disputes', createdAt: now });
     }
     return NextResponse.json({ message: alerted ? 'Case closed. That is an unusually fast pace of reviews, so internal audit was alerted.' : outcome === 'TARGET_REVIEW' ? 'Case closed. The target has been sent for adjustment.' : 'Case closed.' });
   }
