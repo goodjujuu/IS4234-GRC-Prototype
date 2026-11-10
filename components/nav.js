@@ -28,9 +28,8 @@ export const NAV_BY_ROLE = {
   ],
   TEAM_LEAD: [
     { level: 'employee', title: 'My team', items: [
-      { href: '/team', label: 'Team metrics', icon: 'chart' },
+      { href: '/team', label: 'My team', icon: 'user' },
       { href: '/cases', label: 'Reviews', icon: 'briefcase' },
-      { href: '/disputes', label: 'Disputes', icon: 'filter' },
     ] },
     { level: 'monitoring', title: 'Threshold Governance', items: [{ href: '/thresholds', label: 'Thresholds', icon: 'sliders' }] },
     { level: 'manager', title: 'Speak up', items: [{ href: '/speak-up', label: 'Protected speak-up', icon: 'megaphone' }] },

@@ -2,9 +2,10 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { ActionButton, ActionForm } from '@/components/actions';
 import { CaseTimeline } from '@/components/CaseRows';
+import { EmployeeFlagCase } from '@/components/EmployeeFlagCase';
 import { Badge, Callout, Card, CardHeader, PageHeader, RiskBadge, TableWrap, tdClass, thClass } from '@/components/ui';
 import { canActOnCase, canViewCase } from '@/lib/access';
-import { getNow } from '@/lib/engine';
+import { getNow, loadConfig } from '@/lib/engine';
 import { CASE_KINDS, OUTCOMES, TIER_LABELS, deadlineText, formatDate, formatDateTime, formatHours, isOverdue, outcomesFor, percent } from '@/lib/format';
 import { prisma } from '@/lib/prisma';
 import { METRICS, formatMetric } from '@/lib/scoring';
@@ -20,6 +21,10 @@ export default async function CasePage({ params }) {
   if (!c) notFound();
   if (!canViewCase(user, c)) redirect('/cases');
   const canAct = canActOnCase(user, c);
+  if (c.kind === 'EMPLOYEE_FLAG' && c.employee) {
+    const config = await loadConfig(prisma);
+    return <EmployeeFlagCase c={c} now={now} canAct={canAct} thresholds={{ medium: config.level_medium, high: config.level_high }} />;
+  }
   const metrics = c.evidence?.metrics;
   const p = c.evidence?.pressure;
   const showEmployeeLink = c.employee && c.kind === 'EMPLOYEE_FLAG';

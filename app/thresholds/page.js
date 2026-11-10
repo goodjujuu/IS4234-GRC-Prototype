@@ -10,8 +10,41 @@ const GROUPS = [
   ['WATCH', 'Warning signs'],
 ];
 
+const LEVEL_UNITS = { level_medium: 'score', level_high: 'score', pressure_flag: 'index', branch_high_share: 'percent of staff' };
+
+// A team lead sees the thresholds that apply to their team, read-only. The API also
+// refuses any change they send, logs it and alerts internal audit.
+async function TeamLeadThresholds() {
+  const config = await prisma.scoringConfig.findMany({ where: { group: 'LEVEL' } });
+  const order = ['level_medium', 'level_high', 'pressure_flag', 'branch_high_share'];
+  const levels = order.map((k) => config.find((c) => c.key === k)).filter(Boolean);
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        level="monitoring"
+        eyebrow="Threshold Governance"
+        title="Thresholds"
+        description="See the current thresholds that decide when an employee or branch on your team is rated Medium or High."
+      />
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {levels.map((c) => (
+          <Card key={c.key}>
+            <p className="text-[13px] font-medium text-slate-600">{c.label}</p>
+            <p className="mt-1 text-3xl font-semibold tabular-nums text-slate-900">{c.value}<span className="ml-1 text-xs font-normal text-slate-400">{LEVEL_UNITS[c.key]}</span></p>
+            <p className="mt-2 text-[12px] leading-snug text-slate-500">{c.description}</p>
+          </Card>
+        ))}
+      </div>
+      <Callout tone="neutral" icon="lock">
+        These values are read-only for team leads. Only the conduct risk team can propose a change, and the Chief Risk Officer must approve it.
+      </Callout>
+    </div>
+  );
+}
+
 export default async function ThresholdsPage() {
   const user = await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT']);
+  if (user.role === 'TEAM_LEAD') return <TeamLeadThresholds />;
   const [config, requests] = await Promise.all([
     prisma.scoringConfig.findMany(),
     prisma.thresholdChangeRequest.findMany({ orderBy: { createdAt: 'desc' } }),
@@ -20,8 +53,7 @@ export default async function ThresholdsPage() {
   const pending = requests.filter((r) => r.status === 'PENDING');
   const decided = requests.filter((r) => r.status !== 'PENDING');
   const levelFirst = [...config].sort((a, b) => GROUPS.findIndex((g) => g[0] === a.group) - GROUPS.findIndex((g) => g[0] === b.group));
-  const isTeamLead = user.role === 'TEAM_LEAD';
-  const canUseForm = isTeamLead || user.role === 'CONDUCT_RISK';
+  const canUseForm = user.role === 'CONDUCT_RISK';
 
   return (
     <div className="space-y-6">
@@ -50,10 +82,10 @@ export default async function ThresholdsPage() {
         </Card>
         {canUseForm ? (
           <Card className="self-start">
-            <CardHeader icon="sliders" title={isTeamLead ? 'Change a setting' : 'Propose a change'} subtitle={isTeamLead ? 'Every attempt is logged.' : 'Nothing changes until the Chief Risk Officer approves it.'} />
+            <CardHeader icon="sliders" title="Propose a change" subtitle="Nothing changes until the Chief Risk Officer approves it." />
             <ActionForm
               url="/api/thresholds/requests"
-              submitLabel={isTeamLead ? 'Apply change' : 'Propose change'}
+              submitLabel="Propose change"
               variant="accent"
               resultTone="amber"
               fields={[
