@@ -29,7 +29,7 @@ async function logOut() {
   window.location.href = '/login';
 }
 
-export default function Sidebar({ user, unread, clock }) {
+export default function Sidebar({ user, clock }) {
   const pathname = usePathname();
   const nav = NAV_BY_ROLE[user.role] || [];
   // An exact match must win over a shorter prefix (e.g. /me/data over /me).
@@ -62,9 +62,6 @@ export default function Sidebar({ user, unread, clock }) {
                       >
                         <Icon name={item.icon} className={`h-4 w-4 ${active ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`} />
                         <span className="flex-1 font-medium">{item.label}</span>
-                        {item.badge === 'unread' && unread > 0 && (
-                          <span className="rounded-full bg-red-600 px-1.5 text-[11px] font-semibold text-white">{unread}</span>
-                        )}
                       </Link>
                     </li>
                   );

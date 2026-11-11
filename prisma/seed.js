@@ -2,7 +2,7 @@
 // every run produces the same numbers, so the demo scenario in CLAUDE.md always works.
 // All people, branches and customers are fictional.
 //
-// The story: Branch 12 Harbourview had its weekly target raised twice, most recently last
+// The story: Branch 12 Harborview had its weekly target raised twice, most recently last
 // month. Unused accounts nearly doubled, most staff are missing the target, and an
 // overnight dismissal and new complaints moved the branch to High.
 const { PrismaClient } = require('@prisma/client');
@@ -14,8 +14,8 @@ const { openCase, pressureAt, recordDismissal, reporterSeal, runScoring } = requ
 
 const prisma = new PrismaClient();
 
-const CLOCK = new Date('2026-11-09T00:30:00Z'); // Monday 9 November 2026, 8:30 am Singapore time
-const LOAD = new Date('2026-11-08T22:00:00Z'); // the overnight data load, 6:00 am Singapore time
+const CLOCK = new Date('2026-11-09T16:30:00Z'); // Monday 9 November 2026, 8:30 am US Pacific time
+const LOAD = new Date('2026-11-09T14:00:00Z'); // the overnight data load, 6:00 am US Pacific time
 const HISTORY_WEEKS = 30;
 const TARGET_RAISED_1 = new Date(LOAD.getTime() - 148 * DAY);
 const TARGET_RAISED_2 = new Date(LOAD.getTime() - 32 * DAY);
@@ -40,15 +40,15 @@ const pick = (list) => list[Math.floor(rand() * list.length)];
 
 const PRODUCTS = ['Savings Account', 'Current Account', 'Credit Card', 'Personal Line of Credit', 'Debit Card', 'Online Bill Pay'];
 const SERVICE_COMPLAINTS = ['Long wait at the counter', 'Statement arrived late', 'Fee explained poorly', 'Card delivery delayed'];
-const DNA_COMPLAINTS = ['Customer says they never asked for this account', 'Customer did not recognise the account on a statement', 'Customer did not authorise this card'];
+const DNA_COMPLAINTS = ['Customer says they never asked for this account', 'Customer did not recognize the account on a statement', 'Customer did not authorise this card'];
 
-// severity 0 is ordinary behaviour. Higher values add the pattern from the case.
+// severity 0 is ordinary behavior. Higher values add the pattern from the case.
 const BRANCHES = [
   { code: 3, name: 'Eastgate', region: 'East', target: 5, manager: 'Clara Whitfield', staff: [['Tomas Reyes'], ['Hana Sorensen'], ['Felix Amadi'], ['Ruth Delacroix'], ['Jonah Pereira'], ['Mei Tanaka']] },
   { code: 7, name: 'Riverside', region: 'Central', target: 5, manager: 'Victor Nakamura', staff: [['Owen Castell', 0.35], ['Lena Fischer'], ['Arjun Bose'], ['Paula Ibarra'], ['Noah Ekström'], ['Sana Qureshi']] },
   { code: 9, name: 'Lakeside', region: 'West', target: 5, manager: 'Grace Mbeki', staff: [['Elliot Vance'], ['Tara Novak'], ['Hugo Marchetti'], ['Zofia Kowal'], ['Kofi Boateng'], ['Anika Rao']] },
   {
-    code: 12, name: 'Harbourview', region: 'South', target: 12, manager: 'Daniel Okafor', hot: true,
+    code: 12, name: 'Harborview', region: 'South', target: 12, manager: 'Daniel Okafor', hot: true,
     staff: [['Maya Lindqvist', 0.9, 8], ['Ravi Menon', 0, 7], ['Isla Brennan', 0.7, 8], ['Marco Silva', 0.65, 8], ['Yuki Hayashi', 0.55, 7.5], ['Dara Quinn', 0.42, 8.5], ['Sami Haddad', 0.5, 7.5], ['Nora Adeyemi', 0.45, 8], ['Ben Larsen', 0.4, 14], ['Chloe Vargas', 0.35, 14]],
   },
   { code: 15, name: 'Northfield', region: 'North', target: 5, manager: 'Peter Lindholm', staff: [['Ingrid Solberg', 0.3], ['Caleb Stone'], ['Farah Aziz'], ['Mateo Ruiz'], ['Olivia Grant'], ['Rohan Pillai']] },
@@ -365,9 +365,9 @@ async function main() {
   // Past dismissals, with their branch reviews already closed. These employees have
   // left, so they carry no account activity into today's peer groups.
   const pastDismissals = [
-    [12, 'Tessa Lund', 'Opened accounts without customer authorisation.', 96], [12, 'Gareth Pyke', 'Falsified contact details on customer accounts.', 61],
-    [12, 'Ivo Marek', 'Opened accounts without customer authorisation.', 0.4], [7, 'Selma Roy', 'Simulated funding on new accounts.', 83],
-    [15, 'Dean Abara', 'Opened accounts without customer authorisation.', 44],
+    [12, 'Tessa Lund', 'Opened accounts without customer authorization.', 96], [12, 'Gareth Pyke', 'Falsified contact details on customer accounts.', 61],
+    [12, 'Ivo Marek', 'Opened accounts without customer authorization.', 0.4], [7, 'Selma Roy', 'Simulated funding on new accounts.', 83],
+    [15, 'Dean Abara', 'Opened accounts without customer authorization.', 44],
   ];
   for (const [code, name, reason, age] of pastDismissals) {
     const branch = branches.find((b) => b.code === code);

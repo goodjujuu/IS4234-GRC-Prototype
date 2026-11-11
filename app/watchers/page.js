@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ActionButton } from '@/components/actions';
-import { Badge, Callout, Card, CardHeader, EmptyState, PageHeader, PresenterPanel, StatCard, TableWrap, TrendLine, tdClass, thClass } from '@/components/ui';
+import { Badge, Callout, Card, CardHeader, EmptyState, PageHeader, StatCard, TableWrap, TrendLine, tdClass, thClass } from '@/components/ui';
 import { formatDate, formatDateTime } from '@/lib/format';
 import { verifyChain } from '@/lib/hashChain';
 import { getEffectiveness } from '@/lib/kri';
@@ -80,11 +80,6 @@ export default async function WatchersPage() {
           <p className="mt-2 text-[13px]"><Link href="/thresholds" className="font-medium text-indigo-700 hover:underline">See thresholds and pending requests</Link></p>
         </Card>
       </div>
-
-      <PresenterPanel className="max-w-md">
-        <ActionButton presenter url="/api/demo" body={{ action: 'tamper-log' }} icon="alert" hint="Then verify" resultTone="amber">Edit a log entry directly in the database</ActionButton>
-        <ActionButton presenter url="/api/demo" body={{ action: 'tamper-config' }} icon="alert" hint="Bypass approval" resultTone="amber">Raise a threshold directly in the database</ActionButton>
-      </PresenterPanel>
     </div>
   );
 }

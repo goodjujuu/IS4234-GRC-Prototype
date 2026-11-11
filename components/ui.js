@@ -80,7 +80,7 @@ export function Badge({ tone = 'neutral', children, dot = false, className }) {
   );
 }
 
-// Level colour always comes with the word, never colour alone.
+// Level color always comes with the word, never color alone.
 export function RiskBadge({ level }) {
   const label = { HIGH: 'High', MEDIUM: 'Medium', LOW: 'Low' }[level] || level;
   return (
@@ -194,39 +194,6 @@ export function SystemWindow({ title, subtitle, right, children, className }) {
   );
 }
 
-// Presenter-only controls box (clearly separated from every user's screen).
-export function PresenterPanel({ children, className }) {
-  return (
-    <div className={cx('rounded-2xl border border-dashed border-indigo-300 bg-indigo-50/40 p-4', className)}>
-      <div className="mb-3 flex items-center gap-2">
-        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-indigo-600 text-white">
-          <Icon name="play" className="h-3 w-3" />
-        </span>
-        <div>
-          <p className="text-[13px] font-semibold text-indigo-900">Presenter controls</p>
-          <p className="text-[11px] text-indigo-700/80">Demo only — not part of any user’s screen.</p>
-        </div>
-      </div>
-      <div className="space-y-2">{children}</div>
-    </div>
-  );
-}
-
-export function PresenterButton({ children, hint, icon = 'forward', ...rest }) {
-  return (
-    <button
-      type="button"
-      className="flex w-full items-center justify-between gap-2 rounded-lg bg-white px-3 py-2 text-left text-[13px] font-medium text-slate-700 ring-1 ring-inset ring-indigo-200 transition hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-50"
-      {...rest}
-    >
-      <span className="flex min-w-0 items-center gap-2">
-        <Icon name={icon} className="h-3.5 w-3.5 shrink-0 text-indigo-500" />
-        <span className="truncate">{children}</span>
-      </span>
-      {hint && <span className="truncate text-[11px] font-normal text-slate-400">{hint}</span>}
-    </button>
-  );
-}
 
 export function SectionLabel({ children, className }) {
   return <p className={cx('mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400', className)}>{children}</p>;
@@ -292,7 +259,7 @@ export function Avatar({ name, className }) {
   );
 }
 
-// A trend line. The final value is labelled directly and each point has a hover tooltip.
+// A trend line. The final value is labeled directly and each point has a hover tooltip.
 // `compare` adds a dashed reference series (for example the peer median) on the same axis.
 export function TrendLine({ points, compare, format = (v) => v, max, height = 56, label }) {
   if (!points.length) return null;

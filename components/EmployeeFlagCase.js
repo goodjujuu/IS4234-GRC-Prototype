@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { ActionButton, ActionForm } from '@/components/actions';
+import { ActionForm } from '@/components/actions';
+import { CaseFacts, DecisionPanel } from '@/components/CaseDecision';
 import { CaseTimeline } from '@/components/CaseRows';
 import { Section } from '@/components/ConductView';
 import { FlagReason } from '@/components/FlagReason';
-import Icon from '@/components/Icon';
 import { caseIndicators } from '@/components/MyConduct';
-import { Badge, Callout, Card, PageHeader, RiskBadge, TableWrap, cx, tdClass, thClass } from '@/components/ui';
-import { OUTCOMES, TIER_LABELS, formatDate, formatDateTime, isOverdue, outcomesFor, timeLeft } from '@/lib/format';
+import { Badge, Card, PageHeader, TableWrap, cx, tdClass, thClass } from '@/components/ui';
+import { OUTCOMES, TIER_LABELS, formatDate, formatDateTime, timeLeft } from '@/lib/format';
 import { METRICS } from '@/lib/scoring';
 
 const OUTCOME_HELP = {
@@ -24,13 +24,12 @@ export function EmployeeFlagCase({ c, now, canAct, thresholds }) {
   const openDispute = c.disputes.find((d) => d.type === 'DISPUTE' && d.status === 'OPEN');
   const levelText = c.riskLevel === 'HIGH' ? 'High' : 'Medium';
   const metricLabel = (key) => METRICS.find((m) => m.key === key)?.label;
-  const late = isOverdue(c, now);
 
   const facts = [
     ['Employee', c.employee?.name, `${c.employee?.position}, Branch ${c.branch?.code}`],
     ['Score when raised', ev.score != null ? `${ev.score} of 100` : 'Not recorded', `${levelText} from ${c.riskLevel === 'HIGH' ? thresholds.high : thresholds.medium}`],
     ['Reviewer', c.assignee || TIER_LABELS[c.tier], TIER_LABELS[c.tier]],
-    closed ? ['Decided', formatDate(c.closedAt), OUTCOMES[c.outcome]] : ['Decision due', formatDateTime(c.deadlineAt), timeLeft(c.deadlineAt, now)],
+    closed ? ['Decided', formatDate(c.closedAt), OUTCOMES[c.outcome]] : ['Decision due', formatDateTime(c.deadlineAt), timeLeft(c.deadlineAt, now), true],
   ];
 
   return (
@@ -43,23 +42,7 @@ export function EmployeeFlagCase({ c, now, canAct, thresholds }) {
         actions={<Link href={`/employees/${c.employeeId}`} className="text-sm font-medium text-indigo-700 hover:underline">Open employee profile</Link>}
       />
 
-      <Card>
-        <div className="flex flex-wrap items-center gap-2">
-          <RiskBadge level={c.riskLevel} />
-          <Badge tone={closed ? 'neutral' : c.status === 'IN_REVIEW' ? 'blue' : 'amber'}>{closed ? `Closed, ${OUTCOMES[c.outcome]?.toLowerCase()}` : c.status === 'IN_REVIEW' ? 'In review' : 'Not started'}</Badge>
-          {openDispute && <Badge tone="violet">Employee disputes this</Badge>}
-          {c.inCommitteeSummary && <Badge tone="neutral">In audit committee summary</Badge>}
-        </div>
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {facts.map(([k, v, note], i) => (
-            <div key={k}>
-              <dt className="text-xs text-slate-500">{k}</dt>
-              <dd className="mt-0.5 text-sm font-semibold text-slate-900">{v}</dd>
-              <dd className={cx('text-xs', i === 3 && !closed && late ? 'font-semibold text-red-700' : 'text-slate-500')}>{note}</dd>
-            </div>
-          ))}
-        </dl>
-      </Card>
+      <CaseFacts c={c} now={now} facts={facts} badges={openDispute && <Badge tone="violet">Employee disputes this</Badge>} />
 
       <div className="grid items-start gap-6 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
@@ -120,61 +103,14 @@ export function EmployeeFlagCase({ c, now, canAct, thresholds }) {
           </Section>
         </div>
 
-        <div className="space-y-4 lg:sticky lg:top-6">
-          {closed ? (
-            <Card>
-              <p className="text-base font-semibold text-slate-900">Decision</p>
-              <div className="mt-2"><Badge tone={c.outcome === 'CLEARED' ? 'green' : c.outcome === 'COACHING' ? 'amber' : 'red'}>{OUTCOMES[c.outcome]}</Badge></div>
-              <p className="mt-2 text-[13px] leading-relaxed text-slate-600">{c.closeReason}</p>
-              <p className="mt-2 text-xs text-slate-500">{c.assignee}, {formatDateTime(c.closedAt)}</p>
-            </Card>
-          ) : canAct ? (
-            <Card>
-              <p className="text-base font-semibold text-slate-900">Your decision</p>
-              <ol className="mt-3 space-y-2 text-[13px] text-slate-600">
-                {['Check why the flag was raised and the accounts behind it.', 'Decide any dispute from the employee.', 'Choose an outcome and give your reason.'].map((t, i) => (
-                  <li key={t} className="flex gap-2"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-semibold text-slate-700">{i + 1}</span>{t}</li>
-                ))}
-              </ol>
-              {c.status === 'OPEN' && (
-                <div className="mt-4">
-                  <ActionButton url={`/api/cases/${c.id}`} body={{ action: 'start' }} icon="play">Start review</ActionButton>
-                </div>
-              )}
-              <div className="mt-5 border-t border-slate-100 pt-4">
-                {openDispute ? (
-                  <Callout tone="violet" icon="alert">Decide the employee&rsquo;s dispute first. The case cannot close while it is open.</Callout>
-                ) : (
-                  <>
-                    <ul className="mb-4 space-y-1.5 text-[12px] text-slate-500">
-                      {outcomesFor(c.kind).map((o) => <li key={o.value}><span className="font-semibold text-slate-700">{o.label}.</span> {OUTCOME_HELP[o.value]}</li>)}
-                    </ul>
-                    <ActionForm
-                      url={`/api/cases/${c.id}`}
-                      extra={{ action: 'close' }}
-                      submitLabel="Record decision"
-                      resultTone="amber"
-                      fields={[
-                        { name: 'outcome', label: 'Outcome', type: 'select', options: outcomesFor(c.kind) },
-                        { name: 'reason', label: 'Reason', type: 'textarea', rows: 3, required: true, placeholder: 'What you checked and why you chose this outcome.' },
-                      ]}
-                    />
-                  </>
-                )}
-              </div>
-              <details className="group mt-5 border-t border-slate-100 pt-4">
-                <summary className="flex cursor-pointer list-none items-center justify-between text-[13px] font-medium text-slate-700 [&::-webkit-details-marker]:hidden">
-                  Add a note to the audit trail
-                  <Icon name="chevronDown" className="h-4 w-4 text-slate-400 transition group-open:rotate-180" />
-                </summary>
-                <div className="mt-3">
-                  <ActionForm url={`/api/cases/${c.id}`} extra={{ action: 'note' }} submitLabel="Add note" variant="secondary" fields={[{ name: 'note', label: 'Note', type: 'textarea', rows: 2, required: true }]} compact />
-                </div>
-              </details>
-            </Card>
-          ) : (
-            <Callout tone="neutral" icon="lock">This case is routed to {TIER_LABELS[c.tier]}. Your access is read-only.</Callout>
-          )}
+        <div className="space-y-4">
+          <DecisionPanel
+            c={c}
+            canAct={canAct}
+            steps={['Check why the flag was raised and the accounts behind it.', 'Decide any dispute from the employee.', 'Choose an outcome and give your reason.']}
+            help={OUTCOME_HELP}
+            blocked={openDispute && 'Decide the employee\u2019s dispute first. The case cannot close while it is open.'}
+          />
           {caseIndicators(ev).length === 0 && !closed && <p className="text-xs text-slate-500">No indicator was above peers when this flag was raised.</p>}
         </div>
       </div>

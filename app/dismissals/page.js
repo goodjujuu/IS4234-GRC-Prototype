@@ -1,5 +1,4 @@
-import { ActionForm } from '@/components/actions';
-import { Card, CardHeader, PageHeader, PresenterPanel, TableWrap, tdClass, thClass } from '@/components/ui';
+import { Card, CardHeader, PageHeader, TableWrap, tdClass, thClass } from '@/components/ui';
 import { formatDate, formatMonth } from '@/lib/format';
 import { getCommitteeSummary } from '@/lib/kri';
 import { prisma } from '@/lib/prisma';
@@ -7,10 +6,9 @@ import { requireUser } from '@/lib/session';
 
 export default async function DismissalsPage() {
   await requireUser(['CONDUCT_RISK', 'AUDIT_COMMITTEE']);
-  const [summary, dismissals, active] = await Promise.all([
+  const [summary, dismissals] = await Promise.all([
     getCommitteeSummary(),
     prisma.dismissal.findMany({ include: { employee: true, branch: true }, orderBy: { dismissedAt: 'desc' } }),
-    prisma.employee.findMany({ where: { status: 'ACTIVE', isManager: false }, include: { branch: true }, orderBy: [{ name: 'asc' }] }),
   ]);
   const max = Math.max(1, ...summary.months.map((m) => m.total));
   return (
@@ -51,19 +49,6 @@ export default async function DismissalsPage() {
           </TableWrap>
         </Card>
       </div>
-      <PresenterPanel className="max-w-lg">
-        <p className="text-[13px] text-slate-600">Simulates the HR system&rsquo;s feed.</p>
-        <ActionForm
-          url="/api/dismissals"
-          submitLabel="Record dismissal"
-          variant="accent"
-          fields={[
-            { name: 'employeeId', label: 'Employee', type: 'select', defaultValue: active.find((e) => e.name === 'Ravi Menon')?.id, options: active.map((e) => ({ value: e.id, label: `${e.name}, Branch ${e.branch.code}` })) },
-            { name: 'reason', label: 'Reason', type: 'text', required: true, defaultValue: 'Opened accounts without customer authorisation.' },
-          ]}
-          resetOnSuccess={false}
-        />
-      </PresenterPanel>
     </div>
   );
 }

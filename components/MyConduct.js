@@ -35,7 +35,7 @@ export function flaggedMetrics(latest) {
 
 // Who reviews each level of flag, and how long they have.
 export const FLAG_RULES = {
-  MEDIUM: { reviewer: 'your team lead', deadline: '5 working days' },
+  MEDIUM: { reviewer: 'your team lead', deadline: '5 business days' },
   HIGH: { reviewer: 'the conduct risk team', deadline: '48 hours' },
 };
 

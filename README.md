@@ -64,12 +64,8 @@ Other things to show:
 - **Second High case.** Isla Brennan had a High case 24 days ago, so her new one goes to the audit
   committee.
 - **Maker and checker.** Priya proposes a change on Thresholds, and Rosalind approves or rejects it.
-- **Escalation.** On the Live dashboard, move time forward 49 hours. Overdue High cases move to the
-  Chief Risk Officer.
-- **Retaliation guard.** On Dismissals, dismissing Ravi Menon also opens a case for the audit
-  committee, because a sealed report in the seed data belongs to Ravi.
-- **Tamper checks.** On Warning signs, the presenter buttons edit the database directly, and Run
-  checks catches both edits.
+- **Tamper checks.** On Warning signs, Run checks verifies the hash-chained log and flags any
+  threshold change that skipped approval.
 
 `npm run seed` restores the exact starting state.
 
@@ -81,8 +77,7 @@ Other things to show:
   CommonJS so `prisma/seed.js` runs the same engine as the app and cannot drift from it.
 - `lib/kri.js` is the single source of truth for dashboard and effectiveness numbers.
 - Seed data is synthetic and deterministic, using a fixed random seed and a demo clock starting
-  Monday 9 November 2026, 8:30 am. Actions tick the clock forward, and presenter controls move it
-  further, so deadlines and windows give the same results on every run.
+  Monday 9 November 2026, 8:30 am. Actions tick the clock forward, so deadlines and windows give the same results on every run.
 - The AI draft calls Claude when `ANTHROPIC_API_KEY` is set, sending only aggregate facts and no
   employee names. Without a key it uses a template, and the page labels it as simulated.
 
@@ -95,8 +90,8 @@ Other things to show:
   write-once store. Editing and deleting are detected, not prevented.
 - A speak-up seal could be tested by someone holding both the secret and the employee list. A
   production build would need independent key custody.
-- Scoring and deadline sweeps run from presenter controls rather than a scheduler, and the morning
-  briefing is an on-screen email preview that is not actually sent.
+- Scoring and deadline sweeps run at seed time rather than on a scheduler, and the morning
+  briefing is an on-screen summary page rather than a scheduled email.
 
 ## Acknowledging AI use
 

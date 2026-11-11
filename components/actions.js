@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Button, Callout, Field, PresenterButton, inputClass } from '@/components/ui';
+import { Button, Callout, Field, inputClass } from '@/components/ui';
 
 async function post(url, body) {
   const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
@@ -58,7 +58,7 @@ export function ActionForm({ url, fields, extra, submitLabel, variant = 'primary
 }
 
 // A single button that posts to an API route. Shows the route's message or error inline.
-export function ActionButton({ url, body, children, variant = 'secondary', size = 'sm', icon, presenter, hint, resultTone = 'green' }) {
+export function ActionButton({ url, body, children, variant = 'secondary', size = 'sm', icon, resultTone = 'green' }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
@@ -74,11 +74,7 @@ export function ActionButton({ url, body, children, variant = 'secondary', size 
 
   return (
     <div className="min-w-0">
-      {presenter ? (
-        <PresenterButton onClick={run} disabled={busy} icon={icon} hint={hint}>{busy ? 'Working…' : children}</PresenterButton>
-      ) : (
-        <Button variant={variant} size={size} icon={icon} onClick={run} disabled={busy}>{busy ? 'Working…' : children}</Button>
-      )}
+      <Button variant={variant} size={size} icon={icon} onClick={run} disabled={busy}>{busy ? 'Working…' : children}</Button>
       {result && <Callout tone={result.tone} className="mt-2">{result.text}</Callout>}
     </div>
   );

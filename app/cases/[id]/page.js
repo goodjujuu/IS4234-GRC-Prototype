@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { ActionButton, ActionForm } from '@/components/actions';
 import { CaseTimeline } from '@/components/CaseRows';
+import { BranchCase } from '@/components/BranchCase';
 import { EmployeeFlagCase } from '@/components/EmployeeFlagCase';
 import { Badge, Callout, Card, CardHeader, PageHeader, RiskBadge, TableWrap, tdClass, thClass } from '@/components/ui';
 import { canActOnCase, canViewCase } from '@/lib/access';
-import { getNow, loadConfig } from '@/lib/engine';
+import { getNow, latestScores, loadConfig, pressureAt } from '@/lib/engine';
 import { CASE_KINDS, OUTCOMES, TIER_LABELS, deadlineText, formatDate, formatDateTime, formatHours, isOverdue, outcomesFor, percent } from '@/lib/format';
 import { prisma } from '@/lib/prisma';
 import { METRICS, formatMetric } from '@/lib/scoring';
@@ -24,6 +25,18 @@ export default async function CasePage({ params }) {
   if (c.kind === 'EMPLOYEE_FLAG' && c.employee) {
     const config = await loadConfig(prisma);
     return <EmployeeFlagCase c={c} now={now} canAct={canAct} thresholds={{ medium: config.level_medium, high: config.level_high }} />;
+  }
+  if (['BRANCH_PRESSURE', 'DISMISSAL_REVIEW'].includes(c.kind) && c.branch) {
+    const [config, scores, employees, dismissals] = await Promise.all([
+      loadConfig(prisma),
+      latestScores(prisma),
+      prisma.employee.findMany({ where: { branchId: c.branchId } }),
+      prisma.dismissal.findMany({ where: { branchId: c.branchId, category: 'SALES_MISCONDUCT' }, include: { employee: true }, orderBy: { dismissedAt: 'desc' } }),
+    ]);
+    const names = new Map(employees.map((e) => [e.id, e.name]));
+    const team = scores.filter((s) => s.branchId === c.branchId).sort((a, b) => b.score - a.score).map((s) => ({ employeeId: s.employeeId, name: names.get(s.employeeId), score: s.score, level: s.level }));
+    const pressureNow = scores[0] ? (await pressureAt(prisma, scores[0].asOf, config)).find((x) => x.branchId === c.branchId) : null;
+    return <BranchCase c={c} now={now} canAct={canAct} team={team} dismissals={dismissals} pressureNow={pressureNow} config={config} />;
   }
   const metrics = c.evidence?.metrics;
   const p = c.evidence?.pressure;

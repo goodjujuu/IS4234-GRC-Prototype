@@ -12,8 +12,8 @@ export async function POST() {
   if (error) return error;
   const now = await getNow(prisma);
   const config = await loadConfig(prisma);
-  const pressure = await pressureAt(prisma, now, config);
   const [latest] = await latestScores(prisma);
+  const pressure = await pressureAt(prisma, latest.asOf, config);
   const previousPressure = await pressureAt(prisma, new Date(latest.asOf.getTime() - 1), config);
   const facts = await buildBriefingFacts(prisma, { now, pressure, previousPressure });
   const { text, reason } = await aiSummary(facts);

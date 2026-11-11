@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { ActionButton } from '@/components/actions';
-import { Card, CardHeader, PageHeader, PresenterPanel, RiskBadge, StatCard, TableWrap, cx, tdClass, thClass } from '@/components/ui';
+import { Card, CardHeader, PageHeader, RiskBadge, StatCard, TableWrap, cx, tdClass, thClass } from '@/components/ui';
 import { formatHours, percent } from '@/lib/format';
 import { getEffectiveness, getOverview } from '@/lib/kri';
 import { METRICS } from '@/lib/scoring';
@@ -15,11 +14,11 @@ function heatClass(z) {
 }
 
 export default async function OverviewPage() {
-  await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  const user = await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   const [{ heat, totals, topEmployees }, e] = await Promise.all([getOverview(), getEffectiveness()]);
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Risk reporting" title="Live dashboard" description="Where risk sits today across branches and employees, highest risk first." />
+      <PageHeader eyebrow="Risk Reporting" title="Live dashboard" description="See where conduct risk sits across the bank today, with each branch's Pressure Index next to its employee risk and the highest risk listed first." />
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         <StatCard label="High risk employees" value={totals.high} tone="red" hint={`of ${totals.staff} scored`} />
         <StatCard label="Medium risk employees" value={totals.medium} tone="amber" />
@@ -28,7 +27,7 @@ export default async function OverviewPage() {
         <StatCard label="Managers and targets flagged" value={totals.pressureFlags} tone={totals.pressureFlags ? 'red' : 'green'} />
       </div>
       <Card>
-        <CardHeader icon="chart" title="Risk heat map" subtitle="Each cell is the team's average distance above peers, from 0 (typical) to 3, and each branch opens its employees." />
+        <CardHeader icon="chart" title="Risk heat map" subtitle="Each cell shows how far a branch's staff sit above peers on one indicator, from 0 (typical) to 3 (far above). Darker means further above. Select a branch to see its employees." />
         <TableWrap>
           <table className="w-full min-w-[1040px] border-separate border-spacing-[2px]">
             <thead>
@@ -48,7 +47,7 @@ export default async function OverviewPage() {
                     <span className="ml-1 text-slate-500">{b.name}</span>
                   </td>
                   <td className="px-3 py-2"><RiskBadge level={b.rating} /></td>
-                  <td className="px-3 py-2 text-[13px] font-semibold tabular-nums"><Link href={`/pressure#branch-${b.code}`} className="hover:underline">{b.index}</Link></td>
+                  <td className="px-3 py-2 text-[13px] font-semibold tabular-nums"><Link href="/pressure" className="hover:underline">{b.index}</Link></td>
                   <td className="whitespace-nowrap px-3 py-2 text-[13px] tabular-nums">{b.high} of {b.staff}</td>
                   {METRICS.map((m) => {
                     const z = b.metricAverages[m.key];
@@ -72,7 +71,7 @@ export default async function OverviewPage() {
       </Card>
       <div className="grid gap-5 lg:grid-cols-[1fr_1fr]">
         <Card>
-          <CardHeader icon="user" title="Highest-risk employees" />
+          <CardHeader icon="user" title="Highest-risk employees" subtitle="Select a name to open the profile." />
           <TableWrap>
             <table className="w-full min-w-[360px] border-collapse">
               <thead><tr><th className={thClass}>Employee</th><th className={thClass}>Branch</th><th className={thClass}>Score</th><th className={thClass}>Level</th></tr></thead>
@@ -98,12 +97,8 @@ export default async function OverviewPage() {
               <div><dt className="text-xs text-slate-500">False alarm rate</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.falseAlarmRate)}</dd></div>
               <div><dt className="text-xs text-slate-500">Unapproved changes, target 0</dt><dd className="mt-0.5 font-semibold tabular-nums">{e.unapproved.length}</dd></div>
             </dl>
-            <Link href="/effectiveness" className="mt-3 inline-block text-[13px] font-medium text-indigo-700 hover:underline">See all effectiveness metrics</Link>
+            {user.role !== 'CONDUCT_RISK' && <Link href="/effectiveness" className="mt-3 inline-block text-[13px] font-medium text-indigo-700 hover:underline">See all effectiveness metrics</Link>}
           </Card>
-          <PresenterPanel>
-            <ActionButton presenter url="/api/demo" body={{ action: 'load' }} icon="refresh" hint="Clock +1 day">Run the daily data load</ActionButton>
-            <ActionButton presenter url="/api/demo" body={{ action: 'advance', hours: 49 }} icon="clock" hint="Escalates overdue">Move time forward 49 hours</ActionButton>
-          </PresenterPanel>
         </div>
       </div>
     </div>

@@ -33,8 +33,8 @@ routes and data access all live in one project:
 - The seed uses a fixed random seed and a demo clock (`DemoClock`). Time-based logic reads the demo
   clock through `getNow`, never `Date.now()`.
 - Access is role-based with at least one demo login per role (see "Users and access").
-- Staff systems use `SystemWindow`; demo-only shortcuts live in `PresenterPanel`. Keep those
-  visually separate.
+- Staff systems use `SystemWindow`. There are no presenter or demo-only controls in the UI, and no
+  notifications page.
 - Shared UI primitives are in `components/ui.js` (PageHeader, Card, Badge, Button, Callout,
   StatCard…) and navigation in `components/nav.js`; use them rather than ad-hoc styling.
 - Server-side rules (approval, routing, deadlines, scoring) live in the API routes and `lib/`, not
@@ -196,11 +196,11 @@ recognise a reporter who is later flagged or dismissed.
   drill-down from a branch to an employee, metrics over time compared with peers, the accounts
   behind each flag, and the Pressure Index next to employee risk. Each user sees only what their role
   allows. Team leads see their own team. Conduct risk and internal audit see the whole bank.
-- **Daily morning briefing (conduct risk team, by email):** new Medium and High cases, overdue
+- **Daily morning briefing (conduct risk team, a page in the app):** new Medium and High cases, overdue
   reviews, branches with a rising Pressure Index, threshold change attempts, and a short AI-written
   summary of likely causes. It is labelled as an AI draft, and a reviewer must confirm or correct it
-  before anyone acts on it. The AI only receives aggregated data without employee names. For the demo
-  this is generated on demand and shown as an email preview.
+  before anyone acts on it. The AI only receives aggregated data without employee names. It is
+  built from the 6:00 am data load and can be generated again on demand.
 - **Monthly audit committee summary:** escalated cases and disputes, the branches and managers with
   the highest Pressure Index, dismissals for sales misconduct, complaints linked to employees,
   speak-up reports, and every threshold change whether approved or blocked. Each item links to its

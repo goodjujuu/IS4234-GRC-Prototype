@@ -27,7 +27,7 @@ export default async function CommitteePage() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Open escalated and High cases" value={s.cases.length} tone={s.cases.length ? 'red' : 'green'} />
         <StatCard label="Sales misconduct dismissals" value={thisMonth.total} hint={`This month. ${totalDismissals} in 6 months.`} />
-        <StatCard label="Complaints linked to employees" value={s.complaints.total} hint={`${s.complaints.didNotAuthorise} "did not authorise", last 30 days`} />
+        <StatCard label="Complaints linked to employees" value={s.complaints.total} hint={`${s.complaints.didNotAuthorise} "did not authorize", last 30 days`} />
         <StatCard label="Speak-up reports" value={s.speakUp.total} hint={s.speakUp.byBranch.map(([b, n]) => `${b} ${n}`).join(', ') || 'Last 30 days'} />
       </div>
 
