@@ -36,7 +36,7 @@ export default async function PressurePage() {
         level="manager"
         eyebrow="Managers and Targets"
         title="Pressure Index"
-        description="See how much pressure each branch's manager and sales target place on staff, and which managers and targets are flagged for review."
+        description="Monitor the pressure each branch's manager and sales target put on staff, and open the review for any manager and target that is flagged."
       />
 
       <div className="grid gap-3 sm:grid-cols-3">

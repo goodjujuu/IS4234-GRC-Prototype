@@ -16,7 +16,7 @@ export default async function CommitteePage() {
       <PageHeader
         eyebrow={`Audit committee, ${formatMonth(s.now)}`}
         title="Monthly Summary"
-        description="This month's escalated cases, branch pressure, dismissals, complaints, speak-up reports and threshold changes, each linked to its record."
+        description="Review this month's conduct risk position for the board, with every escalated case, branch under pressure and threshold change linked to its record."
         actions={
           <>
             <a href="/api/export/audit" className="inline-flex h-8 items-center rounded-lg bg-slate-900 px-3 text-[13px] font-medium text-white hover:bg-slate-800">Export PDF</a>

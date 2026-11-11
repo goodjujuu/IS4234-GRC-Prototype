@@ -50,7 +50,7 @@ export default async function BriefingPage() {
       <PageHeader
         eyebrow="Risk Reporting"
         title="Morning Briefing"
-        description="Start the day with what changed overnight across the bank, and confirm or correct the AI summary before anyone acts on it."
+        description="Review what changed overnight across the bank and confirm the AI summary of likely causes before the team acts on it."
         actions={canAct && <ActionButton url="/api/briefing" icon="refresh">Generate again</ActionButton>}
       />
 

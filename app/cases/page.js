@@ -13,7 +13,7 @@ import { requireUser } from '@/lib/session';
 const INTRO = {
   CHIEF_RISK_OFFICER: 'Decide the High cases escalated to you after the conduct risk team missed the 48-hour deadline.',
   INTERNAL_AUDIT: 'Check every case across the bank, read-only, for whether it was reviewed on time and properly decided.',
-  AUDIT_COMMITTEE: 'Decide the cases escalated to the committee and read those reported to it.',
+  AUDIT_COMMITTEE: 'Decide repeat High cases and cases involving a speak-up reporter, and track the High cases reported to the committee.',
 };
 
 // The team lead's review queue: one card per Medium flag, with what is driving it.
@@ -195,7 +195,7 @@ async function ConductRiskCases({ user }) {
       <PageHeader
         eyebrow="Case Management"
         title="Cases"
-        description="Review the manager, target and High employee cases routed to the conduct risk team, and keep an eye on cases with other reviewers."
+        description="Review High employee cases within 48 hours and manager, target and dismissal cases within 5 business days."
         actions={exportLinks}
       />
 

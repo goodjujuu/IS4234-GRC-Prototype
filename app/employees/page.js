@@ -39,7 +39,7 @@ export default async function EmployeesPage({ searchParams }) {
         level="employee"
         eyebrow="Employee Conduct"
         title="Employees"
-        description="Find any employee in the bank by branch or risk level and open their profile, highest score first."
+        description="Look up any employee's conduct risk score across the bank, filtered by branch or risk level, and open their profile."
       />
 
       <Card className="space-y-3">

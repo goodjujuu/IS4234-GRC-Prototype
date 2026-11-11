@@ -1,230 +1,237 @@
-4.1 Technology Solution - ConductGuard
+# 4 Technology Solution – ConductGuard
+
+## 4.1 Overview
+
 ConductGuard is an observability platform for conduct risk in retail banking.
-Our unique proposition is that ConductGuard targets the sales pressure created by managers and targets, not only the behaviour of employees. Existing solutions such as EY’s banker surveillance, NICE Actimize and Behavox focus mainly on individual employee conduct, asking which employees are breaking the rules. The Wells Fargo case shows that this is not enough. The bank monitored employees and dismissed about 5,300 of them, yet the misconduct continued for over a decade because its real driver was pressure from managers and unrealistic sales targets. Dismissing staff treated the symptom and left the cause in place. ConductGuard closes this gap by linking each employee’s conduct to the manager and target behind it, so the bank can trace misconduct back to its source.
-In brief, the solution has three functions.
-Conduct Surveillance. This is the core of the platform. It continuously monitors three levels.
-Employee Conduct scores each employee’s account activity daily.
-Managers and Targets measures the pressure each manager and target places on staff and links it to employee flags. When high pressure and rising flags appear in the same branch, the manager and target are flagged for review, not only the employees.
-Threshold Governance protects the detection thresholds, so no one can quietly weaken monitoring as Wells Fargo’s management did.
-Alerting and Case Management. When a threshold is passed, the platform alerts the right reviewer and opens a case with a deadline, whether the flag concerns an employee, a manager or a target. Overdue or serious cases escalate automatically, and every action is recorded with evidence.
-Risk Reporting. The platform turns these findings into a daily briefing for the conduct risk team and a monthly summary for the audit committee. Both highlight high-pressure branches and flagged managers alongside high-risk employees, so warning signs reach the board instead of staying within the business.
 
-In the next few sub sections, we will dive into what each function does, what it measures etc
-4.1.1 Conduct Surveillance
-Conduct Surveillance is the core of ConductGuard. It tracks metrics at three levels, the employee, the manager and target, and the monitoring system itself. Every metric is tied to a specific warning sign from the Wells Fargo case, so each flag can be explained to the person reviewing it and to the employee affected.
+Its unique proposition is that it targets the sales pressure created by managers and targets, not only the behaviour of employees. Existing solutions such as EY's banker surveillance, NICE Actimize and Behavox focus mainly on individual conduct, asking which employees are breaking the rules. The Wells Fargo case shows that this is not enough. The bank monitored employees and dismissed about 5,300 of them, yet the misconduct continued for over a decade because its real driver was pressure from managers and unrealistic sales targets. Dismissing staff treated the symptom and left the cause in place. ConductGuard closes this gap by linking each employee's conduct to the manager and target behind it, so the bank can trace misconduct back to its source.
 
+The platform has three functions.
 
+| Function | What it does |
+| --- | --- |
+| **Conduct Surveillance** | The core of the platform. It monitors three levels, which are employee conduct, the pressure from managers and targets, and the thresholds that decide what gets flagged. |
+| **Alerting and Case Management** | Opens a case for a named reviewer whenever a threshold is passed, starts a deadline and escalates the case automatically if it is ignored. Every action is recorded with evidence. |
+| **Risk Reporting** | Turns the findings into a live dashboard, a morning briefing for the conduct risk team and a monthly summary for the audit committee, so warning signs reach the board instead of staying within the business. |
 
-4.2.1 Employee Conduct Metrics
-At the first level, the platform tracks seven metrics for each employee, using account activity the bank already records.
-Metric
-Definition
-Why it is tracked
-Accounts opened
-Number of accounts opened per week
-Unusually high volume can signal sales pressure
-Unused account rate
-Share of new accounts with no genuine customer activity within 90 days
-Most unauthorised accounts were never used by the customer
-Internal transfer funding rate
-Share of new accounts funded only by moving money from the same customer’s existing account
-Staff moved customer money to make new accounts look funded
-Early closure rate
-Share of new accounts closed within 60 days
-Customers closed accounts they never asked for once they found them
-Contact detail changes
-Customer email or phone changes made by the employee around the time an account was opened
-Staff used false contact details so customers would not learn of new accounts
-Customer complaint rate
-Complaints linked to the employee’s accounts, with “did not authorise” complaints weighted highest
-Complaints were never traced back to the employees involved
-Same-day multiple products
-Customers given several products by the same employee on the same day
-A common pattern under cross-selling pressure
+ConductGuard only reads account activity the bank already records. It does not open accounts, verify customers or provide any customer-facing feature.
 
+## 4.2 Conduct Surveillance
 
-Each metric is compared with peers in the same role and branch, because a high number only matters if it stands out from similar colleagues. The results are combined into a risk score from 0 to 100. Unused accounts, internal transfer funding and “did not authorise” complaints carry the highest weights, because they are the strongest signs of unauthorised accounts. The score also rises with the number of customers affected, so it reflects how much harm was caused as well as how likely misconduct is.
-Risk level
-Score
-Action
-Low
-0 to 39
-Shown on the dashboard only
-Medium
-40 to 69
-Case opened for the team lead
-High
-70 to 100
-Case opened for the conduct risk team and reported to the audit committee
+Conduct Surveillance tracks metrics at three levels, the employee, the manager and target, and the monitoring system itself. Every metric is tied to a specific warning sign from the Wells Fargo case, so each flag can be explained to the reviewer and to the employee affected.
 
+Scores and the Pressure Index are recalculated every day at 6:00 am after the overnight data load, using the previous day's activity. They therefore read the same all day and match the morning briefing.
 
-4.2.2 Manager and Target Metrics
-At the second level, the platform measures the pressure that managers and targets place on staff. This is what makes Integrity Lens unique. These metrics combine into a Pressure Index from 0 to 100 for each branch and manager.
-Metric
-Definition
-Why it is tracked
-Target miss rate
-Share of branch staff missing their sales targets
-When most staff cannot meet a target, the target is the problem, not the staff
-Target increases
-Size and frequency of recent increases to branch targets
-Wells Fargo kept raising targets even as staff struggled to meet them
-End-of-month sales spikes
-Sharp rises in accounts opened in the last days of a sales period
-Staff rushed to hit targets before deadlines
-Pressure reports
-Number of anonymous reports from staff about pressure at the branch
-Staff warnings about pressure were ignored
-Team flag rate
-Share of the manager’s staff rated Medium or High
-Widespread flags in one team point to the manager, not individuals
-Manager response time
-How quickly the manager acts on flags raised in their team
-Managers tolerated or encouraged the behaviour
-Sales misconduct dismissals
-Number of staff dismissed for sales misconduct at the branch
-About 5,300 dismissals were never treated as a pattern
+### 4.2.1 Level 1 – Employee Conduct
+
+The platform tracks seven metrics for each employee.
+
+| Metric | Definition | Why it is tracked | Weight |
+| --- | --- | --- | --- |
+| Accounts opened | Number of accounts opened per week | Unusually high volume can signal sales pressure | 7 |
+| Unused account rate | Share of new accounts with no genuine customer activity within 90 days | Most unauthorised accounts were never used by the customer | 25 |
+| Internal transfer funding rate | Share of new accounts funded only by moving money from the same customer's existing account | Staff moved customer money to make new accounts look funded | 20 |
+| Early closure rate | Share of new accounts closed within 60 days | Customers closed accounts they never asked for once they found them | 10 |
+| Contact detail changes | Customer email or phone changes made by the employee around the time an account was opened | Staff used false contact details so customers would not learn of new accounts | 10 |
+| Customer complaint rate | Complaints linked to the employee's accounts, with "did not authorise" complaints counted three times | Complaints were never traced back to the employees involved | 20 |
+| Same-day multiple products | Customers given several products by the same employee on the same day | A common pattern under cross-selling pressure | 8 |
+
+Each metric is compared with peers in the same role. Two comparisons are made, one across the bank and one within the branch, and the higher of the two counts, so a whole branch under pressure cannot look normal against itself. The results are combined into a risk score from 0 to 100. Unused accounts, internal transfer funding and complaints carry the highest weights because they are the strongest signs of unauthorised accounts. The score also rises with the number of customers affected, so it reflects harm as well as likelihood.
+
+| Risk level | Score | Action |
+| --- | --- | --- |
+| Low | 0 to 39 | Shown on the dashboard only |
+| Medium | 40 to 69 | Case opened for the team lead |
+| High | 70 to 100 | Case opened for the conduct risk team and reported to the audit committee |
+
+### 4.2.2 Level 2 – Managers and Targets
+
+The second level measures the pressure that managers and targets place on staff. This is what makes ConductGuard unique. The metrics combine into a Pressure Index from 0 to 100 for each branch and its manager.
+
+| Metric | Definition | Why it is tracked | Points |
+| --- | --- | --- | --- |
+| Target miss rate | Share of branch staff missing their sales targets | When most staff cannot meet a target, the target is the problem, not the staff | 25 |
+| Team flag rate | Share of the manager's staff rated Medium or High | Widespread flags in one team point to the manager, not individuals | 20 |
+| Target increases | Size and frequency of recent increases to branch targets | Wells Fargo kept raising targets even as staff struggled to meet them | 15 |
+| End-of-month sales spikes | Sharp rises in accounts opened in the last days of a sales period | Staff rushed to hit targets before deadlines | 10 |
+| Pressure reports | Number of anonymous reports from staff about pressure at the branch | Staff warnings about pressure were ignored | 10 |
+| Manager response time | How quickly the manager acts on flags raised in their team | Managers tolerated or encouraged the behaviour | 10 |
+| Sales misconduct dismissals | Number of staff dismissed for sales misconduct at the branch | About 5,300 dismissals were never treated as a pattern | 10 |
 
 The key link is between the two levels. When a branch has a high Pressure Index and rising employee flags, the platform flags the manager and the target for review, not only the employees. A branch is rated High when its Pressure Index is 70 or more, or when at least 30 percent of its staff are rated High.
-4.2.3 Threshold Governance Metrics
-Every flag in Levels 1 and 2 depends on thresholds, which are the limits that decide when an employee or branch is rated Medium or High. Whoever controls these limits controls what the bank can see. Raising a threshold from 70 to 85, for example, would quietly remove many employees from review without any misconduct actually stopping.
-Every flag in Levels 1 and 2 depends on thresholds, which are the limits that decide when an employee or branch is rated Medium or High. Whoever controls these limits controls what the bank can see. Raising a threshold from 70 to 85, for example, would quietly remove many employees from review without any misconduct actually stopping.
-This happened at Wells Fargo. The business lines controlled their own monitoring, and management paused it and later narrowed it to only the top 0.01 percent of employees (Independent Directors of the Board of Wells Fargo & Company, 2017). Fewer flags made the problem look smaller when the bank had simply stopped looking.
-Threshold Governance makes sure no one can weaken detection quietly. It does this in three ways.
-1. Controlling who can change thresholds. Only the conduct risk team can propose a change to thresholds or weights, and the Chief Risk Officer must approve it. No one can approve their own proposal, and branch managers and team leads cannot make changes at all. Every change is written to a permanent log recording who made it, the old and new values and the reason. The log cannot be edited afterwards.
-2. Detecting signs that detection is being weakened. Thresholds are not the only way to hide problems. Flags can also be dismissed without proper review. The platform therefore tracks four warning signs.
-Warning sign
-Example
-What it may indicate
-Threshold change attempted
-A branch manager tries to raise the High threshold from 70 to 85
-An attempt to reduce the number of flagged staff
-Unapproved change
-A threshold change that skipped approval
-A breach of the two-person rule. The target is zero
-Sudden drop in flags
-Flags fall by half in one month while sales volumes stay the same
-Detection was turned down, not that misconduct stopped
-Unusually fast reviews
-A team lead clears twenty cases in one hour
-Flags are being dismissed without real checks
 
-3. Alerting an independent party. Every warning sign, and every threshold change whether approved or blocked, triggers an alert to internal audit, not to the business line involved. As the third line of defence, internal audit is independent of both sales and the conduct risk team, so the people being monitored can never switch off their own monitoring.
+Pressure reports come from the protected speak-up channel. A report stores a one-way seal instead of a name, so the platform can recognise a reporter who is later flagged or dismissed without revealing who they are.
 
-4.3 Alerting and Case Management
-Conduct Surveillance shows where the risk is. Alerting and Case Management makes sure someone acts on it. Every time a threshold is passed, the platform alerts a named reviewer, opens a case with a deadline, and tracks it until it is closed with a recorded outcome. This prevents what happened at Wells Fargo, where complaints and warning signs were received but never followed through.
+### 4.2.3 Level 3 – Threshold Governance
 
+Every flag in Levels 1 and 2 depends on thresholds, which are the limits that decide when an employee or branch is rated Medium or High. Whoever controls these limits controls what the bank can see. Raising the High threshold from 70 to 85 would quietly remove many employees from review without any misconduct actually stopping.
 
-4.3.1 Alerts
-Each alert goes to a specific reviewer based on what was flagged and how serious it is. Employees see any change to their own risk level on their dashboard, so no one is flagged without knowing.
-What is flagged
-Alert sent to
-Review deadline
-Employee rated Medium
-Team lead
-5 working days
-Employee rated High
-Conduct risk team
-48 hours
-Branch or manager rated High on the Pressure Index
-Conduct risk team
-5 working days
-Dismissal for sales misconduct
-Conduct risk team
-5 working days
-Speak-up reporter later flagged or dismissed
-Audit committee
-Immediate
-Threshold change attempt or control breach
-Internal audit
-Immediate
+This happened at Wells Fargo. The business lines controlled their own monitoring, and management paused it and later narrowed it to only the top 0.01 percent of employees (Independent Directors of the Board of Wells Fargo & Company, 2017). Fewer flags made the problem look smaller when the bank had simply stopped looking. Threshold Governance prevents this in three ways.
 
-Cases about managers and targets go to the conduct risk team rather than the branch, because a branch cannot independently review the pressure it creates.
-4.3.2 Case Workflow
-The platform opens each case automatically and attaches the evidence, including the metrics that passed the threshold and the specific accounts behind them. The case is assigned to the named reviewer and the deadline starts. The reviewer examines the evidence and any explanation from the employee, then records an outcome with a written reason.
-There are three outcomes for employee cases. The case can be cleared, the employee can receive coaching, or the case can be referred for investigation. Manager and target cases have a fourth outcome, a target review, where the target is sent for adjustment. This lets the bank fix the cause of the pressure and not only the behaviour it produces.
-4.3.3 Escalation
-Cases cannot sit unresolved. A Medium case not reviewed within 5 working days moves to the conduct risk team, and a High case not reviewed within 48 hours moves to the Chief Risk Officer. A second High case for the same employee or branch within six months goes to the audit committee, as does any case involving a speak-up reporter. This makes sure repeated or ignored problems reach the board, unlike the 5,300 dismissals at Wells Fargo that were never treated as a pattern.
-4.3.4 Employee Disputes
-When a case is opened, the employee receives a plain-language explanation of which metrics passed the threshold and why they matter. The employee can submit a dispute with supporting evidence, which the reviewer must consider before deciding. If the employee disagrees with the outcome, they can appeal to the audit committee.
+1. **Controlling who can change thresholds.** Only the conduct risk team can propose a change to a threshold or weight, and the Chief Risk Officer must approve it. No one can approve their own proposal, and branch managers and team leads cannot make changes at all. Before deciding, the approver sees how many of today's flags the change would weaken. Every change is written to a permanent log recording who made it, the old and new values and the reason. The log is hash-chained, so any later edit is detected.
+
+2. **Detecting signs that detection is being weakened.** Thresholds are not the only way to hide problems, because flags can also be dismissed without proper review. The platform tracks four warning signs.
+
+   | Warning sign | Example | What it may indicate |
+   | --- | --- | --- |
+   | Threshold change attempted | A branch manager tries to raise the High threshold from 70 to 85 | An attempt to reduce the number of flagged staff |
+   | Unapproved change | A threshold change that skipped approval | A breach of the two-person rule, where the target is zero |
+   | Sudden drop in flags | Flags fall by half in one month while sales volumes stay the same | Detection was turned down, not that misconduct stopped |
+   | Unusually fast reviews | A team lead clears five cases in one hour | Flags are being dismissed without real checks |
+
+3. **Alerting an independent party.** Every warning sign, and every threshold change whether approved or blocked, alerts internal audit, not the business line involved. As the third line of defence, internal audit is independent of both sales and the conduct risk team, so the people being monitored can never switch off their own monitoring.
+
+## 4.3 Alerting and Case Management
+
+Conduct Surveillance shows where the risk is. Alerting and Case Management makes sure someone acts on it. This prevents what happened at Wells Fargo, where complaints and warning signs were received but never followed through.
+
+### 4.3.1 Routing and Deadlines
+
+Each flag opens a case in the queue of a named reviewer, chosen by what was flagged and how serious it is. The case is the alert, so reviewers see what is waiting for them as soon as they open ConductGuard, and the conduct risk team also sees new and overdue cases in its morning briefing.
+
+| What is flagged | Routed to | Review deadline |
+| --- | --- | --- |
+| Employee rated Medium | Team lead | 5 business days |
+| Employee rated High | Conduct risk team | 48 hours |
+| Branch or manager rated High on the Pressure Index | Conduct risk team | 5 business days |
+| Dismissal for sales misconduct | Conduct risk team | 5 business days |
+| Speak-up reporter later flagged or dismissed | Audit committee | Immediate |
+| Threshold change attempt or control breach | Internal audit | Immediate |
+
+Cases about managers and targets go to the conduct risk team rather than the branch, because a branch cannot independently review the pressure it creates. Employees see any change to their own risk level on their dashboard, so no one is flagged without knowing.
+
+### 4.3.2 Case Workflow
+
+The platform opens each case automatically and attaches the evidence, which is the metrics that passed the threshold and the specific accounts behind them. This evidence is stored as a snapshot on the case, so it does not change if thresholds change later. The case is assigned to a named reviewer and the deadline starts. The reviewer examines the evidence and any dispute from the employee, then records an outcome with a written reason.
+
+| Outcome | Meaning | Applies to |
+| --- | --- | --- |
+| Cleared | No concern was found | All cases |
+| Coaching | The employee or manager is coached on how they sell or set targets | All cases |
+| Investigation | The accounts or the manager are referred for a formal investigation | All cases |
+| Target review | The branch target is sent for adjustment, so the cause of the pressure is fixed | Manager and target cases only |
+
+### 4.3.3 Escalation
+
+Cases cannot sit unresolved. A Medium case not reviewed within 5 business days moves to the conduct risk team, and a High case not reviewed within 48 hours moves to the Chief Risk Officer. A second High case for the same employee or branch within six months goes to the audit committee, as does any case involving a speak-up reporter. Repeated or ignored problems therefore reach the board, unlike the 5,300 dismissals at Wells Fargo that were never treated as a pattern.
+
+### 4.3.4 Disputes and Appeals
+
+When a case is opened, the employee receives a plain-language explanation of which metrics passed the threshold and why they matter. The employee can dispute a metric with supporting evidence, and the reviewer must decide the dispute before the case can close. If the employee disagrees with the outcome, they can appeal to the audit committee.
+
 Disputes also improve the platform. An upheld dispute is recorded as a false alarm. If false alarms build up for a particular metric or branch, the conduct risk team can propose adjusting the weights. That change must still pass through Threshold Governance, so disputes can refine detection but never quietly weaken it.
-4.3.5 Audit Trail
-Every action on a case is recorded with the time, the person who acted and the evidence used, from opening to closure. The record cannot be edited and can be exported for internal audit or regulators. Internal audit can therefore check that every flag was reviewed on time and properly decided.
 
+### 4.3.5 Audit Trail
 
-4.4 Risk Reporting
-Conduct Surveillance finds the risk, and Case Management makes sure each flag is acted on. Risk Reporting makes sure the right people see the overall picture. At Wells Fargo, complaints, whistleblower reports and about 5,300 dismissals were known within the business, but the board was not fully informed until 2014, more than a decade after the misconduct began (Independent Directors of the Board of Wells Fargo & Company, 2017). ConductGuard prevents this by reporting at three levels, a live dashboard for daily work, a morning briefing for the conduct risk team, and a monthly summary for the audit committee.
+Every action on a case is recorded with the time, the person who acted and the evidence used, from opening to closure. The record cannot be edited and can be exported as a spreadsheet or a printable report for internal audit or regulators. Internal audit can therefore check that every flag was reviewed on time and properly decided.
 
-4.4.1 Live Dashboard
-The dashboard gives reviewers a real-time view of where risk sits. A heat map shows risk by branch and team, with the highest-risk employees and branches listed first. Reviewers can drill down from a branch to an individual employee, see how their metrics have changed over time compared with peers, and view the specific accounts behind each flag. Branch views show the Pressure Index next to employee risk, so reviewers can see at a glance whether risky behaviour is concentrated where pressure is high. Each user sees only what their role allows. Team leads see their own team, while the conduct risk team and internal audit see the whole bank.
-4.4.2 Daily Morning Briefing
-Every morning, the conduct risk team opens a briefing page in ConductGuard that summarises what changed overnight. It lists new Medium and High cases, overdue reviews, branches with a rising Pressure Index, and any threshold change attempts. Each briefing also includes a short AI-written summary that explains likely causes in plain language. For example, it might say “Branch 12 moved to High after unused accounts doubled following a target increase last month.”
-Because AI can be wrong, the summary is clearly labelled as an AI draft, and a reviewer must confirm or correct it before anyone acts on it. The AI only receives aggregated data without employee names, which protects staff privacy. This follows the human-in-the-loop approach in Singapore’s Model AI Governance Framework, where AI supports decisions but a person makes them.
-4.4.3 Monthly Audit Committee Summary
-Each month, the audit committee receives a summary designed to bring warning signs to board level. It covers escalated cases and disputes, the branches and managers with the highest Pressure Index, dismissals for sales misconduct, complaints linked to employees, speak-up reports, and every threshold change, whether approved or blocked. Each item links to its full case record and audit trail, so the committee can see the evidence behind it. This meets the Monetary Authority of Singapore’s expectation that the board receives regular summaries of complaints and whistleblowing (Monetary Authority of Singapore, n.d.), and it ensures that a pattern like Wells Fargo’s dismissals is visible to the board.
-4.4.4 Effectiveness Metrics
+## 4.4 Risk Reporting
+
+Conduct Surveillance finds the risk, and Case Management makes sure each flag is acted on. Risk Reporting makes sure the right people see the overall picture. At Wells Fargo, complaints, whistleblower reports and about 5,300 dismissals were known within the business, but the board was not fully informed until 2014, more than a decade after the misconduct began (Independent Directors of the Board of Wells Fargo & Company, 2017). ConductGuard reports at three levels.
+
+### 4.4.1 Live Dashboard
+
+The dashboard gives the conduct risk team a current view of where risk sits across the bank. Key totals come first, followed by a heat map of each branch's seven indicators with its Pressure Index and number of High staff beside them, so reviewers can see at a glance whether risky behaviour is concentrated where pressure is high. Branches and employees with the highest risk are listed first. Selecting a branch opens its employees, and selecting an employee opens their profile with the accounts behind each flag. The headline effectiveness metrics are shown alongside.
+
+### 4.4.2 Morning Briefing
+
+Every morning, the conduct risk team opens a briefing page in ConductGuard that summarises what changed overnight. It counts new High and Medium cases, overdue reviews, branches with a rising Pressure Index and threshold change attempts, and lists each item with a link to where it is handled.
+
+The briefing also includes a short AI-written summary of likely causes in plain language, such as "Branch 12 moved to High after unused accounts nearly doubled following a target increase." Because AI can be wrong, the summary is labelled as an AI draft and stays unconfirmed until a reviewer confirms it or corrects it. A corrected summary replaces the draft, and the original is kept for the record. The AI only receives branch-level figures and never employee names, which protects staff privacy. This follows the human-in-the-loop approach in Singapore's Model AI Governance Framework, where AI supports decisions but a person makes them.
+
+### 4.4.3 Monthly Audit Committee Summary
+
+Each month, the audit committee receives a summary designed to bring warning signs to board level. It covers escalated cases and appeals, the branches with the highest Pressure Index, dismissals for sales misconduct, complaints linked to employees, speak-up reports, the effectiveness metrics and every threshold change whether approved or blocked. Each case links to its full record and audit trail, so the committee can see the evidence behind it. This meets the expectation of the Monetary Authority of Singapore that the board receives regular summaries of complaints and whistleblowing (Monetary Authority of Singapore, n.d.), and it ensures that a pattern like Wells Fargo's dismissals is visible to the board.
+
+### 4.4.4 Effectiveness Metrics
+
 ConductGuard also reports on how well the platform itself is working, so management and internal audit can check that monitoring is effective and not just active.
-Metric
-What it shows
-Target
-Flags reviewed within deadline
-Whether reviewers act on time
-At least 95 percent
-Average time to resolve a case
-Whether cases are handled promptly
-Within each level’s deadline
-False alarm rate
-Share of flags overturned through disputes, overall and by branch
-Falling over time
-Bank-wide unused account rate
-Whether misconduct is actually decreasing
-Falling over time
-Unapproved threshold changes
-Whether detection was weakened without approval
-Zero
 
-These metrics appear in both the dashboard and the monthly summary. A rising false alarm rate shows that weights need refining, and a falling unused account rate shows that the platform is reducing the behaviour it was built to detect.
+| Metric | What it shows | Target |
+| --- | --- | --- |
+| Flags reviewed within deadline | Whether reviewers act on time | At least 95 percent |
+| Average time to resolve a case | Whether cases are handled promptly | Within each level's deadline |
+| False alarm rate | Share of flags overturned through disputes, overall and by branch | Falling over time |
+| Bank-wide unused account rate | Whether misconduct is actually decreasing | Falling over time |
+| Unapproved threshold changes | Whether detection was weakened without approval | Zero |
 
-4.5 User Views
-Each user group sees a small set of pages built around the decisions it makes. Only what that group needs to act is shown. There is no separate notifications page, because each page already shows what is waiting for that user.
+The dashboard and the monthly summary show the headline figures, and internal audit sees all five with their trends. A rising false alarm rate shows that weights need refining, and a falling unused account rate shows that the platform is reducing the behaviour it was built to detect.
 
-4.5.1 Employee
-Employees see their own metrics compared with the peer range, read why any flag was raised, and decide whether to dispute it. They have three pages, written in plain language so a bank employee can use them without training.
-Score refresh. Scores are recalculated every day at 6:00 am after the overnight data load, using the previous day's account activity. The dashboard shows when the score was last updated and when the next update is due.
-My dashboard opens with a welcome and answers three questions from top to bottom.
-How am I doing? The conduct risk score from 0 to 100 is shown as a ring coloured by level, next to a scale marked Low (0 to 39), Medium (40 to 69) and High (70 to 100). One sentence explains what the level means and who will review it, and a notice reminds the employee that a score is an indicator, not proof. Beside the score, an open flag card shows the case reference, the score that raised it, the named reviewer, the decision deadline and the time left, with a button to see why and respond. An employee with no flag sees that they are flagged only if their score reaches 40.
-Why is my score what it is? A single bar splits the score into four areas, with the points each adds. Customer response covers the unused account rate, the early closure rate and the customer complaint rate, which are signs that customers did not want or use the account. Account setup covers the internal transfer funding rate and contact detail changes, which are signs that an account was made to look genuine. Sales activity covers accounts opened and same-day multiple products, which are signs of selling under pressure. Customers affected adds points for the number of customers with at least one warning sign, so the score reflects harm as well as likelihood.
-Which indicators stand out? The seven indicators appear as tiles grouped by area. Each tile compares the employee with peers in the same role as two bars, gives a status of in line with peers, above peers (one peer spread above the median) or well above peers (two spreads above), states the accounts behind it in one sentence and shows the points it adds.
-Disputes and appeals is where the employee responds to a flag. It explains that a flag is raised when the total score crosses a threshold, not for any single indicator, so one flag covers every indicator behind it. For each flag the page shows the date raised, the score at the time, the named reviewer and the decision deadline. It then lists the indicators that were above peers when the flag was raised, with the employee's value, the peer value, the status and the points each added, read from the score snapshot stored on the case. Beside this, the employee can dispute one of those indicators with a statement and optional evidence while the case is open, or appeal to the audit committee once it is closed with an outcome other than cleared. A short guide explains what happens next. The reviewer must consider the dispute, then clear the flag, arrange coaching or refer it for investigation, and the employee can appeal the outcome. The page also lists the eight accounts with the most warning signs, with customers shown only as references, and points employees with an open flag to the protected speak-up channel.
-My personal data shows everything ConductGuard holds about the employee, which supports data minimisation. A short profile states that the data is used only for conduct monitoring, never for pay, and that speak-up reports are not linked to the employee's name. Four expandable sections follow, each with its source system and record count. These are accounts opened (core banking system and customer records audit log), complaints linked to those accounts (complaints system), risk scores (daily scoring) and cases with their disputes and appeals (case management). Every record is shown in full when a section is opened.
+## 4.5 User Roles and Views
 
-4.5.2 Team Lead
-Team leads see only their own team and decide whether a Medium case needs coaching or can be cleared. In the demonstrator the team lead is the branch manager. They have three pages, and use the same score visuals as the employee so both read a score the same way.
-My team opens the team lead's day. A card shows how many Medium flags are waiting for their review and when the next one is due, with a button to the review queue. Beside it, a team at a glance card splits the team into High, Medium and Low with one bar. It states who reviews each level, so the team lead can see that High flags go to the conduct risk team and only Medium flags come to them. A tag shows that scores are updated daily at 6:00 am. Below, every team member is listed with the highest score first, showing their score on a bar, their level, the indicator adding the most points (the main driver) and their flag. A Medium flag shows a review button with the time left. A High flag shows that it is with the conduct risk team or the audit committee, because a branch cannot independently review the pressure it creates. Selecting a name opens the employee profile, which shows the score, the breakdown by area and the seven indicator tiles in the same layout as the employee's own dashboard, along with every flag on the employee's record.
-Reviews is the team lead's queue of Medium flags, earliest deadline first. Each flag shows the employee, the case reference, the date and score that raised it, its three main drivers, the time left and whether the employee has disputed it. A note explains that a flag not reviewed within 5 working days moves to the conduct risk team automatically. Past decisions are listed with their outcome and date.
-The review screen for one flag starts with the key facts, which are the employee, the score when raised and the threshold it crossed, the named reviewer and the decision deadline. Why this flag was raised lists the indicators above peers with the employee's value, the peer value, the status and the points each added, taken from the score snapshot stored on the case so the evidence does not change if thresholds change later. The accounts behind the flag follow, each with its warning signs, then any dispute or appeal from the employee. The team lead decides a dispute on the same screen, and an upheld dispute clears the flag and counts as a false alarm. The audit trail lists every action with its time and who took it. A decision panel guides the team lead through three steps, which are to check the evidence, decide any dispute and record an outcome with a reason. It explains the three outcomes. Cleared means no concern was found, coaching means talking to the employee about how they sell, and investigation refers the accounts for a formal investigation. The case cannot close while a dispute is open, and closing it requires a written reason. The team lead can also add a note to the audit trail. The same review screen is used by every reviewer of an employee flag.
-Thresholds is read-only for team leads. It shows the four current thresholds that decide when the team is flagged, which are Medium from 40, High from 70, the Pressure Index High threshold of 70 and the branch High staff share of 30 percent, each with what it does. A note states that only the conduct risk team can propose a change and the Chief Risk Officer must approve it. Team leads have no way to change a value in the interface, and the server also refuses any change a team lead sends, writes the attempt to the permanent log and alerts internal audit. Metric weights are not shown to team leads, because they cannot act on them.
-Team leads no longer have a separate disputes page, because each dispute is decided on its review screen.
+ConductGuard serves six user groups, arranged along the three lines of defence and the board. Each group sees only the pages it needs for the decisions it makes, and every page states its purpose in one sentence.
 
-4.5.3 Conduct Risk Team
-The conduct risk team sees the whole bank, reviews High cases and flagged managers, and decides whether to investigate or fix a target. It is independent of the sales business, unlike the risk managers at Wells Fargo who answered to the business heads they oversaw. Wells Fargo created a similar central function, the Conduct Management Office, in 2017. The team has six pages in five groups named after the parts of the platform, so employee pages and manager pages are clearly apart. Risk Reporting holds the morning briefing and the live dashboard, Case Management holds the cases, Employee Conduct holds the employees list, Managers and Targets holds the Pressure Index and Threshold Governance holds the thresholds.
-Risk Reporting. The morning briefing is the team's home page, a summary page the team reads at the start of each day, built from the 6:00 am data load. Today at a glance counts new High cases, overdue reviews, branches with a rising Pressure Index, threshold change attempts and new Medium cases. Likely causes holds the AI summary. Needs attention today lists the new High cases, the branches with a rising Pressure Index, the overdue reviews and the threshold change attempts, each with a link to where it is handled, and the new Medium cases with team leads follow at the end. The AI summary of likely causes is labelled as an AI draft and as unconfirmed, with a note that the AI receives only branch-level figures and never employee names. Below the draft, a review box asks the reviewer to check it against the figures in the briefing, with two choices. Confirm marks it as accurate so it can inform action. Correct opens the text for editing, and the corrected version replaces the draft while the original is kept for the record and can be shown on request. Once reviewed, the box shows who confirmed or corrected it and when. The detail of each tile follows, with links to cases, the Pressure Index and thresholds.
-Case Management. Cases is the team's review queue, split into two clearly marked queues because the team reviews different things in each. Managers and targets comes first, marked in amber, because it deals with the cause of the pressure. It holds manager and target cases and dismissal cases, and states that the reviewer checks the branch target, how the manager responds to flags and whether dismissals form a pattern, with a deadline of 5 working days and four outcomes. High risk employees follows, marked in blue. It states that the reviewer checks one employee's indicators above peers, the accounts behind them and any dispute, with a deadline of 48 hours and three outcomes, and each case shows its three main drivers. Below are open cases with other reviewers, such as Medium flags with team leads and cases escalated to the Chief Risk Officer or the audit committee, and the most recent decisions. Cases can be exported as a spreadsheet and as a printable audit report.
-Review screens. A High employee flag uses the same review screen as the team lead. A manager and target case shows the branch, the manager, the Pressure Index when the case opened and the deadline. It then shows why the case was raised, with each of the seven Pressure Index signs explained in plain language and the points it added, the sales misconduct dismissals at the branch and the team's current scores. A dismissal case shows the dismissal, the other dismissals at the branch and the team. Both have the same decision panel, with four outcomes. Cleared means no pressure problem was found, coaching means coaching the manager on how they set targets and respond to flags, investigation refers the manager for a formal investigation, and target review sends the branch target for adjustment so the cause of the pressure is fixed.
-The live dashboard shows the key totals, the heat map of each branch's indicators with its Pressure Index next to employee risk, the highest-risk employees and the effectiveness metrics.
-Employee Conduct. Employees lists every employee in the bank, highest score first, with filters by risk level and branch. Each row shows the score, the main driver and who holds any open flag, and opens the employee profile.
-Managers and Targets. The Pressure Index page explains how the index is scored, when a branch is rated High and what happens then. Each branch is listed highest first with its manager, its index on a bar marked with the High threshold, its rating, its main pressure signs and a link to any open manager and target case. Selecting a branch shows all seven signs with plain-language detail.
-Threshold Governance. The thresholds page opens with the three steps of a change, which are that the conduct risk team proposes, the Chief Risk Officer approves and internal audit is alerted, with a note that no one can approve their own proposal and that branch managers and team leads cannot make changes. The four risk level thresholds follow as cards with what each does. The metric weights are shown as bars of the 100 score points each indicator can add, with the customer harm settings below, and the warning sign settings show when internal audit is alerted that detection may be weakening. Beside these, the team proposes a change with a reason, using the false alarm rate on the live dashboard as evidence for adjusting weights. Proposals awaiting the Chief Risk Officer show a suppression check of how many of today's flags the change would weaken. The change log lists every approved, rejected and blocked change with who proposed it, who decided it and the reason, and notes that the log is hash-chained so any edit is detected.
-The monthly summary, speak-up reports, warning signs and effectiveness pages are not shown to the conduct risk team. They belong to the audit committee and internal audit, and the dismissal cases in the queue already carry the dismissal records the team needs. Only the audit committee can read the text of speak-up reports, and the conduct risk team sees only their number in the Pressure Index.
-The Pressure Index is refreshed with the daily 6:00 am data load, in the same way as employee scores, so it reads the same all day and matches the morning briefing. Actions taken during the day, such as a manager starting a review, count from the next data load.
+| Role | Duty | Pages |
+| --- | --- | --- |
+| Employee | Understand their own score, respond to a flag and report pressure | My Dashboard, Disputes and Appeals, My Personal Data, Protected Speak-Up |
+| Team lead | Review Medium flags on their own team within 5 business days | My Team, Reviews, Thresholds, Protected Speak-Up |
+| Conduct risk team | Monitor the whole bank, review High, manager, target and dismissal cases, and propose threshold changes | Morning Briefing, Live Dashboard, Cases, Employees, Pressure Index, Thresholds |
+| Chief Risk Officer | Approve or reject threshold changes and decide High cases escalated after 48 hours | Thresholds, Escalated Cases |
+| Internal audit | Check independently that detection is not weakened and that cases are reviewed on time | Warning Signs, Thresholds, Effectiveness, Cases |
+| Audit committee | Oversee conduct risk for the board, decide appeals and escalated cases, and protect people who speak up | Monthly Summary, Escalated Cases, Appeals, Speak-Up Reports |
 
-4.5.4 Chief Risk Officer
-The Chief Risk Officer approves or rejects threshold changes and decides High cases that the conduct risk team did not review within 48 hours. They have two pages. Thresholds is their home page, where each proposal waiting for them shows the suppression check of how many of today's flags the change would weaken, with approve and reject buttons that each need a note. They cannot propose a change and cannot approve their own proposal. Escalated cases lists only the cases escalated to them, with the same review screen as other reviewers.
+### 4.5.1 Employee
 
-4.5.5 Internal Audit
-Internal audit is the third line and has read-only access to the whole bank. It checks that detection is not being weakened and that flags were reviewed on time and properly decided. It has four pages. Warning signs is its home page and lists every alert, such as a blocked threshold change, with an acknowledge button, the flag volume over time and the hash-chained change log with a button to run the integrity checks. Thresholds shows the current values and every change. Effectiveness shows the five effectiveness measures against their targets, the bank-wide unused account rate over time and false alarms by branch and by metric. Cases lists every case for checking, and cases can be exported with their audit trail.
+Employees are the first line. Their pages are written in plain language so a bank employee can use them without training.
 
-4.5.6 Audit Committee
-The audit committee brings warning signs to board level, decides appeals and escalated cases, and protects people who speak up. It has four pages. The monthly summary is its home page and covers escalated cases and disputes, the branches with the highest Pressure Index, sales misconduct dismissals, complaints linked to employees, speak-up reports, effectiveness and every threshold change, with each case linked to its full audit trail. Escalated cases lists the cases routed to or reported to the committee. Appeals lists employee appeals against case outcomes for the committee to uphold or reject, each with a reason. Speak-up reports shows the anonymous reports in full, newest first, and the committee is the only group that can read them.
+- **My Dashboard** shows the conduct risk score from 0 to 100 as a ring coloured by level, with a reminder that a score is an indicator, not proof. A card shows any open flag with its named reviewer and deadline. A bar splits the score into four areas, which are customer response, account setup, sales activity and customers affected. The seven indicators follow as tiles, each comparing the employee with peers and stating the accounts behind it.
+- **Disputes and Appeals** lists each flag with the indicators that were above peers when it was raised. The employee can dispute an indicator with a statement and evidence while the case is open, or appeal to the audit committee once it has closed with an outcome other than cleared.
+- **My Personal Data** shows every record ConductGuard holds about the employee, grouped by source system. It states that the data is used only for conduct monitoring, never for pay, and that speak-up reports are not linked to their name.
+- **Protected Speak-Up** lets the employee report sales pressure at their branch to the audit committee anonymously.
 
-Demo accounts. The login page lists one account per role in the order of the demonstration, from the business up to the board. The employee, team lead, conduct risk team and audit committee accounts are highlighted because they carry the scenario, and the Chief Risk Officer and internal audit accounts are marked to show if time permits.
+### 4.5.2 Team Lead
+
+Team leads are also the first line, and in the demonstrator the team lead is the branch manager. They see only their own team and use the same score visuals as the employee.
+
+- **My Team** shows how many Medium flags are waiting and when the next is due, splits the team into High, Medium and Low, and lists every team member by score with their main driver and flag. High flags show that they sit with the conduct risk team.
+- **Reviews** is the queue of Medium flags, earliest deadline first, with each flag's main drivers and any dispute. The review screen shows why the flag was raised, the accounts behind it, any dispute and the audit trail. A decision panel guides the team lead to check the evidence, decide any dispute and record an outcome with a reason. The case cannot close while a dispute is open.
+- **Thresholds** shows the four thresholds that decide when the team is flagged. A team lead can submit a request to change one, but the server blocks it, writes it to the permanent log and alerts internal audit.
+- **Protected Speak-Up** works as it does for employees.
+
+### 4.5.3 Conduct Risk Team
+
+The conduct risk team is the second line. It is independent of the sales business, unlike the risk managers at Wells Fargo who answered to the business heads they oversaw. Wells Fargo created a similar central function, the Conduct Management Office, in 2017. Its pages are grouped by the parts of the platform.
+
+- **Morning Briefing** is the team's home page. It opens with today's counts, then the AI summary of likely causes with buttons to confirm or correct it, then the items that need attention today, each linked to where it is handled.
+- **Live Dashboard** shows the key totals, the branch heat map with each Pressure Index, the highest-risk employees and the headline effectiveness metrics.
+- **Cases** splits the team's work into two queues because each reviews something different. Managers and targets comes first because it deals with the cause of the pressure, and holds manager, target and dismissal cases with a deadline of 5 business days and four outcomes. High risk employees follows, with a deadline of 48 hours and three outcomes. Cases with other reviewers and recent decisions are listed below, and all cases can be exported.
+- **Employees** lists every employee in the bank by score, with filters by branch and risk level, and opens each profile.
+- **Pressure Index** lists each branch with its manager, its index against the High threshold, its main pressure signs and a link to any open manager and target case. The review screen for that case explains each of the seven signs and the points it added.
+- **Thresholds** shows the three steps of a change, the current thresholds, the metric weights and the warning sign settings. The team proposes a change with a reason, sees proposals awaiting the Chief Risk Officer with their suppression check, and reads the full change log.
+
+The team sees the number of speak-up reports per branch in the Pressure Index but not their text, which only the audit committee can read.
+
+### 4.5.4 Chief Risk Officer
+
+The Chief Risk Officer is the approver in the two-person rule.
+
+- **Thresholds** is the home page. Each proposal shows how many of today's flags it would weaken, with approve and reject buttons that each need a note. The Chief Risk Officer cannot propose a change or approve their own proposal.
+- **Escalated Cases** lists only the High cases escalated after the 48-hour deadline, using the same review screen as other reviewers.
+
+### 4.5.5 Internal Audit
+
+Internal audit is the third line and has read-only access to the whole bank.
+
+- **Warning Signs** is the home page. It lists every alert, such as a blocked threshold change, with a button to acknowledge it, the flag volume over time, and the hash-chained change log with a button to check that it has not been edited.
+- **Thresholds** shows the current values and every change.
+- **Effectiveness** shows all five effectiveness metrics against their targets, the bank-wide unused account rate over time and false alarms by branch and by metric.
+- **Cases** lists every case for checking, and cases can be exported with their audit trail.
+
+### 4.5.6 Audit Committee
+
+The audit committee brings conduct risk to board level.
+
+- **Monthly Summary** is the home page and covers the items in Section 4.4.3, each linked to its record.
+- **Escalated Cases** lists the cases routed to or reported to the committee, such as repeat High cases and cases involving a speak-up reporter.
+- **Appeals** lists employee appeals against case outcomes for the committee to uphold or reject, each with a reason.
+- **Speak-Up Reports** shows the anonymous reports in full, and the committee is the only group that can read them.
+
+## 4.6 Safeguards and Limitations
+
+| Limitation | Safeguard |
+| --- | --- |
+| A high score is not proof of misconduct | Every flag has a named reviewer, a dispute route and an appeal to the audit committee |
+| Some branches naturally score higher | Scores compare peers in the same role across the bank and within the branch, and false alarms are tracked |
+| Staff and managers may game the metrics | Weights are reviewed through Threshold Governance, and the Pressure Index looks at managers and targets as well as staff |
+| The AI summary can be wrong | It stays an unconfirmed draft until a reviewer confirms or corrects it, and it never receives employee names |
+| Monitoring may feel intrusive | Only conduct data is used, staff can see everything held about them, and scores never set pay |

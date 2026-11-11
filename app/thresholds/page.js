@@ -26,7 +26,7 @@ async function TeamLeadThresholds() {
         level="monitoring"
         eyebrow="Threshold Governance"
         title="Thresholds"
-        description="See the current thresholds that decide when an employee or branch on your team is rated Medium or High."
+        description="See the thresholds that decide when someone on your team is flagged, which only the conduct risk team can propose changing."
       />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {levels.map((c) => (
@@ -37,9 +37,25 @@ async function TeamLeadThresholds() {
           </Card>
         ))}
       </div>
-      <Callout tone="neutral" icon="lock">
-        These values are read-only for team leads. Only the conduct risk team can propose a change, and the Chief Risk Officer must approve it.
-      </Callout>
+      <div className="grid gap-5 lg:grid-cols-[1fr_1.2fr]">
+        <Card className="self-start">
+          <CardHeader icon="sliders" title="Request a change" subtitle="Branches cannot change thresholds. Every request is written to the permanent log and sent to internal audit." />
+          <ActionForm
+            url="/api/thresholds/requests"
+            submitLabel="Submit request"
+            variant="secondary"
+            resultTone="amber"
+            fields={[
+              { name: 'configKey', label: 'Setting', type: 'select', defaultValue: 'level_high', options: levels.map((c) => ({ value: c.key, label: `${c.label} (now ${c.value})` })) },
+              { name: 'newValue', label: 'New value', type: 'number', step: 'any', required: true },
+              { name: 'reason', label: 'Reason', type: 'textarea', rows: 2, required: true },
+            ]}
+          />
+        </Card>
+        <Callout tone="neutral" icon="lock" className="self-start">
+          Only the conduct risk team can propose a change to a threshold, and the Chief Risk Officer must approve it before it takes effect.
+        </Callout>
+      </div>
     </div>
   );
 }
@@ -238,7 +254,7 @@ export default async function ThresholdsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Thresholds and Weights" description="See the current thresholds and weights, propose or approve a change, and check every change that was proposed, approved or blocked." />
+      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Thresholds and Weights" description={user.role === 'CHIEF_RISK_OFFICER' ? 'Approve or reject proposed threshold and weight changes after checking how many current flags each would weaken.' : 'Check that every threshold and weight change was approved by the Chief Risk Officer and that every blocked attempt was logged.'} />
       <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
         <Card>
           <CardHeader icon="sliders" title="Current settings" />

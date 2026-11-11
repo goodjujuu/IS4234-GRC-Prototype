@@ -38,7 +38,7 @@ export function EmployeeFlagCase({ c, now, canAct, thresholds }) {
         level="employee"
         eyebrow={`${c.ref}, employee flag`}
         title={`Review: ${c.employee?.name}`}
-        description="Check why this employee was flagged and the accounts behind it, then record your decision with a reason."
+        description={canAct ? 'Check why this employee was flagged and the accounts behind it, then record your decision with a reason.' : 'Check why this employee was flagged, the accounts behind it and how the case was handled.'}
         actions={<Link href={`/employees/${c.employeeId}`} className="text-sm font-medium text-indigo-700 hover:underline">Open employee profile</Link>}
       />
 

@@ -216,13 +216,16 @@ recognise a reporter who is later flagged or dismissed.
 
 ## Demo scenario (video must be ≤5 minutes)
 
-1. Conduct risk opens the morning briefing: Branch 12 moved to High after unused accounts nearly
-   doubled following a target increase. The reviewer confirms or corrects the AI draft.
-2. Pressure Index shows about 80% of Branch 12 staff missing targets → manager and target flagged.
-3. A flagged employee logs in, reads the explanation, disputes and reports pressure anonymously.
-4. The branch manager tries to raise the High threshold from 70 to 85 → blocked, logged, internal
-   audit alerted.
-5. The case appears in the audit committee monthly summary with its full audit trail.
+The walkthrough is in `USER_GUIDE.md`, one account per role from the business up to the board:
+
+1. Employee (Maya) reads why she was flagged, disputes and reports pressure anonymously.
+2. Branch manager (Daniel) requests raising the High threshold from 70 to 85 → blocked, logged,
+   internal audit alerted.
+3. Conduct risk (Priya) confirms the morning briefing's AI summary, sees Branch 12 High on the
+   Pressure Index (about 80% of staff missing target) and sends the target for review.
+4. Chief Risk Officer (Rosalind, optional) approves or rejects a proposal.
+5. Internal audit (Samuel, optional) acknowledges the blocked-change alert and verifies the log.
+6. Audit committee (Margaret) sees the case in the monthly summary with its full audit trail.
 
 The seed data must make this scenario reproducible.
 

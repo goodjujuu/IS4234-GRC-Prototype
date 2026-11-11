@@ -44,23 +44,9 @@ Every account uses the password `demo1234`. The login page also has one-click bu
 
 ## Demo scenario
 
-1. **Priya**, Morning briefing. Branch 12 moved to High overnight, and unused accounts nearly doubled
-   following target increases. Confirm or correct the AI draft.
-2. **Priya**, Pressure Index. 80% of Branch 12 staff are missing the target, so the manager and the
-   target are flagged.
-3. **Maya**, My dashboard. Read the explanation, dispute the flag with evidence, then report pressure
-   anonymously.
-4. **Daniel**, Thresholds. Try to raise the High risk threshold from 70 to 85. It is blocked and
-   logged, and internal audit is alerted.
-5. **Margaret**, Monthly summary. The case appears with its full audit trail.
-
-Other things to show:
-
-- **Second High case.** Isla Brennan had a High case 24 days ago, so her new one goes to the audit
-  committee.
-- **Maker and checker.** Priya proposes a change on Thresholds, and Rosalind approves or rejects it.
-- **Tamper checks.** On Warning signs, Run checks verifies the hash-chained log and flags any
-  threshold change that skipped approval.
+The step-by-step walkthrough is in [`USER_GUIDE.md`](USER_GUIDE.md). It follows one problem from the
+branch up to the board: Maya (employee), Daniel (team lead), Priya (conduct risk), Rosalind (Chief
+Risk Officer, optional), Samuel (internal audit, optional) and Margaret (audit committee).
 
 `npm run seed` restores the exact starting state.
 

@@ -48,7 +48,7 @@ export default async function CasePage({ params }) {
         level="employee"
         eyebrow={`${c.ref}, ${CASE_KINDS[c.kind]}`}
         title={c.title}
-        description="The evidence, audit trail and review actions for this case."
+        description={canAct ? 'Check the evidence for this case and record your decision with a reason.' : 'Check the evidence for this case and how it was handled, with its full audit trail.'}
         actions={showEmployeeLink && <Link href={`/employees/${c.employeeId}`} className="text-sm font-medium text-indigo-700 hover:underline">Open employee profile</Link>}
       />
       <div className="flex flex-wrap items-center gap-2 text-[13px]">

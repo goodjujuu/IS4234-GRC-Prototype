@@ -12,7 +12,7 @@ export default async function SpeakUpReportsPage() {
   });
   return (
     <div className="space-y-6">
-      <PageHeader level="manager" eyebrow="Managers and Targets" title="Speak-Up Reports" description="Anonymous reports from branch staff, newest first." />
+      <PageHeader level="manager" eyebrow="Managers and Targets" title="Speak-Up Reports" description="Read anonymous pressure reports from branch staff and watch for any sign that a reporter is being targeted." />
       <Card>
         <CardHeader icon="megaphone" title={`Reports (${reports.length})`} />
         <ul className="divide-y divide-slate-100">

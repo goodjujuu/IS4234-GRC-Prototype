@@ -10,7 +10,7 @@ export default async function EffectivenessPage() {
   const e = await getEffectiveness();
   return (
     <div className="space-y-6">
-      <PageHeader level="monitoring" eyebrow="Risk Reporting" title="Effectiveness" description="How well monitoring is working, measured against its targets." />
+      <PageHeader level="monitoring" eyebrow="Risk Reporting" title="Effectiveness" description="Test whether flags are reviewed on time, decisions hold up and misconduct is falling, measured against each target." />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Flags reviewed within deadline" value={percent(e.pctOnTime)} hint={`${e.onTime} of ${e.dueCount} flags due. Target at least 95%.`} tone={e.pctOnTime >= 0.95 ? 'green' : 'amber'} />
         <StatCard label="Average time to resolve a case" value={formatHours(e.avgHours)} hint={e.byLevel.map((l) => `${LEVEL_NAME[l.level]} ${formatHours(l.avgHours)}, deadline ${formatHours(l.deadlineHours)}`).join('. ')} />

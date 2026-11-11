@@ -18,7 +18,7 @@ export default async function OverviewPage() {
   const [{ heat, totals, topEmployees }, e] = await Promise.all([getOverview(), getEffectiveness()]);
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Risk Reporting" title="Live Dashboard" description="See where conduct risk sits across the bank today, with each branch's Pressure Index next to its employee risk and the highest risk listed first." />
+      <PageHeader eyebrow="Risk Reporting" title="Live Dashboard" description="Monitor where conduct risk sits across the bank, with each branch's Pressure Index beside its employee risk and the highest risk first." />
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         <StatCard label="High risk employees" value={totals.high} tone="red" hint={`of ${totals.staff} scored`} />
         <StatCard label="Medium risk employees" value={totals.medium} tone="amber" />

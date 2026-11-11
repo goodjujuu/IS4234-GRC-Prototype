@@ -17,7 +17,7 @@ export default async function DisputesPage() {
       <PageHeader
         eyebrow="Case Management"
         title="Appeals"
-        description="Decide employee appeals against case outcomes, which come straight to the committee."
+        description="Decide employee appeals against case outcomes as the final review, independent of the business and the conduct risk team."
       />
       <Card>
         <CardHeader icon="filter" title={`Waiting for your decision (${pending.length})`} />

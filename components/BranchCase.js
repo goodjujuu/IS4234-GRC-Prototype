@@ -88,8 +88,8 @@ export function BranchCase({ c, now, canAct, team, dismissals, pressureNow, conf
         eyebrow={`${c.ref}, ${CASE_KINDS[c.kind].toLowerCase()}`}
         title={isPressure ? `Review: Branch ${c.branch.code} manager and target` : `Review: dismissal at Branch ${c.branch.code}`}
         description={isPressure
-          ? 'Check whether the manager and the sales target are creating pressure behind the employee flags, then record your decision.'
-          : 'Check whether this dismissal is part of a wider pattern at the branch, then record your decision.'}
+          ? `Check whether the manager and the sales target are creating pressure behind the employee flags${canAct ? ', then record your decision' : ''}.`
+          : `Check whether this dismissal is part of a wider pattern at the branch${canAct ? ', then record your decision' : ''}.`}
         actions={<Link href="/pressure" className="text-sm font-medium text-indigo-700 hover:underline">Open the Pressure Index</Link>}
       />
 

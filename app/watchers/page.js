@@ -19,7 +19,7 @@ export default async function WatchersPage() {
   const open = alerts.filter((a) => a.status === 'OPEN');
   return (
     <div className="space-y-6">
-      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Warning Signs" description="Signs that detection may be being weakened, and the permanent log of every threshold change." />
+      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Warning Signs" description="Investigate signs that detection is being weakened, acknowledge each one and verify that the change log has not been edited." />
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Open warning signs" value={open.length} tone={open.length ? 'amber' : 'green'} />
         <StatCard label="Unapproved threshold changes" value={effectiveness.unapproved.length} tone={effectiveness.unapproved.length ? 'red' : 'green'} hint="Target zero" />
