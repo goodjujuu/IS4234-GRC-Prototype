@@ -16,8 +16,6 @@ pressure created by managers and targets, not only the behaviour of employees.
    committee summary.
 
 `solution.md` is the source of truth for the design, and `CLAUDE.md` summarises it for building.
-`docs/PROTOTYPE_OVERVIEW.md` and `docs/M1..M7` describe an earlier design and are kept for reference
-only.
 
 ## Setup
 
@@ -38,11 +36,8 @@ Every account uses the password `demo1234`. The login page also has one-click bu
 | Role | Name | Email |
 | --- | --- | --- |
 | Employee (High risk) | Maya Lindqvist | `maya.lindqvist@conductguard.demo` |
-| Employee (Low risk) | Mei Tanaka | `mei.tanaka@conductguard.demo` |
 | Team lead, Branch 12 | Daniel Okafor | `daniel.okafor@conductguard.demo` |
-| Team lead, Branch 7 | Victor Nakamura | `victor.nakamura@conductguard.demo` |
 | Conduct risk analyst | Priya Raman | `priya.raman@conductguard.demo` |
-| Head of Conduct Risk | Helen Cho | `helen.cho@conductguard.demo` |
 | Chief Risk Officer | Rosalind Keane | `rosalind.keane@conductguard.demo` |
 | Internal auditor | Samuel Ito | `samuel.ito@conductguard.demo` |
 | Audit committee chair | Margaret Flynn | `margaret.flynn@conductguard.demo` |

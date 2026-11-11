@@ -10,7 +10,7 @@ import { requireUser } from '@/lib/session';
 const short = (hash) => (hash ? `${hash.slice(0, 8)}…${hash.slice(-4)}` : 'Genesis');
 
 export default async function WatchersPage() {
-  await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  await requireUser(['INTERNAL_AUDIT']);
   const [alerts, chain, effectiveness] = await Promise.all([
     prisma.watcherAlert.findMany({ orderBy: { createdAt: 'desc' } }),
     verifyChain(prisma),
@@ -19,7 +19,7 @@ export default async function WatchersPage() {
   const open = alerts.filter((a) => a.status === 'OPEN');
   return (
     <div className="space-y-6">
-      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Warning signs" description="Signs that detection may be being weakened, and the permanent log of every threshold change." />
+      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Warning Signs" description="Signs that detection may be being weakened, and the permanent log of every threshold change." />
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Open warning signs" value={open.length} tone={open.length ? 'amber' : 'green'} />
         <StatCard label="Unapproved threshold changes" value={effectiveness.unapproved.length} tone={effectiveness.unapproved.length ? 'red' : 'green'} hint="Target zero" />

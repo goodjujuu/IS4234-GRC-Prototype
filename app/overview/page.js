@@ -14,11 +14,11 @@ function heatClass(z) {
 }
 
 export default async function OverviewPage() {
-  const user = await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   const [{ heat, totals, topEmployees }, e] = await Promise.all([getOverview(), getEffectiveness()]);
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Risk Reporting" title="Live dashboard" description="See where conduct risk sits across the bank today, with each branch's Pressure Index next to its employee risk and the highest risk listed first." />
+      <PageHeader eyebrow="Risk Reporting" title="Live Dashboard" description="See where conduct risk sits across the bank today, with each branch's Pressure Index next to its employee risk and the highest risk listed first." />
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         <StatCard label="High risk employees" value={totals.high} tone="red" hint={`of ${totals.staff} scored`} />
         <StatCard label="Medium risk employees" value={totals.medium} tone="amber" />
@@ -97,7 +97,6 @@ export default async function OverviewPage() {
               <div><dt className="text-xs text-slate-500">False alarm rate</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.falseAlarmRate)}</dd></div>
               <div><dt className="text-xs text-slate-500">Unapproved changes, target 0</dt><dd className="mt-0.5 font-semibold tabular-nums">{e.unapproved.length}</dd></div>
             </dl>
-            {user.role !== 'CONDUCT_RISK' && <Link href="/effectiveness" className="mt-3 inline-block text-[13px] font-medium text-indigo-700 hover:underline">See all effectiveness metrics</Link>}
           </Card>
         </div>
       </div>

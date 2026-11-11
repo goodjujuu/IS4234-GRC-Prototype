@@ -50,7 +50,7 @@ export default async function MyDataPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader level="employee" eyebrow="My conduct record" title="My personal data" description="Open any section to see every record ConductGuard holds about you and where it comes from." />
+      <PageHeader level="employee" eyebrow="My Conduct Record" title="My Personal Data" description="Open any section to see every record ConductGuard holds about you and where it comes from." />
 
       <Card>
         <dl className="grid gap-4 text-sm sm:grid-cols-3">

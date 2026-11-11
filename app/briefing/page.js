@@ -49,7 +49,7 @@ export default async function BriefingPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Risk Reporting"
-        title="Morning briefing"
+        title="Morning Briefing"
         description="Start the day with what changed overnight across the bank, and confirm or correct the AI summary before anyone acts on it."
         actions={canAct && <ActionButton url="/api/briefing" icon="refresh">Generate again</ActionButton>}
       />

@@ -70,7 +70,7 @@ async function ConductRiskThresholds() {
 
   return (
     <div className="space-y-6">
-      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Thresholds and weights" description="Propose a change to a threshold or weight for the Chief Risk Officer to approve, and check every change that was proposed, approved or blocked." />
+      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Thresholds and Weights" description="Propose a change to a threshold or weight for the Chief Risk Officer to approve, and check every change that was proposed, approved or blocked." />
 
       <Card>
         <div className="grid gap-4 md:grid-cols-3">
@@ -238,7 +238,7 @@ export default async function ThresholdsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Thresholds and weights" description="See the current thresholds and weights, propose or approve a change, and check every change that was proposed, approved or blocked." />
+      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Thresholds and Weights" description="See the current thresholds and weights, propose or approve a change, and check every change that was proposed, approved or blocked." />
       <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
         <Card>
           <CardHeader icon="sliders" title="Current settings" />

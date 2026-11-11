@@ -55,7 +55,7 @@ export default async function TeamPage() {
       <PageHeader
         level="employee"
         eyebrow={`Branch ${user.branch.code} ${user.branch.name}`}
-        title="My team"
+        title="My Team"
         description="See how your team's conduct risk scores compare and review the Medium flags assigned to you."
       />
 

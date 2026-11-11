@@ -8,33 +8,27 @@ export const LEVEL_DOTS = {
 
 const OPEN = (title, items) => ({ level: 'overview', title, items });
 
-const reporting = (extra = []) => OPEN('Risk reporting', [
-  { href: '/overview', label: 'Live dashboard', icon: 'chart' },
-  ...extra,
-  { href: '/committee', label: 'Monthly summary', icon: 'layers' },
-]);
-
 export const NAV_BY_ROLE = {
   EMPLOYEE: [
-    { level: 'employee', title: 'My conduct record', items: [
-      { href: '/me', label: 'My dashboard', icon: 'user' },
-      { href: '/me/disputes', label: 'Disputes and appeals', icon: 'filter' },
-      { href: '/me/data', label: 'My personal data', icon: 'eye' },
+    { level: 'employee', title: 'My Conduct Record', items: [
+      { href: '/me', label: 'My Dashboard', icon: 'user' },
+      { href: '/me/disputes', label: 'Disputes and Appeals', icon: 'filter' },
+      { href: '/me/data', label: 'My Personal Data', icon: 'eye' },
     ] },
-    { level: 'manager', title: 'Speak up', items: [{ href: '/speak-up', label: 'Protected speak-up', icon: 'megaphone' }] },
+    { level: 'manager', title: 'Speak Up', items: [{ href: '/speak-up', label: 'Protected Speak-Up', icon: 'megaphone' }] },
   ],
   TEAM_LEAD: [
-    { level: 'employee', title: 'My team', items: [
-      { href: '/team', label: 'My team', icon: 'user' },
+    { level: 'employee', title: 'My Team', items: [
+      { href: '/team', label: 'My Team', icon: 'user' },
       { href: '/cases', label: 'Reviews', icon: 'briefcase' },
     ] },
     { level: 'monitoring', title: 'Threshold Governance', items: [{ href: '/thresholds', label: 'Thresholds', icon: 'sliders' }] },
-    { level: 'manager', title: 'Speak up', items: [{ href: '/speak-up', label: 'Protected speak-up', icon: 'megaphone' }] },
+    { level: 'manager', title: 'Speak Up', items: [{ href: '/speak-up', label: 'Protected Speak-Up', icon: 'megaphone' }] },
   ],
   CONDUCT_RISK: [
     OPEN('Risk Reporting', [
-      { href: '/briefing', label: 'Morning briefing', icon: 'sparkles' },
-      { href: '/overview', label: 'Live dashboard', icon: 'chart' },
+      { href: '/briefing', label: 'Morning Briefing', icon: 'sparkles' },
+      { href: '/overview', label: 'Live Dashboard', icon: 'chart' },
     ]),
     OPEN('Case Management', [{ href: '/cases', label: 'Cases', icon: 'briefcase' }]),
     { level: 'employee', title: 'Employee Conduct', items: [{ href: '/employees', label: 'Employees', icon: 'user' }] },
@@ -42,45 +36,23 @@ export const NAV_BY_ROLE = {
     { level: 'monitoring', title: 'Threshold Governance', items: [{ href: '/thresholds', label: 'Thresholds', icon: 'sliders' }] },
   ],
   CHIEF_RISK_OFFICER: [
-    { level: 'monitoring', title: 'Threshold Governance', items: [
-      { href: '/thresholds', label: 'Thresholds', icon: 'sliders' },
-      { href: '/watchers', label: 'Warning signs', icon: 'shield' },
-      { href: '/effectiveness', label: 'Effectiveness', icon: 'checkCircle' },
-    ] },
-    { level: 'employee', title: 'Cases', items: [
-      { href: '/cases', label: 'Cases', icon: 'briefcase' },
-      { href: '/disputes', label: 'Disputes', icon: 'filter' },
-      { href: '/employees', label: 'Employee profiles', icon: 'user' },
-    ] },
-    reporting([{ href: '/pressure', label: 'Pressure Index', icon: 'radar' }]),
+    { level: 'monitoring', title: 'Threshold Governance', items: [{ href: '/thresholds', label: 'Thresholds', icon: 'sliders' }] },
+    OPEN('Case Management', [{ href: '/cases', label: 'Escalated Cases', icon: 'briefcase' }]),
   ],
   INTERNAL_AUDIT: [
     { level: 'monitoring', title: 'Threshold Governance', items: [
-      { href: '/watchers', label: 'Warning signs', icon: 'shield' },
+      { href: '/watchers', label: 'Warning Signs', icon: 'shield' },
       { href: '/thresholds', label: 'Thresholds', icon: 'sliders' },
-      { href: '/effectiveness', label: 'Effectiveness', icon: 'checkCircle' },
     ] },
-    reporting([
-      { href: '/briefing', label: 'Morning briefing', icon: 'sparkles' },
-      { href: '/cases', label: 'Cases', icon: 'briefcase' },
-      { href: '/employees', label: 'Employee profiles', icon: 'user' },
-      { href: '/pressure', label: 'Pressure Index', icon: 'radar' },
-    ]),
+    OPEN('Risk Reporting', [{ href: '/effectiveness', label: 'Effectiveness', icon: 'checkCircle' }]),
+    OPEN('Case Management', [{ href: '/cases', label: 'Cases', icon: 'briefcase' }]),
   ],
   AUDIT_COMMITTEE: [
-    OPEN('Committee', [
-      { href: '/committee', label: 'Monthly summary', icon: 'layers' },
+    OPEN('Risk Reporting', [{ href: '/committee', label: 'Monthly Summary', icon: 'layers' }]),
+    OPEN('Case Management', [
+      { href: '/cases', label: 'Escalated Cases', icon: 'briefcase' },
       { href: '/disputes', label: 'Appeals', icon: 'filter' },
-      { href: '/cases', label: 'Escalated cases', icon: 'briefcase' },
     ]),
-    OPEN('Evidence', [
-      { href: '/overview', label: 'Live dashboard', icon: 'chart' },
-      { href: '/pressure', label: 'Pressure Index', icon: 'radar' },
-      { href: '/employees', label: 'Employee profiles', icon: 'user' },
-      { href: '/dismissals', label: 'Dismissals', icon: 'building' },
-      { href: '/speak-up/reports', label: 'Speak-up reports', icon: 'megaphone' },
-      { href: '/watchers', label: 'Warning signs', icon: 'shield' },
-      { href: '/effectiveness', label: 'Effectiveness', icon: 'checkCircle' },
-    ]),
+    { level: 'manager', title: 'Managers and Targets', items: [{ href: '/speak-up/reports', label: 'Speak-Up Reports', icon: 'megaphone' }] },
   ],
 };

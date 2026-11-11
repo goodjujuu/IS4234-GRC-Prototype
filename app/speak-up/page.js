@@ -7,7 +7,7 @@ export default async function SpeakUpPage() {
   await requireUser(['EMPLOYEE', 'TEAM_LEAD']);
   return (
     <div className="space-y-6">
-      <PageHeader level="manager" eyebrow="Protected Speak-Up Link" title="Report pressure, anonymously" description="Send a concern about pressure to the conduct risk team and audit committee, without your name and without your manager seeing it." />
+      <PageHeader level="manager" eyebrow="Protected Speak-Up Link" title="Report pressure, anonymously" description="Send a concern about pressure to the audit committee, without your name and without your manager seeing it." />
       <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
         <Card>
           <CardHeader icon="megaphone" title="Your report" />

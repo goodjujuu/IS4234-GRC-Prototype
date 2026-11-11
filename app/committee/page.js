@@ -15,7 +15,7 @@ export default async function CommitteePage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow={`Audit committee, ${formatMonth(s.now)}`}
-        title="Monthly summary"
+        title="Monthly Summary"
         description="This month's escalated cases, branch pressure, dismissals, complaints, speak-up reports and threshold changes, each linked to its record."
         actions={
           <>

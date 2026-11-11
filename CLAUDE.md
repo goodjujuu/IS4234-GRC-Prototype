@@ -5,9 +5,7 @@ cross-selling scandal (GRC case study). The product is **ConductGuard**, an obse
 for conduct risk in retail banking.
 
 **`solution.md` is the source of truth for what the application does, and this file summarises it
-for building.** If the two disagree, `solution.md` wins. `docs/PROTOTYPE_OVERVIEW.md` and
-`docs/M1..M7` describe an earlier, superseded design. Treat them as historical reference only and do
-not build to them.
+for building.** If the two disagree, `solution.md` wins.
 
 ## Stack and layout
 

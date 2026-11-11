@@ -11,9 +11,9 @@ import { prisma } from '@/lib/prisma';
 import { requireUser } from '@/lib/session';
 
 const INTRO = {
-  CHIEF_RISK_OFFICER: 'Every case across the bank, including those escalated to you after missing their deadline.',
-  INTERNAL_AUDIT: 'Every case across the bank, read-only, with its deadline and outcome.',
-  AUDIT_COMMITTEE: 'Cases reported or escalated to the audit committee.',
+  CHIEF_RISK_OFFICER: 'Decide the High cases escalated to you after the conduct risk team missed the 48-hour deadline.',
+  INTERNAL_AUDIT: 'Check every case across the bank, read-only, for whether it was reviewed on time and properly decided.',
+  AUDIT_COMMITTEE: 'Decide the cases escalated to the committee and read those reported to it.',
 };
 
 // The team lead's review queue: one card per Medium flag, with what is driving it.
@@ -269,15 +269,15 @@ export default async function CasesPage() {
   if (user.role === 'TEAM_LEAD') return <TeamLeadReviews user={user} />;
   if (user.role === 'CONDUCT_RISK') return <ConductRiskCases user={user} />;
   const [all, now] = await Promise.all([prisma.case.findMany({ orderBy: [{ deadlineAt: 'asc' }] }), getNow(prisma)]);
-  const cases = all.filter((c) => canViewCase(user, c));
+  // The Chief Risk Officer only handles cases escalated to them.
+  const cases = all.filter((c) => canViewCase(user, c) && (user.role !== 'CHIEF_RISK_OFFICER' || c.tier === 'CHIEF_RISK_OFFICER'));
   const open = cases.filter((c) => c.status !== 'CLOSED');
   const closed = cases.filter((c) => c.status === 'CLOSED').sort((a, b) => b.closedAt - a.closedAt);
   return (
     <div className="space-y-6">
       <PageHeader
-        level="employee"
-        eyebrow="Review"
-        title="Cases"
+        eyebrow="Case Management"
+        title={user.role === 'INTERNAL_AUDIT' ? 'Cases' : 'Escalated Cases'}
         description={INTRO[user.role]}
         actions={exportLinks}
       />

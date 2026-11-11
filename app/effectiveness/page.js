@@ -6,11 +6,11 @@ import { requireUser } from '@/lib/session';
 const LEVEL_NAME = { MEDIUM: 'Medium', HIGH: 'High' };
 
 export default async function EffectivenessPage() {
-  await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  await requireUser(['INTERNAL_AUDIT']);
   const e = await getEffectiveness();
   return (
     <div className="space-y-6">
-      <PageHeader level="monitoring" eyebrow="Risk reporting" title="Effectiveness" description="How well monitoring is working, measured against its targets." />
+      <PageHeader level="monitoring" eyebrow="Risk Reporting" title="Effectiveness" description="How well monitoring is working, measured against its targets." />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Flags reviewed within deadline" value={percent(e.pctOnTime)} hint={`${e.onTime} of ${e.dueCount} flags due. Target at least 95%.`} tone={e.pctOnTime >= 0.95 ? 'green' : 'amber'} />
         <StatCard label="Average time to resolve a case" value={formatHours(e.avgHours)} hint={e.byLevel.map((l) => `${LEVEL_NAME[l.level]} ${formatHours(l.avgHours)}, deadline ${formatHours(l.deadlineHours)}`).join('. ')} />

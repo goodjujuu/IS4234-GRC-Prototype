@@ -7,6 +7,17 @@ import { ROLE_LABELS } from '@/lib/format';
 
 const PASSWORD = 'demo1234';
 
+// The accounts the demo walks through, from the business up to the board.
+// Core steps carry the story. The others add depth if time permits.
+const WALKTHROUGH = [
+  { email: 'maya.lindqvist@conductguard.demo', line: 'Business', core: true, show: 'See her High flag and why it was raised, dispute it and report sales pressure anonymously' },
+  { email: 'daniel.okafor@conductguard.demo', line: 'Business', core: true, show: 'Her branch manager tries to raise the High threshold from 70 to 85, which is blocked and logged' },
+  { email: 'priya.raman@conductguard.demo', line: 'Risk oversight', core: true, show: 'Morning briefing shows Branch 12 at High, then the Pressure Index and the manager and target case' },
+  { email: 'rosalind.keane@conductguard.demo', line: 'Risk oversight', core: false, show: 'Approves or rejects a threshold proposal, and cannot approve her own' },
+  { email: 'samuel.ito@conductguard.demo', line: 'Independent assurance', core: false, show: 'Warning signs shows the blocked threshold change, sent to internal audit and not the business' },
+  { email: 'margaret.flynn@conductguard.demo', line: 'Board oversight', core: true, show: 'Monthly summary, with the case and its full audit trail' },
+];
+
 export default function LoginPanel({ accounts }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,7 +36,7 @@ export default function LoginPanel({ accounts }) {
     window.location.href = data.redirect;
   }
 
-  const roles = Object.keys(ROLE_LABELS);
+  const walkthrough = WALKTHROUGH.map((w) => ({ ...w, account: accounts.find((a) => a.email === w.email) })).filter((w) => w.account);
   return (
     <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[1fr_1.4fr]">
       <div>
@@ -47,31 +58,33 @@ export default function LoginPanel({ accounts }) {
           <Button type="submit" disabled={busy} className="w-full">Log in</Button>
         </form>
       </div>
-      <div>
-        <h2 className="text-[15px] font-semibold text-slate-900">Or choose a demo account</h2>
-        <div className="mt-3 space-y-4">
-          {roles.map((role) => (
-            <div key={role}>
-              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{ROLE_LABELS[role]}</p>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {accounts.filter((a) => a.role === role).map((a) => (
-                  <button
-                    key={a.email}
-                    type="button"
-                    disabled={busy}
-                    onClick={() => logIn(a.email, PASSWORD)}
-                    className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left shadow-card transition hover:border-indigo-300 hover:bg-indigo-50/40 disabled:opacity-50"
-                  >
-                    <span className="min-w-0">
-                      <span className="block truncate text-sm font-semibold text-slate-800">{a.name}</span>
-                      <span className="block truncate text-xs text-slate-500">{a.title}</span>
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-[15px] font-semibold text-slate-900">Demo walkthrough</h2>
+          <p className="mt-0.5 text-[13px] text-slate-500">One account per role, from the business up to the board.</p>
+          <ol className="mt-3 space-y-2">
+            {walkthrough.map(({ account: a, line, core, show }, i) => (
+              <li key={a.email}>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => logIn(a.email, PASSWORD)}
+                  className={`flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left shadow-card transition disabled:opacity-50 ${core ? 'border-indigo-200 bg-indigo-50/50 hover:border-indigo-400 hover:bg-indigo-50' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'}`}
+                >
+                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold ${core ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'}`}>{i + 1}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex flex-wrap items-baseline gap-x-2">
+                      <span className="text-sm font-semibold text-slate-900">{a.name}</span>
+                      <span className={`text-xs font-medium ${core ? 'text-indigo-700' : 'text-slate-500'}`}>{ROLE_LABELS[a.role]} · {line}</span>
+                      {!core && <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500">If time permits</span>}
                     </span>
-                    <Icon name="arrowRight" className="h-4 w-4 shrink-0 text-slate-400" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
+                    <span className="mt-0.5 block text-[12px] leading-snug text-slate-600">{show}</span>
+                  </span>
+                  <Icon name="arrowRight" className={`h-4 w-4 shrink-0 ${core ? 'text-indigo-400' : 'text-slate-400'}`} />
+                </button>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </div>

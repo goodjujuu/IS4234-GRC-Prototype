@@ -165,8 +165,8 @@ export default async function MyDisputes() {
     <div className="space-y-8">
       <PageHeader
         level="employee"
-        eyebrow="My conduct record"
-        title="Disputes and appeals"
+        eyebrow="My Conduct Record"
+        title="Disputes and Appeals"
         description="Review why you were flagged, dispute a flag with your reviewer, or appeal a decided outcome to the audit committee."
       />
 

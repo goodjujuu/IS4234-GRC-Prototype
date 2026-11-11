@@ -127,7 +127,7 @@ export default async function CasePage({ params }) {
           )}
           {c.disputes.length > 0 && (
             <Card>
-              <CardHeader icon="filter" title="Disputes and appeals" />
+              <CardHeader icon="filter" title="Disputes and Appeals" />
               {c.disputes.map((d) => (
                 <div key={d.id} className="text-[13px] text-slate-600">
                   <p><span className="font-semibold text-slate-800">{d.employee.name}</span> {d.type === 'APPEAL' ? 'appealed the outcome' : `disputes ${METRICS.find((m) => m.key === d.metricKey)?.label.toLowerCase()}`}. <Badge tone="neutral">{d.status}</Badge></p>
@@ -136,7 +136,7 @@ export default async function CasePage({ params }) {
                   {d.decisionNote && <p className="mt-1">Decision by {d.decidedBy}: {d.decisionNote}</p>}
                 </div>
               ))}
-              {['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'AUDIT_COMMITTEE'].includes(user.role) && <Link href="/disputes" className="mt-2 inline-block text-[13px] font-medium text-indigo-700 hover:underline">Open disputes</Link>}
+              {user.role === 'AUDIT_COMMITTEE' && <Link href="/disputes" className="mt-2 inline-block text-[13px] font-medium text-indigo-700 hover:underline">Open appeals</Link>}
             </Card>
           )}
           <Card>

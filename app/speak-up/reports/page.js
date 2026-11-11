@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { requireUser } from '@/lib/session';
 
 export default async function SpeakUpReportsPage() {
-  await requireUser(['CONDUCT_RISK', 'AUDIT_COMMITTEE']);
+  await requireUser(['AUDIT_COMMITTEE']);
   // The seal is deliberately left out of the query, so it cannot reach this page.
   const reports = await prisma.speakUpReport.findMany({
     select: { id: true, trackingCode: true, theme: true, message: true, createdAt: true, branch: { select: { code: true, name: true } } },
@@ -12,7 +12,7 @@ export default async function SpeakUpReportsPage() {
   });
   return (
     <div className="space-y-6">
-      <PageHeader level="manager" eyebrow="Managers and targets" title="Speak-up reports" description="Anonymous reports from branch staff, newest first." />
+      <PageHeader level="manager" eyebrow="Managers and Targets" title="Speak-Up Reports" description="Anonymous reports from branch staff, newest first." />
       <Card>
         <CardHeader icon="megaphone" title={`Reports (${reports.length})`} />
         <ul className="divide-y divide-slate-100">
