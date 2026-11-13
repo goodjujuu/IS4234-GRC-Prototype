@@ -11,7 +11,7 @@ ConductGuard is a conduct risk observability platform for retail banking. It sco
 
 ## Demo Accounts
 
-The login page lists one account per role, in the order of the walkthrough below. Highlighted accounts carry the main scenario, and the others add depth if time permits.
+The login page lists one account per role, in the order of the walkthrough below. Each account demonstrates a distinct part of the prototype.
 
 | # | Name | Role | What the role does |
 | --- | --- | --- | --- |
@@ -46,7 +46,7 @@ The scenario follows one problem from the branch up to the board. Branch 12 had 
 4. On the manager and target case, read why it was raised, choose **Target review** as the outcome, give a reason and select **Record decision**. This sends the target for adjustment.
 5. Optionally, open **Cases**, select Maya's case under **High risk employees** and decide her dispute.
 
-### 4. Internal Audit – Samuel Ito (if time permits)
+### 4. Internal Audit – Samuel Ito
 
 1. On **Warning Signs**, inspect the unusually fast review alert and select **Acknowledge**.
 

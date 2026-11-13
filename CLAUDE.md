@@ -234,7 +234,7 @@ The walkthrough is in `USER_GUIDE.md`, one account per role from the business up
 3. Conduct risk (Priya) reads the morning briefing's AI summary, sees Branch 12 High on the
    Pressure Index (about 80% of staff missing target) and sends the target for review.
 4. Chief Risk Officer (Rosalind, optional) approves or rejects a proposal.
-5. Internal audit (Samuel, optional) acknowledges the blocked-change alert and verifies the log.
+5. Internal audit (Samuel) reviews warning signs and case effectiveness.
 6. Audit committee (Margaret) sees the case in the monthly summary with its full audit trail.
 
 The seed data must make this scenario reproducible.
