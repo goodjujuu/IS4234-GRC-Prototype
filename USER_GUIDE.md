@@ -41,7 +41,7 @@ The scenario follows one problem from the branch up to the board. Branch 12 had 
 ### 3. Conduct Risk Team – Priya Raman
 
 1. On **Morning Briefing**, review the new cases, overdue reviews and branches with rising pressure.
-2. Read the AI summary of likely causes, then select **Confirm, it is accurate** or **Correct it**. The summary is only a draft until a reviewer does this.
+2. Read the AI summary for a quick overview of the figures, possible causes and areas needing attention. No confirmation or correction is required.
 3. Open **Pressure Index**. Branch 12 is rated High. Expand it to see its seven pressure signs, then select **Review case**.
 4. On the manager and target case, read why it was raised, choose **Target review** as the outcome, give a reason and select **Record decision**. This sends the target for adjustment.
 5. Optionally, open **Cases**, select Maya's case under **High risk employees** and decide her dispute.

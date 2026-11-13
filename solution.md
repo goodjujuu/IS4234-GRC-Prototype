@@ -7,6 +7,7 @@
 > committee. Configuration checks compare live settings with `DEFAULT_CONFIG`, and
 > independent warning signs remain. Hash-chain logic and configuration-log displays are removed.
 > A targeted migration removes legacy proposal and configuration-log storage and obsolete records.
+> AI summaries are informational overviews without a manual confirmation or correction step.
 > See `USER_GUIDE.md` for the current walkthrough.
 
 ## 4.1 Overview
@@ -146,7 +147,7 @@ The dashboard gives the conduct risk team a current view of where risk sits acro
 
 Every morning, the conduct risk team opens a briefing page in ConductGuard that summarises what changed overnight. It counts new High and Medium cases, overdue reviews, branches with a rising Pressure Index and threshold change attempts, and lists each item with a link to where it is handled.
 
-The briefing also includes a short AI-written summary of likely causes in plain language, such as "Branch 12 moved to High after unused accounts nearly doubled following a target increase." Because AI can be wrong, the summary is labelled as an AI draft and stays unconfirmed until a reviewer confirms it or corrects it. A corrected summary replaces the draft, and the original is kept for the record. The AI only receives branch-level figures and never employee names, which protects staff privacy. This follows the human-in-the-loop approach in Singapore's Model AI Governance Framework, where AI supports decisions but a person makes them.
+The briefing also includes a short AI-written summary of likely causes in plain language, such as "Branch 12 moved to High after unused accounts nearly doubled following a target increase." The summary provides a quick informational overview and is available immediately, without confirmation or correction. The AI only receives branch-level figures and never employee names, which protects staff privacy. Case decisions remain with human reviewers.
 
 ### 4.4.3 Monthly Audit Committee Summary
 
@@ -201,7 +202,7 @@ Team leads are also the first line, and in the demonstrator the team lead is the
 
 The conduct risk team is the second line. It is independent of the sales business, unlike the risk managers at Wells Fargo who answered to the business heads they oversaw. Wells Fargo created a similar central function, the Conduct Management Office, in 2017. Its pages are grouped by the parts of the platform.
 
-- **Morning Briefing** is the team's home page. It opens with today's counts, then the AI summary of likely causes with buttons to confirm or correct it, then the items that need attention today, each linked to where it is handled.
+- **Morning Briefing** is the team's home page. It opens with today's counts, then the informational AI summary of likely causes, then the items that need attention today, each linked to where it is handled.
 - **Live Dashboard** shows the key totals, the branch heat map with each Pressure Index, the highest-risk employees and the headline effectiveness metrics.
 - **Cases** splits the team's work into two queues because each reviews something different. Managers and targets comes first because it deals with the cause of the pressure, and holds manager, target and dismissal cases with a deadline of 5 business days and four outcomes. High risk employees follows, with a deadline of 48 hours and three outcomes. Cases with other reviewers and recent decisions are listed below, and all cases can be exported.
 - **Employees** lists every employee in the bank by score, with filters by branch and risk level, and opens each profile.
@@ -242,5 +243,5 @@ The audit committee brings conduct risk to board level.
 | A high score is not proof of misconduct | Every flag has a named reviewer, a dispute route and an appeal to the audit committee |
 | Some branches naturally score higher | Scores compare peers in the same role across the bank and within the branch, and false alarms are tracked |
 | Staff and managers may game the metrics | Weights are reviewed through Threshold Governance, and the Pressure Index looks at managers and targets as well as staff |
-| The AI summary can be wrong | It stays an unconfirmed draft until a reviewer confirms or corrects it, and it never receives employee names |
+| The AI summary can be wrong | It serves as an informational overview, never receives employee names and does not make case decisions |
 | Monitoring may feel intrusive | Only conduct data is used, staff can see everything held about them, and scores never set pay |

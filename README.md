@@ -62,7 +62,7 @@ branch up to the board: Maya (employee), Daniel (team lead), Priya (conduct risk
   resetting operational data.
 - Seed data is synthetic and deterministic, using a fixed random seed and a demo clock starting
   Monday 9 November 2026, 8:30 am. Actions tick the clock forward, so deadlines and windows give the same results on every run.
-- The AI draft calls Google Gemini when `GEMINI_API_KEY` is set, sending only aggregate facts and no
+- The AI summary calls Google Gemini when `GEMINI_API_KEY` is set, sending only aggregate facts and no
   employee names. Without a key or when the request fails, it uses a labelled template and shows the reason.
   `GEMINI_MODEL` optionally overrides the default `gemini-3.6-flash` model.
 
@@ -70,7 +70,7 @@ branch up to the board: Maya (employee), Daniel (team lead), Priya (conduct risk
 
 - Demo logins share a password, and sessions are simple signed cookies. Not a production access model.
 - Scores are indicators, not proof. Metrics and the Pressure Index can be gamed.
-- An AI summary can be wrong, so it stays unconfirmed until a reviewer confirms or corrects it.
+- The AI summary is an informational overview and can be wrong. Case decisions remain with the assigned reviewer.
 - A speak-up seal could be tested by someone holding both the secret and the employee list. A
   production build would need independent key custody.
 - Scoring and deadline sweeps run at seed time rather than on a scheduler, and the morning

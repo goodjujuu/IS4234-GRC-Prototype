@@ -50,9 +50,9 @@ git push origin main
    - `SESSION_SECRET`, the same long random string as your local `.env`. It signs logins and
      speak-up seals, so the seed must run with the same value or the retaliation guard will not
      recognise the seeded reporter.
-   - `GEMINI_API_KEY` (optional). Enables a live AI draft on "Generate again". Create the key in
+   - `GEMINI_API_KEY` (optional). Enables a live AI summary on "Generate again". Create the key in
      [Google AI Studio](https://aistudio.google.com/apikey). Without it, the briefing uses a labelled
-     template draft. Set `GEMINI_MODEL` to override the default `gemini-3.6-flash` model.
+     template summary. Set `GEMINI_MODEL` to override the default `gemini-3.6-flash` model.
 5. Deploy.
 
 ## 5. Set up the production database
@@ -116,8 +116,8 @@ before recording or grading.
 Set `GEMINI_API_KEY` in your local `.env` and in the Vercel server environment. Restart
 `npm run dev` after changing local settings, or redeploy after changing hosted settings.
 Sign in as Priya, open **Morning Briefing** and select **Generate again**. A successful
-request shows **AI draft** and **Awaiting review**. Confirm or correct it after checking
-the figures. Seeded briefings use a template until you generate a new one.
+request shows **AI summary**, ready to read without confirmation or correction.
+Seeded briefings use a template until you generate a new one.
 
 The server calls Google's Gemini `generateContent` API with aggregate figures only.
 It uses a 45-second timeout and falls back to a template on missing credentials, quota

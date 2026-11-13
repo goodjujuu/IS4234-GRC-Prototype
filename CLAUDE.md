@@ -7,6 +7,7 @@
 > committee. Configuration checks compare live settings with `DEFAULT_CONFIG`, and
 > independent warning signs remain. Hash-chain logic and configuration-log displays are removed.
 > A targeted migration removes legacy proposal and configuration-log storage and obsolete records.
+> AI summaries are informational overviews without a manual confirmation or correction step.
 > See `USER_GUIDE.md` for the current walkthrough.
 
 This is the technology demonstrator for NUS IS4234 Group 26's report on the Wells Fargo
@@ -205,8 +206,8 @@ recognise a reporter who is later flagged or dismissed.
   allows. Team leads see their own team. Conduct risk and internal audit see the whole bank.
 - **Daily morning briefing (conduct risk team, a page in the app):** new Medium and High cases, overdue
   reviews, branches with a rising Pressure Index, threshold change attempts, and a short AI-written
-  summary of likely causes. It is labelled as an AI draft, and a reviewer must confirm or correct it
-  before anyone acts on it. The AI only receives aggregated data without employee names. It is
+  summary for a quick informational overview, without confirmation or correction. The AI only
+  receives aggregated data without employee names. It is
   built from the 6:00 am data load and can be generated again on demand.
 - **Monthly audit committee summary:** escalated cases and disputes, the branches and managers with
   the highest Pressure Index, dismissals for sales misconduct, complaints linked to employees,
@@ -230,7 +231,7 @@ The walkthrough is in `USER_GUIDE.md`, one account per role from the business up
 1. Employee (Maya) reads why she was flagged, disputes and reports pressure anonymously.
 2. Branch manager (Daniel) requests raising the High threshold from 70 to 85 → blocked, logged,
    internal audit alerted.
-3. Conduct risk (Priya) confirms the morning briefing's AI summary, sees Branch 12 High on the
+3. Conduct risk (Priya) reads the morning briefing's AI summary, sees Branch 12 High on the
    Pressure Index (about 80% of staff missing target) and sends the target for review.
 4. Chief Risk Officer (Rosalind, optional) approves or rejects a proposal.
 5. Internal audit (Samuel, optional) acknowledges the blocked-change alert and verifies the log.
@@ -242,8 +243,8 @@ The seed data must make this scenario reproducible.
 
 - Scores are indicators, not proof; every flag has a named reviewer and a route to dispute and appeal.
 - Data minimisation: only conduct-relevant data; employees can see all data held about them.
-- Gaming risk (metrics, Pressure Index); AI summary can be wrong → reviewer confirmation required,
-  following the human-in-the-loop approach in Singapore's Model AI Governance Framework.
+- Gaming risk (metrics, Pressure Index); the AI summary is informational and can be wrong.
+  Human reviewers remain responsible for case decisions.
 
 ## Submission requirements (from project spec)
 
