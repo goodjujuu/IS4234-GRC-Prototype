@@ -1,5 +1,13 @@
 # 4 Technology Solution – ConductGuard
 
+> Current prototype scope, 13 November 2026. Weights and thresholds are fixed and read-only.
+> Proposal submission, approval, rejection, justification and related reporting are removed.
+> This scope supersedes the proposal workflow described below. The Chief Risk Officer opens
+> escalated cases. Configuration checks compare live settings with `DEFAULT_CONFIG`, and
+> independent warning signs remain. Hash-chain logic and configuration-log displays are removed.
+> Legacy proposal and configuration-log storage are retained for database compatibility.
+> See `USER_GUIDE.md` for the current walkthrough.
+
 ## 4.1 Overview
 
 ConductGuard is an observability platform for conduct risk in retail banking.

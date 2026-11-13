@@ -207,7 +207,7 @@ model Dismissal {
   dismissedAt DateTime
 }
 
-// Weights and thresholds. Only changed through an approved change request.
+// Fixed prototype weights and thresholds, read-only in the application.
 model ScoringConfig {
   key         String @id
   label       String
@@ -217,6 +217,7 @@ model ScoringConfig {
   description String
 }
 
+// Legacy proposal storage retained for database compatibility; unused by the application.
 model ThresholdChangeRequest {
   id            String    @id @default(cuid())
   configKey     String
@@ -234,7 +235,7 @@ model ThresholdChangeRequest {
   reviewedAt    DateTime?
 }
 
-// Append-only and hash-chained. Each hash covers the previous one.
+// Legacy configuration log retained for database compatibility; unused by the application.
 model ConfigChangeLog {
   id          String   @id @default(cuid())
   seq         Int      @unique
@@ -249,7 +250,7 @@ model ConfigChangeLog {
 
 model WatcherAlert {
   id             String    @id @default(cuid())
-  type           String    // THRESHOLD_CHANGE | UNAPPROVED_CHANGE | FLAG_VOLUME_DROP | FAST_REVIEWS | LOG_TAMPERING
+  type           String    // UNAPPROVED_CHANGE | FLAG_VOLUME_DROP | FAST_REVIEWS (legacy alert types may remain stored)
   severity       String    // MEDIUM | HIGH
   title          String
   detail         String

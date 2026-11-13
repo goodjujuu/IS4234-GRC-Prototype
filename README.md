@@ -9,7 +9,7 @@ pressure created by managers and targets, not only the behaviour of employees.
 
 1. **Conduct Surveillance** monitors three levels. Employee Conduct scores seven peer-relative
    metrics from 0 to 100. Managers and Targets combines seven measures into a Pressure Index and
-   links it to employee flags. Threshold Governance protects the detection thresholds.
+   links it to employee flags. Threshold Governance checks fixed, read-only detection settings.
 2. **Alerting and Case Management** opens a case with a named reviewer and a deadline, escalates
    overdue or repeated cases, handles disputes and appeals, and records every action.
 3. **Risk Reporting** provides a live dashboard, a daily morning briefing and a monthly audit
@@ -54,9 +54,13 @@ Risk Officer, optional), Samuel (internal audit, optional) and Margaret (audit c
 
 - One Next.js 15 project (App Router, JavaScript), Tailwind CSS, Prisma and Postgres, hosted on
   Vercel. API routes hold the server-side rules.
-- `lib/scoring.js`, `lib/pressure.js`, `lib/engine.js`, `lib/hashChain.js` and `lib/briefing.js` are
+- `lib/scoring.js`, `lib/pressure.js`, `lib/engine.js` and `lib/briefing.js` are
   CommonJS so `prisma/seed.js` runs the same engine as the app and cannot drift from it.
 - `lib/kri.js` is the single source of truth for dashboard and effectiveness numbers.
+- Weights and thresholds are read-only. Integrity checks compare database settings with
+  `DEFAULT_CONFIG` in `lib/scoring.js`. The legacy proposal and configuration-log tables remain
+  for database compatibility, but the proposal workflow and hash-chain logic are removed.
+  No database migration or reset is needed.
 - Seed data is synthetic and deterministic, using a fixed random seed and a demo clock starting
   Monday 9 November 2026, 8:30 am. Actions tick the clock forward, so deadlines and windows give the same results on every run.
 - The AI draft calls Claude when `ANTHROPIC_API_KEY` is set, sending only aggregate facts and no
@@ -67,8 +71,6 @@ Risk Officer, optional), Samuel (internal audit, optional) and Margaret (audit c
 - Demo logins share a password, and sessions are simple signed cookies. Not a production access model.
 - Scores are indicators, not proof. Metrics and the Pressure Index can be gamed.
 - An AI summary can be wrong, so it stays unconfirmed until a reviewer confirms or corrects it.
-- The hash chain lives in the same database it protects. A production build would anchor it in a
-  write-once store. Editing and deleting are detected, not prevented.
 - A speak-up seal could be tested by someone holding both the secret and the employee list. A
   production build would need independent key custody.
 - Scoring and deadline sweeps run at seed time rather than on a scheduler, and the morning

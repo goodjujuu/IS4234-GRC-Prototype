@@ -18,7 +18,7 @@ The login page lists one account per role, in the order of the walkthrough below
 | 1 | Maya Lindqvist | Employee, Branch 12 | Sees her own score, disputes a flag and reports pressure |
 | 2 | Daniel Okafor | Team lead, Branch 12 manager | Reviews Medium flags on his own team |
 | 3 | Priya Raman | Conduct risk team | Monitors the whole bank and reviews High, manager and target cases |
-| 4 | Rosalind Keane | Chief Risk Officer | Approves or rejects threshold changes |
+| 4 | Rosalind Keane | Chief Risk Officer | Reviews cases escalated to the Chief Risk Officer |
 | 5 | Samuel Ito | Internal audit | Checks independently that detection is not being weakened |
 | 6 | Margaret Flynn | Audit committee | Oversees conduct risk for the board and decides appeals |
 
@@ -37,33 +37,35 @@ The scenario follows one problem from the branch up to the board. Branch 12 had 
 ### 2. Team Lead – Daniel Okafor
 
 1. On **My Team**, note that Maya's High flag sits with the conduct risk team, because a branch cannot review the pressure it creates.
-2. Open **Thresholds**. Under **Request a change**, choose the High risk threshold, enter 85, give a reason and select **Submit request**. The change is blocked, written to the permanent log and sent to internal audit.
+2. Open **Reviews** and inspect a Medium flag assigned to the team lead. Open **Thresholds** to see the fixed risk levels and weights.
 
 ### 3. Conduct Risk Team – Priya Raman
 
-1. On **Morning Briefing**, select **Generate again** so the briefing includes Daniel's blocked attempt.
+1. On **Morning Briefing**, review the new cases, overdue reviews and branches with rising pressure.
 2. Read the AI summary of likely causes, then select **Confirm, it is accurate** or **Correct it**. The summary is only a draft until a reviewer does this.
 3. Open **Pressure Index**. Branch 12 is rated High. Expand it to see its seven pressure signs, then select **Review case**.
 4. On the manager and target case, read why it was raised, choose **Target review** as the outcome, give a reason and select **Record decision**. This sends the target for adjustment.
-5. Optionally, open **Cases**, select Maya's case under **High risk employees** and decide her dispute. To prepare step 4, open **Thresholds** and propose a change, such as the unused account rate weight from 25 to 30.
+5. Optionally, open **Cases**, select Maya's case under **High risk employees** and decide her dispute.
 
 ### 4. Chief Risk Officer – Rosalind Keane (if time permits)
 
-1. On **Thresholds**, open the proposal from Priya and read the suppression check, which shows how many of today's flags the change would weaken.
-2. Enter a note and select **Approve** or **Reject**. She cannot approve a proposal of her own.
+1. On **Escalated Cases**, review any cases routed to the Chief Risk Officer. The queue may be empty in the starting demo state.
+2. Open **Thresholds** to inspect the fixed, read-only settings.
 
 ### 5. Internal Audit – Samuel Ito (if time permits)
 
-1. On **Warning Signs**, find the alert for Daniel's blocked threshold change and select **Acknowledge**.
-2. Under **Permanent change log**, select **Run checks** to confirm the hash-chained log has not been edited.
+1. On **Warning Signs**, inspect the unusually fast review alert and select **Acknowledge**.
+2. Under **Configuration settings**, select **Check settings** to compare current settings with the fixed baseline.
 
 ### 6. Audit Committee – Margaret Flynn
 
-1. On **Monthly Summary**, review the escalated cases, the branches with the highest Pressure Index, dismissals, speak-up reports and every threshold change, including Daniel's blocked attempt.
+1. On **Monthly Summary**, review the escalated cases, the branches with the highest Pressure Index, dismissals, speak-up reports and configuration integrity.
 2. Open a case under **Cases with their audit trail** to see every action with its time and who took it.
 3. Open **Speak-Up Reports** to read Maya's anonymous report. Only the audit committee can read report text.
 
 ## Other Features
+
+- **Fixed settings.** Thresholds and weights are read-only for every role. There is no proposal or approval workflow.
 
 - **Exports.** On **Cases**, the conduct risk team, internal audit and the audit committee can export cases as a spreadsheet or a printable audit report.
 - **Appeals.** An employee whose case closes with an outcome other than cleared can appeal, and the audit committee decides it under **Appeals**.

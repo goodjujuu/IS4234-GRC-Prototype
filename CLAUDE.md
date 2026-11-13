@@ -1,5 +1,13 @@
 # IS4234 Group 26 Prototype: ConductGuard
 
+> Current prototype scope, 13 November 2026. Weights and thresholds are fixed and read-only.
+> Proposal submission, approval, rejection, justification and related reporting are removed.
+> This scope supersedes the proposal workflow described below. The Chief Risk Officer opens
+> escalated cases. Configuration checks compare live settings with `DEFAULT_CONFIG`, and
+> independent warning signs remain. Hash-chain logic and configuration-log displays are removed.
+> Legacy proposal and configuration-log storage are retained for database compatibility.
+> See `USER_GUIDE.md` for the current walkthrough.
+
 This is the technology demonstrator for NUS IS4234 Group 26's report on the Wells Fargo
 cross-selling scandal (GRC case study). The product is **ConductGuard**, an observability platform
 for conduct risk in retail banking.
@@ -15,7 +23,7 @@ routes and data access all live in one project:
 
 - `app/` — pages (`page.js`) and API route handlers (`app/api/**/route.js`)
 - `components/` — `ui.js` (shared primitives), `nav.js` (navigation by role), `actions.js` (forms that call the API)
-- `lib/scoring.js`, `pressure.js`, `engine.js`, `hashChain.js`, `briefing.js` — the engine. These are
+- `lib/scoring.js`, `pressure.js`, `engine.js`, `briefing.js` — the engine. These are
   CommonJS so `prisma/seed.js` runs the same code as the app
 - `lib/kri.js` — dashboard and effectiveness numbers
 - `lib/access.js` — who can see and act on a case

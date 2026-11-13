@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { CaseTimeline } from '@/components/CaseRows';
 import { Badge, Callout, Card, CardHeader, EmptyState, PageHeader, RiskBadge, StatCard } from '@/components/ui';
-import { CASE_KINDS, CHANGE_TONE, TIER_LABELS, deadlineText, formatDateTime, formatHours, formatMonth, isOverdue, percent } from '@/lib/format';
+import { CASE_KINDS, TIER_LABELS, deadlineText, formatDateTime, formatHours, formatMonth, isOverdue, percent } from '@/lib/format';
 import { getCommitteeSummary } from '@/lib/kri';
 import { requireUser } from '@/lib/session';
 
@@ -55,22 +55,9 @@ export default async function CommitteePage() {
             <div><dt className="text-xs text-slate-500">Reviewed within deadline, target 95%</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.pctOnTime)}</dd></div>
             <div><dt className="text-xs text-slate-500">Average time to resolve</dt><dd className="mt-0.5 font-semibold tabular-nums">{formatHours(e.avgHours)}</dd></div>
             <div><dt className="text-xs text-slate-500">False alarm rate</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.falseAlarmRate)}</dd></div>
-            <div><dt className="text-xs text-slate-500">Unapproved changes, target 0</dt><dd className="mt-0.5 font-semibold tabular-nums">{e.unapproved.length}</dd></div>
+            <div><dt className="text-xs text-slate-500">Unexpected configuration changes, target 0</dt><dd className="mt-0.5 font-semibold tabular-nums">{e.unexpected.length}</dd></div>
             <div><dt className="text-xs text-slate-500">Bank-wide unused account rate</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.trend[e.trend.length - 1]?.rate || 0)}</dd></div>
-            <div><dt className="text-xs text-slate-500">Permanent change log</dt><dd className="mt-0.5 font-semibold">{s.chain.intact ? 'Intact' : `Broken at entry ${s.chain.firstBroken}`}</dd></div>
           </dl>
-        </Card>
-        <Card>
-          <CardHeader icon="shield" title="Every threshold change, approved or blocked, last 30 days" />
-          {s.requests.length === 0 ? <p className="text-sm text-slate-500">None.</p> : (
-            <ul className="divide-y divide-slate-100">
-              {s.requests.map((r) => (
-                <li key={r.id} className="py-2 text-[13px] text-slate-600">
-                  <span className="font-medium text-slate-800">{r.requestedBy}</span>, {r.label.toLowerCase()} from {r.oldValue} to {r.newValue}. <Badge tone={CHANGE_TONE[r.status]}>{r.status}</Badge>
-                </li>
-              ))}
-            </ul>
-          )}
         </Card>
         <Card>
           <CardHeader icon="alert" title="Warning signs and complaints, last 30 days" />

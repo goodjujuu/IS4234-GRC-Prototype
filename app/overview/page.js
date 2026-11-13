@@ -95,7 +95,7 @@ export default async function OverviewPage() {
               <div><dt className="text-xs text-slate-500">Reviewed within deadline, target 95%</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.pctOnTime)}</dd></div>
               <div><dt className="text-xs text-slate-500">Average time to resolve</dt><dd className="mt-0.5 font-semibold tabular-nums">{formatHours(e.avgHours)}</dd></div>
               <div><dt className="text-xs text-slate-500">False alarm rate</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.falseAlarmRate)}</dd></div>
-              <div><dt className="text-xs text-slate-500">Unapproved changes, target 0</dt><dd className="mt-0.5 font-semibold tabular-nums">{e.unapproved.length}</dd></div>
+              <div><dt className="text-xs text-slate-500">Unexpected configuration changes, target 0</dt><dd className="mt-0.5 font-semibold tabular-nums">{e.unexpected.length}</dd></div>
             </dl>
           </Card>
         </div>

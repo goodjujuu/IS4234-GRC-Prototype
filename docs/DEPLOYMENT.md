@@ -75,7 +75,7 @@ tables and replaces them. They only ever held synthetic demo data.
 
 Open the Vercel-assigned URL (e.g. `https://is4234-grc-prototype.vercel.app`) and confirm the
 five-step demo scenario in `README.md` works end to end: morning briefing → Pressure Index →
-employee dispute and speak-up → blocked threshold change → audit committee summary.
+employee dispute and speak-up → manager and target review → audit committee summary.
 
 That hosted URL is what goes in the Technology Demonstrator submission, alongside the 2+ page
 guide PDF and the 5-minute demo video.

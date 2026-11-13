@@ -14,8 +14,7 @@ export async function GET() {
     { text: 'Effectiveness', size: 13, bold: true },
     { text: `Flags reviewed within deadline ${percent(e.pctOnTime)} (${e.onTime} of ${e.dueCount})` },
     { text: `False alarm rate ${percent(e.falseAlarmRate)}` },
-    { text: `Unapproved threshold changes ${e.unapproved.length} (target zero)` },
-    { text: `Change log ${s.chain.intact ? `intact across ${s.chain.entries.length} entries` : `BROKEN at entry ${s.chain.firstBroken}`}`, gap: 12 },
+    { text: `Unexpected configuration changes ${e.unexpected.length} (target zero)` },
     { text: 'Cases in the audit committee summary', size: 13, bold: true },
     ...s.cases.flatMap((c) => [
       { text: `${c.ref}  ${c.title}`, bold: true },
@@ -23,8 +22,6 @@ export async function GET() {
       ...c.events.map((ev) => ({ text: `  ${formatDateTime(ev.timestamp)}  ${ev.action}  ${ev.actor}. ${ev.note || ''}` })),
       { text: '', gap: 4 },
     ]),
-    { text: 'Change log', size: 13, bold: true },
-    ...s.chain.entries.map((l) => ({ text: `#${l.seq} ${formatDateTime(l.createdAt)} ${l.event} by ${l.changedBy}${l.signedOffBy ? `, signed off by ${l.signedOffBy}` : ''}. ${l.change} Hash ${l.hash.slice(0, 16)}` })),
   ];
   return new Response(buildPdf(rows), { headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'attachment; filename="conductguard-audit-export.pdf"' } });
 }

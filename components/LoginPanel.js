@@ -11,10 +11,10 @@ const PASSWORD = 'demo1234';
 // Core steps carry the story. The others add depth if time permits.
 const WALKTHROUGH = [
   { email: 'maya.lindqvist@conductguard.demo', line: 'Business', core: true, show: 'See her High flag and why it was raised, dispute it and report sales pressure anonymously' },
-  { email: 'daniel.okafor@conductguard.demo', line: 'Business', core: true, show: 'Her branch manager tries to raise the High threshold from 70 to 85, which is blocked and logged' },
+  { email: 'daniel.okafor@conductguard.demo', line: 'Business', core: true, show: 'Review Medium flags on his team and see the fixed thresholds' },
   { email: 'priya.raman@conductguard.demo', line: 'Risk oversight', core: true, show: 'Morning briefing shows Branch 12 at High, then the Pressure Index and the manager and target case' },
-  { email: 'rosalind.keane@conductguard.demo', line: 'Risk oversight', core: false, show: 'Approves or rejects a threshold proposal, and cannot approve her own' },
-  { email: 'samuel.ito@conductguard.demo', line: 'Independent assurance', core: false, show: 'Warning signs shows the blocked threshold change, sent to internal audit and not the business' },
+  { email: 'rosalind.keane@conductguard.demo', line: 'Risk oversight', core: false, show: 'Reviews cases escalated to the Chief Risk Officer' },
+  { email: 'samuel.ito@conductguard.demo', line: 'Independent assurance', core: false, show: 'Checks warning signs, verifies fixed settings and measures review effectiveness' },
   { email: 'margaret.flynn@conductguard.demo', line: 'Board oversight', core: true, show: 'Monthly summary, with the case and its full audit trail' },
 ];
 

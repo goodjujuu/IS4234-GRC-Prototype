@@ -36,8 +36,8 @@ export const NAV_BY_ROLE = {
     { level: 'monitoring', title: 'Threshold Governance', items: [{ href: '/thresholds', label: 'Thresholds', icon: 'sliders' }] },
   ],
   CHIEF_RISK_OFFICER: [
-    { level: 'monitoring', title: 'Threshold Governance', items: [{ href: '/thresholds', label: 'Thresholds', icon: 'sliders' }] },
     OPEN('Case Management', [{ href: '/cases', label: 'Escalated Cases', icon: 'briefcase' }]),
+    { level: 'monitoring', title: 'Threshold Governance', items: [{ href: '/thresholds', label: 'Thresholds', icon: 'sliders' }] },
   ],
   INTERNAL_AUDIT: [
     { level: 'monitoring', title: 'Threshold Governance', items: [

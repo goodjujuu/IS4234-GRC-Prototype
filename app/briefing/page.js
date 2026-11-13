@@ -41,7 +41,6 @@ export default async function BriefingPage() {
     ['New High cases', f.newHigh.length, 'red', 'For you, 48 hours each'],
     ['Overdue reviews', f.overdue.length, f.overdue.length ? 'red' : 'green', 'Past their deadline'],
     ['Branches with rising pressure', f.rising.length, f.rising.length ? 'amber' : 'green', 'Pressure Index went up'],
-    ['Threshold change attempts', f.thresholdAttempts.length, f.thresholdAttempts.length ? 'red' : 'green', 'Internal audit alerted'],
     ['New Medium cases', f.newMedium.length, 'amber', 'With team leads'],
   ];
 
@@ -61,7 +60,7 @@ export default async function BriefingPage() {
 
       <section>
         <SectionLabel>Today at a glance</SectionLabel>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {tiles.map(([label, n, tone, hint]) => (
             <Card key={label}>
               <p className={cx('text-[28px] font-semibold tabular-nums tracking-tight', n ? TONE[tone] : 'text-slate-900')}>{n}</p>
@@ -133,15 +132,6 @@ export default async function BriefingPage() {
           <Attention icon="clock" title="Overdue reviews" count={f.overdue.length} note="Cases past their deadline, which escalate automatically." href="/cases" linkText="Open cases">
             <ul className="divide-y divide-slate-100 text-[13px] text-slate-700">
               {f.overdue.map((x) => <li key={x.ref} className="py-2 first:pt-0 last:pb-0"><span className="font-medium text-slate-800">{x.ref}</span>, {x.title}</li>)}
-            </ul>
-          </Attention>
-          <Attention icon="sliders" title="Threshold change attempts" count={f.thresholdAttempts.length} note="Each one is logged and sent to internal audit." href="/thresholds" linkText="Open thresholds">
-            <ul className="divide-y divide-slate-100 text-[13px] text-slate-700">
-              {f.thresholdAttempts.map((a, i) => (
-                <li key={i} className="py-2 first:pt-0 last:pb-0">
-                  <span className="font-medium text-slate-800">{a.requestedBy}</span>, {a.label.toLowerCase()} from {a.oldValue} to {a.newValue}, {a.status.toLowerCase()}
-                </li>
-              ))}
             </ul>
           </Attention>
         </div>
