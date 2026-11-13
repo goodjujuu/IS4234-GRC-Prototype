@@ -219,7 +219,7 @@ model ScoringConfig {
 
 model WatcherAlert {
   id             String    @id @default(cuid())
-  type           String    // UNAPPROVED_CHANGE | FLAG_VOLUME_DROP | FAST_REVIEWS (legacy alert types may remain stored)
+  type           String    // FLAG_VOLUME_DROP | FAST_REVIEWS (legacy alert records may remain stored)
   severity       String    // MEDIUM | HIGH
   title          String
   detail         String

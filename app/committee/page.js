@@ -16,7 +16,7 @@ export default async function CommitteePage() {
       <PageHeader
         eyebrow={`Audit committee, ${formatMonth(s.now)}`}
         title="Monthly Summary"
-        description="Review this month's conduct risk position for the board, with every escalated case, branch under pressure and threshold change linked to its record."
+        description="Review this month's conduct risk position for the board, with escalated cases and the wider branch context."
         actions={
           <>
             <a href="/api/export/audit" className="inline-flex h-8 items-center rounded-lg bg-slate-900 px-3 text-[13px] font-medium text-white hover:bg-slate-800">Export PDF</a>
@@ -55,7 +55,6 @@ export default async function CommitteePage() {
             <div><dt className="text-xs text-slate-500">Reviewed within deadline, target 95%</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.pctOnTime)}</dd></div>
             <div><dt className="text-xs text-slate-500">Average time to resolve</dt><dd className="mt-0.5 font-semibold tabular-nums">{formatHours(e.avgHours)}</dd></div>
             <div><dt className="text-xs text-slate-500">False alarm rate</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.falseAlarmRate)}</dd></div>
-            <div><dt className="text-xs text-slate-500">Unexpected configuration changes, target 0</dt><dd className="mt-0.5 font-semibold tabular-nums">{e.unexpected.length}</dd></div>
             <div><dt className="text-xs text-slate-500">Bank-wide unused account rate</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.trend[e.trend.length - 1]?.rate || 0)}</dd></div>
           </dl>
         </Card>

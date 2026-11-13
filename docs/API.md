@@ -14,7 +14,6 @@ All routes are in `app/api/`. Each checks the caller's role on the server and re
 | `POST /api/speak-up` | Employee, team lead | Files an anonymous report with a one-way seal |
 | `POST /api/dismissals` | Conduct risk, audit committee | Simulated HR feed, with no screen in the app. Opens a branch review and checks the retaliation guard |
 | `POST /api/watchers/[id]` | Admins | Acknowledges a warning sign |
-| `POST /api/watchers/verify` | Admins | Checks settings against the fixed baseline. A breach alerts internal audit |
 | `POST /api/briefing` | Conduct risk | Generates an informational briefing, using the AI model if a key is set, with no manual review step |
 | `GET /api/export/cases` | Admins | Audit trail as CSV |
 | `GET /api/export/audit` | Admins | Audit export as PDF |

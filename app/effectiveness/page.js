@@ -1,4 +1,4 @@
-import { Callout, Card, CardHeader, PageHeader, StatCard, TableWrap, TrendLine, tdClass, thClass } from '@/components/ui';
+import { Card, CardHeader, PageHeader, StatCard, TableWrap, TrendLine, tdClass, thClass } from '@/components/ui';
 import { formatDate, formatHours, percent } from '@/lib/format';
 import { getEffectiveness } from '@/lib/kri';
 import { requireUser } from '@/lib/session';
@@ -15,13 +15,7 @@ export default async function EffectivenessPage() {
         <StatCard label="Flags reviewed within deadline" value={percent(e.pctOnTime)} hint={`${e.onTime} of ${e.dueCount} flags due. Target at least 95%.`} tone={e.pctOnTime >= 0.95 ? 'green' : 'amber'} />
         <StatCard label="Average time to resolve a case" value={formatHours(e.avgHours)} hint={e.byLevel.map((l) => `${LEVEL_NAME[l.level]} ${formatHours(l.avgHours)}, deadline ${formatHours(l.deadlineHours)}`).join('. ')} />
         <StatCard label="False alarm rate" value={percent(e.falseAlarmRate)} hint={`${e.upheldCount} flags overturned of ${e.closedCount} closed. Target falling over time.`} />
-        <StatCard label="Unexpected configuration changes" value={e.unexpected.length} hint="Target zero." tone={e.unexpected.length ? 'red' : 'green'} />
       </div>
-      {e.unexpected.length > 0 && (
-        <Callout tone="red" icon="alert" title="Settings differ from the fixed baseline">
-          {e.unexpected.map((u) => `${u.label} is ${u.actual}, but the fixed baseline value is ${u.expected}.`).join(' ')}
-        </Callout>
-      )}
       <Card>
         <CardHeader icon="chart" title="Bank-wide unused account rate" subtitle="Accounts with no genuine activity within 90 days, at each scoring run." />
         <TrendLine points={e.trend.map((t) => ({ value: t.rate, label: formatDate(t.asOf) }))} format={percent} max={Math.max(0.3, ...e.trend.map((t) => t.rate))} label="Bank-wide unused account rate by scoring run" />

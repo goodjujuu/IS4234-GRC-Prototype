@@ -14,7 +14,6 @@ export async function GET() {
     { text: 'Effectiveness', size: 13, bold: true },
     { text: `Flags reviewed within deadline ${percent(e.pctOnTime)} (${e.onTime} of ${e.dueCount})` },
     { text: `False alarm rate ${percent(e.falseAlarmRate)}` },
-    { text: `Unexpected configuration changes ${e.unexpected.length} (target zero)` },
     { text: 'Cases in the audit committee summary', size: 13, bold: true },
     ...s.cases.flatMap((c) => [
       { text: `${c.ref}  ${c.title}`, bold: true },

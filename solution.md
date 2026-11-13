@@ -4,8 +4,8 @@
 > Proposal submission, approval, rejection, justification and related reporting are removed.
 > This scope supersedes the proposal workflow and six-role design described below. The Chief
 > Risk Officer role is removed, and overdue conduct-risk cases route directly to the audit
-> committee. Configuration checks compare live settings with `DEFAULT_CONFIG`, and
-> independent warning signs remain. Hash-chain logic and configuration-log displays are removed.
+> committee. Automated checks against a fixed settings baseline are removed; independent
+> warning signs for risk detection and case handling remain. Hash-chain logic and configuration-log displays are removed.
 > A targeted migration removes legacy proposal and configuration-log storage and obsolete records.
 > AI summaries are informational overviews without a manual confirmation or correction step.
 > See `USER_GUIDE.md` for the current walkthrough.

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { ActionButton } from '@/components/actions';
 import { Badge, Card, CardHeader, EmptyState, PageHeader, StatCard, TrendLine } from '@/components/ui';
 import { formatDate, formatDateTime } from '@/lib/format';
@@ -9,20 +8,19 @@ import { requireUser } from '@/lib/session';
 export default async function WatchersPage() {
   await requireUser(['INTERNAL_AUDIT']);
   const [alerts, effectiveness] = await Promise.all([
-    prisma.watcherAlert.findMany({ where: { type: { notIn: ['THRESHOLD_CHANGE', 'LOG_TAMPERING'] } }, orderBy: { createdAt: 'desc' } }),
+    prisma.watcherAlert.findMany({ where: { type: { notIn: ['THRESHOLD_CHANGE', 'LOG_TAMPERING', 'UNAPPROVED_CHANGE'] } }, orderBy: { createdAt: 'desc' } }),
     getEffectiveness(),
   ]);
   const open = alerts.filter((a) => a.status === 'OPEN');
   return (
     <div className="space-y-6">
-      <PageHeader level="monitoring" eyebrow="Threshold Governance" title="Warning Signs" description="Investigate warning signs, acknowledge alerts and check that detection settings match the fixed baseline." />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <PageHeader level="monitoring" eyebrow="Control Monitoring" title="Warning Signs" description="Investigate and acknowledge warning signs in case handling and risk detection." />
+      <div className="grid gap-4">
         <StatCard label="Open warning signs" value={open.length} tone={open.length ? 'amber' : 'green'} />
-        <StatCard label="Unexpected configuration changes" value={effectiveness.unexpected.length} tone={effectiveness.unexpected.length ? 'red' : 'green'} hint="Target zero" />
       </div>
 
       <Card>
-        <CardHeader icon="alert" title="Alerts" subtitle="Unexpected configuration changes, sudden drops in flags and unusually fast reviews." />
+        <CardHeader icon="alert" title="Alerts" subtitle="Sudden drops in flags and unusually fast reviews." />
         {alerts.length === 0 && <EmptyState icon="checkCircle" title="No alerts" />}
         <ul className="space-y-3">
           {alerts.map((a) => (
@@ -43,15 +41,6 @@ export default async function WatchersPage() {
         </ul>
       </Card>
 
-      <Card>
-        <CardHeader
-          icon="shield"
-          title="Configuration settings"
-          subtitle="Check that current thresholds and weights match the fixed baseline."
-          actions={<ActionButton url="/api/watchers/verify" icon="shield">Check settings</ActionButton>}
-        />
-        <Link href="/thresholds" className="text-[13px] font-medium text-indigo-700 hover:underline">See fixed thresholds and weights</Link>
-      </Card>
       <Card>
         <CardHeader icon="chart" title="Flag volume by run" subtitle="A sudden fall raises an alert." />
         <TrendLine points={effectiveness.trend.slice(-12).map((t) => ({ value: t.flags, label: formatDate(t.asOf) }))} label="Employees flagged Medium or High at each scoring run" />

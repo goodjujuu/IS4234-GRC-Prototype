@@ -49,11 +49,10 @@ The scenario follows one problem from the branch up to the board. Branch 12 had 
 ### 4. Internal Audit – Samuel Ito (if time permits)
 
 1. On **Warning Signs**, inspect the unusually fast review alert and select **Acknowledge**.
-2. Under **Configuration settings**, select **Check settings** to compare current settings with the fixed baseline.
 
 ### 5. Audit Committee – Margaret Flynn
 
-1. On **Monthly Summary**, review the escalated cases, the branches with the highest Pressure Index, dismissals, speak-up reports and configuration integrity.
+1. On **Monthly Summary**, review the escalated cases, the branches with the highest Pressure Index, dismissals and speak-up reports.
 2. Open a case under **Cases with their audit trail** to see every action with its time and who took it.
 3. Open **Speak-Up Reports** to read Maya's anonymous report. Only the audit committee can read report text.
 

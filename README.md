@@ -9,7 +9,7 @@ pressure created by managers and targets, not only the behaviour of employees.
 
 1. **Conduct Surveillance** monitors three levels. Employee Conduct scores seven peer-relative
    metrics from 0 to 100. Managers and Targets combines seven measures into a Pressure Index and
-   links it to employee flags. Threshold Governance checks fixed, read-only detection settings.
+   links it to employee flags. Threshold Governance displays fixed, read-only detection settings.
 2. **Alerting and Case Management** opens a case with a named reviewer and a deadline, escalates
    overdue or repeated cases, handles disputes and appeals, and records every action.
 3. **Risk Reporting** provides a live dashboard, a daily morning briefing and a monthly audit
