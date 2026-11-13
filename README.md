@@ -9,7 +9,7 @@ pressure created by managers and targets, not only the behaviour of employees.
 
 1. **Conduct Surveillance** monitors three levels. Employee Conduct scores seven peer-relative
    metrics from 0 to 100. Managers and Targets combines seven measures into a Pressure Index and
-   links it to employee flags. Threshold Governance protects the detection thresholds.
+   links it to employee flags. Threshold Governance displays fixed, read-only detection settings.
 2. **Alerting and Case Management** opens a case with a named reviewer and a deadline, escalates
    overdue or repeated cases, handles disputes and appeals, and records every action.
 3. **Risk Reporting** provides a live dashboard, a daily morning briefing and a monthly audit
@@ -38,15 +38,14 @@ Every account uses the password `demo1234`. The login page also has one-click bu
 | Employee (High risk) | Maya Lindqvist | `maya.lindqvist@conductguard.demo` |
 | Team lead, Branch 12 | Daniel Okafor | `daniel.okafor@conductguard.demo` |
 | Conduct risk analyst | Priya Raman | `priya.raman@conductguard.demo` |
-| Chief Risk Officer | Rosalind Keane | `rosalind.keane@conductguard.demo` |
 | Internal auditor | Samuel Ito | `samuel.ito@conductguard.demo` |
 | Audit committee chair | Margaret Flynn | `margaret.flynn@conductguard.demo` |
 
 ## Demo scenario
 
 The step-by-step walkthrough is in [`USER_GUIDE.md`](USER_GUIDE.md). It follows one problem from the
-branch up to the board: Maya (employee), Daniel (team lead), Priya (conduct risk), Rosalind (Chief
-Risk Officer, optional), Samuel (internal audit, optional) and Margaret (audit committee).
+branch up to the board: Maya (employee), Daniel (team lead), Priya (conduct risk), Samuel
+(internal audit, optional) and Margaret (audit committee).
 
 `npm run seed` restores the exact starting state.
 
@@ -54,21 +53,24 @@ Risk Officer, optional), Samuel (internal audit, optional) and Margaret (audit c
 
 - One Next.js 15 project (App Router, JavaScript), Tailwind CSS, Prisma and Postgres, hosted on
   Vercel. API routes hold the server-side rules.
-- `lib/scoring.js`, `lib/pressure.js`, `lib/engine.js`, `lib/hashChain.js` and `lib/briefing.js` are
+- `lib/scoring.js`, `lib/pressure.js`, `lib/engine.js` and `lib/briefing.js` are
   CommonJS so `prisma/seed.js` runs the same engine as the app and cannot drift from it.
 - `lib/kri.js` is the single source of truth for dashboard and effectiveness numbers.
+- Weights and thresholds are read-only. Integrity checks compare database settings with
+  `DEFAULT_CONFIG` in `lib/scoring.js`. Proposal workflows, hash-chain logic and their legacy
+  tables are removed. Run `npx prisma migrate deploy` to apply the targeted cleanup without
+  resetting operational data.
 - Seed data is synthetic and deterministic, using a fixed random seed and a demo clock starting
   Monday 9 November 2026, 8:30 am. Actions tick the clock forward, so deadlines and windows give the same results on every run.
-- The AI draft calls Claude when `ANTHROPIC_API_KEY` is set, sending only aggregate facts and no
-  employee names. Without a key it uses a template, and the page labels it as simulated.
+- The AI summary calls Google Gemini when `GEMINI_API_KEY` is set, sending only aggregate facts and no
+  employee names. Without a key or when the request fails, it uses a labelled template and shows the reason.
+  `GEMINI_MODEL` optionally overrides the default `gemini-3.6-flash` model.
 
 ## Known limitations
 
 - Demo logins share a password, and sessions are simple signed cookies. Not a production access model.
 - Scores are indicators, not proof. Metrics and the Pressure Index can be gamed.
-- An AI summary can be wrong, so it stays unconfirmed until a reviewer confirms or corrects it.
-- The hash chain lives in the same database it protects. A production build would anchor it in a
-  write-once store. Editing and deleting are detected, not prevented.
+- The AI summary is an informational overview and can be wrong. Case decisions remain with the assigned reviewer.
 - A speak-up seal could be tested by someone holding both the secret and the employee list. A
   production build would need independent key custody.
 - Scoring and deadline sweeps run at seed time rather than on a scheduler, and the morning

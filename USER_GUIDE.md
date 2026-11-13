@@ -11,16 +11,15 @@ ConductGuard is a conduct risk observability platform for retail banking. It sco
 
 ## Demo Accounts
 
-The login page lists one account per role, in the order of the walkthrough below. Highlighted accounts carry the main scenario, and the others add depth if time permits.
+The login page lists one account per role, in the order of the walkthrough below. Each account demonstrates a distinct part of the prototype.
 
 | # | Name | Role | What the role does |
 | --- | --- | --- | --- |
 | 1 | Maya Lindqvist | Employee, Branch 12 | Sees her own score, disputes a flag and reports pressure |
 | 2 | Daniel Okafor | Team lead, Branch 12 manager | Reviews Medium flags on his own team |
 | 3 | Priya Raman | Conduct risk team | Monitors the whole bank and reviews High, manager and target cases |
-| 4 | Rosalind Keane | Chief Risk Officer | Approves or rejects threshold changes |
-| 5 | Samuel Ito | Internal audit | Checks independently that detection is not being weakened |
-| 6 | Margaret Flynn | Audit committee | Oversees conduct risk for the board and decides appeals |
+| 4 | Samuel Ito | Internal audit | Checks independently that detection is not being weakened |
+| 5 | Margaret Flynn | Audit committee | Oversees conduct risk for the board and decides appeals |
 
 Use **Switch user** at the bottom of the sidebar to return to the login page.
 
@@ -37,33 +36,31 @@ The scenario follows one problem from the branch up to the board. Branch 12 had 
 ### 2. Team Lead – Daniel Okafor
 
 1. On **My Team**, note that Maya's High flag sits with the conduct risk team, because a branch cannot review the pressure it creates.
-2. Open **Thresholds**. Under **Request a change**, choose the High risk threshold, enter 85, give a reason and select **Submit request**. The change is blocked, written to the permanent log and sent to internal audit.
+2. Open **Reviews** and inspect a Medium flag assigned to the team lead. Open **Thresholds** to see the fixed risk levels and weights.
 
 ### 3. Conduct Risk Team – Priya Raman
 
-1. On **Morning Briefing**, select **Generate again** so the briefing includes Daniel's blocked attempt.
-2. Read the AI summary of likely causes, then select **Confirm, it is accurate** or **Correct it**. The summary is only a draft until a reviewer does this.
+1. On **Morning Briefing**, review the new cases, overdue reviews and branches with rising pressure.
+2. Read the AI summary for a quick overview of the figures, possible causes and areas needing attention. No confirmation or correction is required.
 3. Open **Pressure Index**. Branch 12 is rated High. Expand it to see its seven pressure signs, then select **Review case**.
 4. On the manager and target case, read why it was raised, choose **Target review** as the outcome, give a reason and select **Record decision**. This sends the target for adjustment.
-5. Optionally, open **Cases**, select Maya's case under **High risk employees** and decide her dispute. To prepare step 4, open **Thresholds** and propose a change, such as the unused account rate weight from 25 to 30.
+5. Optionally, open **Cases**, select Maya's case under **High risk employees** and decide her dispute.
 
-### 4. Chief Risk Officer – Rosalind Keane (if time permits)
+### 4. Internal Audit – Samuel Ito
 
-1. On **Thresholds**, open the proposal from Priya and read the suppression check, which shows how many of today's flags the change would weaken.
-2. Enter a note and select **Approve** or **Reject**. She cannot approve a proposal of her own.
+1. On **Warning Signs**, inspect the unusually fast review alert and select **Acknowledge**.
 
-### 5. Internal Audit – Samuel Ito (if time permits)
+### 5. Audit Committee – Margaret Flynn
 
-1. On **Warning Signs**, find the alert for Daniel's blocked threshold change and select **Acknowledge**.
-2. Under **Permanent change log**, select **Run checks** to confirm the hash-chained log has not been edited.
-
-### 6. Audit Committee – Margaret Flynn
-
-1. On **Monthly Summary**, review the escalated cases, the branches with the highest Pressure Index, dismissals, speak-up reports and every threshold change, including Daniel's blocked attempt.
+1. On **Monthly Summary**, review the escalated cases, the branches with the highest Pressure Index, dismissals and speak-up reports.
 2. Open a case under **Cases with their audit trail** to see every action with its time and who took it.
 3. Open **Speak-Up Reports** to read Maya's anonymous report. Only the audit committee can read report text.
 
 ## Other Features
+
+- **Escalation.** The routing logic sends overdue team-lead cases to conduct risk and overdue conduct-risk cases directly to the audit committee. The prototype has no scheduled deadline sweep.
+
+- **Fixed settings.** Thresholds and weights are read-only for every role. There is no proposal or approval workflow.
 
 - **Exports.** On **Cases**, the conduct risk team, internal audit and the audit committee can export cases as a spreadsheet or a printable audit report.
 - **Appeals.** An employee whose case closes with an outcome other than cleared can appeal, and the audit committee decides it under **Appeals**.
@@ -90,6 +87,6 @@ Then open http://localhost:3000.
 ## Known Limitations
 
 - Scores are indicators, not proof, and every flag has a named reviewer and a route to dispute and appeal.
-- The AI summary is simulated from a template unless an Anthropic model key is configured, and it is labelled as such.
+- Live AI summaries use Google Gemini when a server API key is configured. Otherwise, or when a request fails, a labelled template is shown with an explanation.
 - Data is synthetic, the briefing is shown on screen instead of being sent, and the daily scoring runs when the data is loaded instead of on a schedule.
 - Demo logins share one password and are not a production access model.

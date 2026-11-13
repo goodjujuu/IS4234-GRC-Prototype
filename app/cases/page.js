@@ -11,9 +11,8 @@ import { prisma } from '@/lib/prisma';
 import { requireUser } from '@/lib/session';
 
 const INTRO = {
-  CHIEF_RISK_OFFICER: 'Decide the High cases escalated to you after the conduct risk team missed the 48-hour deadline.',
   INTERNAL_AUDIT: 'Check every case across the bank, read-only, for whether it was reviewed on time and properly decided.',
-  AUDIT_COMMITTEE: 'Decide repeat High cases and cases involving a speak-up reporter, and track the High cases reported to the committee.',
+  AUDIT_COMMITTEE: 'Decide overdue conduct-risk cases, repeat High cases and cases involving a speak-up reporter, and track the High cases reported to the committee.',
 };
 
 // The team lead's review queue: one card per Medium flag, with what is driving it.
@@ -224,7 +223,7 @@ async function ConductRiskCases({ user }) {
         </div>
       </Section>
 
-      <Section title={`With other reviewers (${others.length})`} subtitle="Medium flags with team leads, and cases escalated to the Chief Risk Officer or the audit committee. A Medium flag not reviewed in time moves to you.">
+      <Section title={`With other reviewers (${others.length})`} subtitle="Medium flags with team leads, and cases escalated to the audit committee. A Medium flag not reviewed in time moves to you.">
         <Card padded={false}>
           <ul className="divide-y divide-slate-100">
             {others.map((c) => {
@@ -265,12 +264,11 @@ async function ConductRiskCases({ user }) {
 }
 
 export default async function CasesPage() {
-  const user = await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  const user = await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   if (user.role === 'TEAM_LEAD') return <TeamLeadReviews user={user} />;
   if (user.role === 'CONDUCT_RISK') return <ConductRiskCases user={user} />;
   const [all, now] = await Promise.all([prisma.case.findMany({ orderBy: [{ deadlineAt: 'asc' }] }), getNow(prisma)]);
-  // The Chief Risk Officer only handles cases escalated to them.
-  const cases = all.filter((c) => canViewCase(user, c) && (user.role !== 'CHIEF_RISK_OFFICER' || c.tier === 'CHIEF_RISK_OFFICER'));
+  const cases = all.filter((c) => canViewCase(user, c));
   const open = cases.filter((c) => c.status !== 'CLOSED');
   const closed = cases.filter((c) => c.status === 'CLOSED').sort((a, b) => b.closedAt - a.closedAt);
   return (

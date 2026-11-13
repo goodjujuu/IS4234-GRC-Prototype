@@ -7,7 +7,6 @@
 // overnight dismissal and new complaints moved the branch to High.
 const { PrismaClient } = require('@prisma/client');
 const { DAY, DEFAULT_CONFIG, computeRiskTable, configMap } = require('../lib/scoring');
-const { appendLogEntry } = require('../lib/hashChain');
 const { hashPassword } = require('../lib/password');
 const { buildBriefingFacts, simulatedSummary } = require('../lib/briefing');
 const { openCase, pressureAt, recordDismissal, reporterSeal, runScoring } = require('../lib/engine');
@@ -59,7 +58,6 @@ const LOGINS = [
   { email: 'maya.lindqvist@conductguard.demo', name: 'Maya Lindqvist', title: 'Personal Banker, Branch 12', role: 'EMPLOYEE', employee: 'Maya Lindqvist' },
   { email: 'daniel.okafor@conductguard.demo', name: 'Daniel Okafor', title: 'Branch Manager, Branch 12', role: 'TEAM_LEAD', employee: 'Daniel Okafor', branch: 12 },
   { email: 'priya.raman@conductguard.demo', name: 'Priya Raman', title: 'Conduct Risk Analyst', role: 'CONDUCT_RISK' },
-  { email: 'rosalind.keane@conductguard.demo', name: 'Rosalind Keane', title: 'Chief Risk Officer', role: 'CHIEF_RISK_OFFICER' },
   { email: 'samuel.ito@conductguard.demo', name: 'Samuel Ito', title: 'Internal Auditor', role: 'INTERNAL_AUDIT' },
   { email: 'margaret.flynn@conductguard.demo', name: 'Margaret Flynn', title: 'Audit Committee Chair', role: 'AUDIT_COMMITTEE' },
 ];
@@ -166,8 +164,6 @@ async function wipe() {
   await prisma.employee.deleteMany();
   await prisma.branch.deleteMany();
   await prisma.scoringConfig.deleteMany();
-  await prisma.thresholdChangeRequest.deleteMany();
-  await prisma.configChangeLog.deleteMany();
   await prisma.watcherAlert.deleteMany();
   await prisma.briefing.deleteMany();
   await prisma.demoClock.deleteMany();
@@ -228,7 +224,7 @@ async function seedClosedCases(employeesByBranch, branches) {
   }
 
   // Past disputes. The reviewer decides, and an upheld dispute is a false alarm that
-  // feeds later proposals to adjust weights.
+  // feeds the effectiveness metrics.
   const disputes = [
     [1, 'contact', 'The customer asked for this change in person and signed the form.', 'The signed form is attached to the file.', 'UPHELD', 'Form on file confirms the customer requested it.'],
     [15, 'sameDay', 'These were a family opening accounts together during one appointment.', 'Appointment notes from that day.', 'UPHELD', 'Appointment notes support this.'],
@@ -249,30 +245,6 @@ async function seedClosedCases(employeesByBranch, branches) {
     });
     if (status === 'UPHELD') await prisma.case.update({ where: { id: c.id }, data: { outcome: 'CLEARED', closeReason: `Dispute upheld. ${decisionNote}` } });
   }
-}
-
-async function seedChangeHistory() {
-  await appendLogEntry(prisma, {
-    event: 'SEEDED', change: 'Baseline weights and thresholds approved at platform launch.', changedBy: 'Helen Cho', signedOffBy: 'Rosalind Keane', createdAt: daysBefore(240),
-  });
-  const label = (key) => DEFAULT_CONFIG.find(([k]) => k === key)[1];
-  const proposals = [
-    ['weight_unused', 20, 25, 'False alarm data showed unused accounts were the most reliable signal.', 'Priya Raman', 11, 13, 'APPROVED', 'Raises detection, supported by the data.', 95],
-    ['weight_contact', 10, 5, 'Several contact change flags were overturned in disputes.', 'Helen Cho', 12, 11, 'REJECTED', 'Two false alarms are not enough evidence to reduce this weight.', 60],
-  ];
-  for (const [configKey, oldValue, newValue, reason, requestedBy, flagsBefore, flagsAfter, status, reviewNote, age] of proposals) {
-    const createdAt = daysBefore(age);
-    const reviewedAt = new Date(createdAt.getTime() + 26 * 3600000);
-    await prisma.thresholdChangeRequest.create({ data: { configKey, oldValue, newValue, reason, requestedBy, requesterRole: 'CONDUCT_RISK', flagsBefore, flagsAfter, status, reviewedBy: 'Rosalind Keane', reviewNote, createdAt, reviewedAt } });
-    await appendLogEntry(prisma, { event: 'PROPOSED', change: `${label(configKey)} from ${oldValue} to ${newValue} proposed. ${reason}`, changedBy: requestedBy, createdAt });
-    await appendLogEntry(prisma, { event: status, change: `${label(configKey)} from ${oldValue} to ${newValue} ${status.toLowerCase()}. ${reviewNote}`, changedBy: requestedBy, signedOffBy: 'Rosalind Keane', createdAt: reviewedAt });
-  }
-  // An earlier blocked attempt by a branch manager.
-  const blockedAt = daysBefore(37);
-  await prisma.thresholdChangeRequest.create({
-    data: { configKey: 'level_high', oldValue: 70, newValue: 80, reason: 'Too many High reviews for the current team size.', requestedBy: 'Victor Nakamura', requesterRole: 'TEAM_LEAD', flagsBefore: 12, flagsAfter: 9, status: 'BLOCKED', createdAt: blockedAt },
-  });
-  await appendLogEntry(prisma, { event: 'BLOCKED', change: `${label('level_high')} from 70 to 80 blocked. Branch managers cannot change thresholds. Too many High reviews for the current team size.`, changedBy: 'Victor Nakamura', createdAt: blockedAt });
 }
 
 async function main() {
@@ -356,7 +328,6 @@ async function main() {
     });
   }
 
-  await seedChangeHistory();
   await seedClosedCases(employeesByBranch, branches);
 
   // Past dismissals, with their branch reviews already closed. These employees have
@@ -372,16 +343,12 @@ async function main() {
     await recordDismissal(prisma, { employee, reason, now: daysBefore(age), openReview: age < 7 });
   }
 
-  // Past warning signs from the Branch 9 reviews and the blocked attempt above
+  // Past warning sign from the Branch 9 reviews
   await prisma.watcherAlert.createMany({
     data: [
       {
         type: 'FAST_REVIEWS', severity: 'MEDIUM', title: 'Unusually fast reviews at Branch 9',
         detail: 'Grace Mbeki cleared six cases within one hour. Flags may have been dismissed without real checks.', createdAt: daysBefore(19),
-      },
-      {
-        type: 'THRESHOLD_CHANGE', severity: 'HIGH', title: 'Branch manager tried to change high risk threshold', status: 'ACKNOWLEDGED', acknowledgedBy: 'Samuel Ito',
-        detail: 'Victor Nakamura tried to raise the high risk threshold from 70 to 80. The attempt was blocked.', createdAt: daysBefore(37),
       },
     ],
   });
@@ -404,8 +371,8 @@ async function main() {
 
   const previousPressure = await pressureAt(prisma, daysBefore(1), config);
   const facts = await buildBriefingFacts(prisma, { now: LOAD, pressure, previousPressure });
-  const draft = simulatedSummary(facts);
-  await prisma.briefing.create({ data: { asOf: LOAD, facts, draft, summary: draft, source: 'SIMULATED', createdAt: LOAD } });
+  const summary = simulatedSummary(facts);
+  await prisma.briefing.create({ data: { asOf: LOAD, facts, summary, source: 'SIMULATED', createdAt: LOAD } });
 
   const levels = table.reduce((n, r) => ({ ...n, [r.level]: (n[r.level] || 0) + 1 }), {});
   console.log(

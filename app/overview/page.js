@@ -14,7 +14,7 @@ function heatClass(z) {
 }
 
 export default async function OverviewPage() {
-  await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  await requireUser(['CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   const [{ heat, totals, topEmployees }, e] = await Promise.all([getOverview(), getEffectiveness()]);
   return (
     <div className="space-y-6">
@@ -95,7 +95,6 @@ export default async function OverviewPage() {
               <div><dt className="text-xs text-slate-500">Reviewed within deadline, target 95%</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.pctOnTime)}</dd></div>
               <div><dt className="text-xs text-slate-500">Average time to resolve</dt><dd className="mt-0.5 font-semibold tabular-nums">{formatHours(e.avgHours)}</dd></div>
               <div><dt className="text-xs text-slate-500">False alarm rate</dt><dd className="mt-0.5 font-semibold tabular-nums">{percent(e.falseAlarmRate)}</dd></div>
-              <div><dt className="text-xs text-slate-500">Unapproved changes, target 0</dt><dd className="mt-0.5 font-semibold tabular-nums">{e.unapproved.length}</dd></div>
             </dl>
           </Card>
         </div>

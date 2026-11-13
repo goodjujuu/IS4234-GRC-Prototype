@@ -35,10 +35,6 @@ export const NAV_BY_ROLE = {
     { level: 'manager', title: 'Managers and Targets', items: [{ href: '/pressure', label: 'Pressure Index', icon: 'radar' }] },
     { level: 'monitoring', title: 'Threshold Governance', items: [{ href: '/thresholds', label: 'Thresholds', icon: 'sliders' }] },
   ],
-  CHIEF_RISK_OFFICER: [
-    { level: 'monitoring', title: 'Threshold Governance', items: [{ href: '/thresholds', label: 'Thresholds', icon: 'sliders' }] },
-    OPEN('Case Management', [{ href: '/cases', label: 'Escalated Cases', icon: 'briefcase' }]),
-  ],
   INTERNAL_AUDIT: [
     { level: 'monitoring', title: 'Threshold Governance', items: [
       { href: '/watchers', label: 'Warning Signs', icon: 'shield' },

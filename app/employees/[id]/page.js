@@ -11,7 +11,7 @@ import { requireUser } from '@/lib/session';
 
 export default async function EmployeeProfile({ params }) {
   const { id } = await params;
-  const user = await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  const user = await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   const record = await getEmployeeRecord(id);
   if (!record) notFound();
   if (!canViewEmployee(user, record.employee)) redirect('/');

@@ -55,7 +55,7 @@ model User {
   passwordHash  String
   name          String
   title         String
-  role          String         // EMPLOYEE | TEAM_LEAD | CONDUCT_RISK | CHIEF_RISK_OFFICER | INTERNAL_AUDIT | AUDIT_COMMITTEE
+  role          String         // EMPLOYEE | TEAM_LEAD | CONDUCT_RISK | INTERNAL_AUDIT | AUDIT_COMMITTEE
   employee      Employee?      @relation(fields: [employeeId], references: [id])
   employeeId    String?        @unique
   branch        Branch?        @relation(fields: [branchId], references: [id])
@@ -133,7 +133,7 @@ model Case {
   title              String
   summary            String
   riskLevel          String      // MEDIUM | HIGH
-  tier               String      // TEAM_LEAD | CONDUCT_RISK | CHIEF_RISK_OFFICER | AUDIT_COMMITTEE
+  tier               String      // TEAM_LEAD | CONDUCT_RISK | AUDIT_COMMITTEE
   status             String      @default("OPEN") // OPEN | IN_REVIEW | CLOSED
   assignee           String?
   outcome            String?     // CLEARED | COACHING | INVESTIGATION | TARGET_REVIEW (manager and target cases only)
@@ -207,7 +207,7 @@ model Dismissal {
   dismissedAt DateTime
 }
 
-// Weights and thresholds. Only changed through an approved change request.
+// Fixed prototype weights and thresholds, read-only in the application.
 model ScoringConfig {
   key         String @id
   label       String
@@ -217,39 +217,9 @@ model ScoringConfig {
   description String
 }
 
-model ThresholdChangeRequest {
-  id            String    @id @default(cuid())
-  configKey     String
-  oldValue      Float
-  newValue      Float
-  reason        String
-  requestedBy   String
-  requesterRole String
-  flagsBefore   Int
-  flagsAfter    Int
-  status        String    @default("PENDING") // PENDING | APPROVED | REJECTED | BLOCKED
-  reviewedBy    String?
-  reviewNote    String?
-  createdAt     DateTime
-  reviewedAt    DateTime?
-}
-
-// Append-only and hash-chained. Each hash covers the previous one.
-model ConfigChangeLog {
-  id          String   @id @default(cuid())
-  seq         Int      @unique
-  event       String   // PROPOSED | APPROVED | REJECTED | BLOCKED | SEEDED
-  change      String
-  changedBy   String
-  signedOffBy String?
-  prevHash    String?
-  hash        String
-  createdAt   DateTime
-}
-
 model WatcherAlert {
   id             String    @id @default(cuid())
-  type           String    // THRESHOLD_CHANGE | UNAPPROVED_CHANGE | FLAG_VOLUME_DROP | FAST_REVIEWS | LOG_TAMPERING
+  type           String    // FLAG_VOLUME_DROP | FAST_REVIEWS (legacy alert records may remain stored)
   severity       String    // MEDIUM | HIGH
   title          String
   detail         String
@@ -275,12 +245,7 @@ model Briefing {
   id          String    @id @default(cuid())
   asOf        DateTime
   facts       Json
-  draft       String    // the AI draft, kept unchanged even if a reviewer corrects it
-  summary     String    // what readers see: the draft, or the reviewer's correction
+  summary     String    // generated overview displayed immediately
   source      String    // AI_MODEL | SIMULATED
-  status      String    @default("PENDING") // PENDING | CONFIRMED | CORRECTED
-  confirmedBy String?
-  confirmNote String?
-  confirmedAt DateTime?
   createdAt   DateTime
 }

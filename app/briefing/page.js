@@ -1,17 +1,10 @@
 import Link from 'next/link';
 import { ActionButton } from '@/components/actions';
-import BriefingReview from '@/components/BriefingReview';
 import Icon from '@/components/Icon';
-import { Badge, Callout, Card, CardHeader, PageHeader, RiskBadge, SectionLabel, cx } from '@/components/ui';
-import { formatClock, formatDateTime } from '@/lib/format';
+import { Badge, Card, CardHeader, PageHeader, RiskBadge, SectionLabel, cx } from '@/components/ui';
+import { formatClock } from '@/lib/format';
 import { prisma } from '@/lib/prisma';
 import { requireUser } from '@/lib/session';
-
-const STATUS = {
-  PENDING: { tone: 'amber', text: 'Awaiting review' },
-  CONFIRMED: { tone: 'green', text: 'Confirmed by a reviewer' },
-  CORRECTED: { tone: 'green', text: 'Corrected by a reviewer' },
-};
 
 const TONE = { red: 'text-red-600', amber: 'text-amber-600', green: 'text-emerald-600' };
 const linkClass = 'text-[13px] font-medium text-indigo-700 hover:underline';
@@ -33,15 +26,13 @@ function Attention({ icon, title, count, note, href, linkText, children }) {
 
 export default async function BriefingPage() {
   const user = await requireUser(['CONDUCT_RISK', 'INTERNAL_AUDIT']);
-  const briefing = await prisma.briefing.findFirst({ orderBy: { createdAt: 'desc' } });
+  const briefing = await prisma.briefing.findFirst({ orderBy: [{ createdAt: 'desc' }, { id: 'desc' }] });
   const f = briefing.facts;
-  const status = STATUS[briefing.status];
-  const canAct = user.role === 'CONDUCT_RISK';
+  const canGenerate = user.role === 'CONDUCT_RISK';
   const tiles = [
     ['New High cases', f.newHigh.length, 'red', 'For you, 48 hours each'],
     ['Overdue reviews', f.overdue.length, f.overdue.length ? 'red' : 'green', 'Past their deadline'],
     ['Branches with rising pressure', f.rising.length, f.rising.length ? 'amber' : 'green', 'Pressure Index went up'],
-    ['Threshold change attempts', f.thresholdAttempts.length, f.thresholdAttempts.length ? 'red' : 'green', 'Internal audit alerted'],
     ['New Medium cases', f.newMedium.length, 'amber', 'With team leads'],
   ];
 
@@ -50,8 +41,8 @@ export default async function BriefingPage() {
       <PageHeader
         eyebrow="Risk Reporting"
         title="Morning Briefing"
-        description="Review what changed overnight across the bank and confirm the AI summary of likely causes before the team acts on it."
-        actions={canAct && <ActionButton url="/api/briefing" icon="refresh">Generate again</ActionButton>}
+        description="Get a quick overview of new cases, overdue reviews and rising branch pressure across the bank."
+        actions={canGenerate && <ActionButton url="/api/briefing" icon="refresh">Generate again</ActionButton>}
       />
 
       <div className="flex flex-wrap items-center gap-2 text-[13px] text-slate-500">
@@ -61,7 +52,7 @@ export default async function BriefingPage() {
 
       <section>
         <SectionLabel>Today at a glance</SectionLabel>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {tiles.map(([label, n, tone, hint]) => (
             <Card key={label}>
               <p className={cx('text-[28px] font-semibold tabular-nums tracking-tight', n ? TONE[tone] : 'text-slate-900')}>{n}</p>
@@ -73,37 +64,19 @@ export default async function BriefingPage() {
       </section>
 
       <section>
-        <SectionLabel>Likely causes</SectionLabel>
+        <SectionLabel>Quick overview</SectionLabel>
         <div className="rounded-2xl bg-indigo-50/60 p-5 ring-1 ring-inset ring-indigo-100">
           <div className="flex flex-wrap items-center gap-2">
             <Icon name="sparkles" className="h-4 w-4 text-indigo-600" />
             <p className="text-sm font-semibold text-indigo-950">What the figures suggest</p>
-            <Badge tone={briefing.source === 'AI_MODEL' ? 'indigo' : 'neutral'}>{briefing.source === 'AI_MODEL' ? 'AI draft' : 'Simulated AI draft'}</Badge>
-            <Badge tone={status.tone}>{status.text}</Badge>
+            <Badge tone={briefing.source === 'AI_MODEL' ? 'indigo' : 'neutral'}>{briefing.source === 'AI_MODEL' ? 'AI summary' : 'Template summary'}</Badge>
           </div>
           <p className="mt-3 text-[15px] leading-relaxed text-slate-800">{briefing.summary}</p>
           <p className="mt-2 text-xs text-slate-500">
-            Written by AI from branch-level figures only, never employee names.
-            {briefing.source === 'SIMULATED' && ' No model key is configured, so this draft was built from a template over the figures on this page.'}
+            {briefing.source === 'AI_MODEL'
+              ? 'Generated from branch-level figures only, never employee names.'
+              : `Built from a template over the figures on this page. ${f.generation?.fallbackReason || 'Generate again to request a live AI summary.'}`}
           </p>
-
-          {briefing.status === 'PENDING' && canAct && <BriefingReview id={briefing.id} summary={briefing.summary} />}
-          {briefing.status === 'PENDING' && !canAct && <Callout tone="neutral" className="mt-3">The conduct risk team confirms or corrects this draft before anyone acts on it.</Callout>}
-          {briefing.confirmedBy && (
-            <div className="mt-4 flex items-start gap-2 rounded-xl border border-emerald-100 bg-white p-3 text-[13px]">
-              <Icon name="checkCircle" className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-              <div className="min-w-0">
-                <p className="font-medium text-slate-800">{briefing.status === 'CONFIRMED' ? 'Confirmed' : 'Corrected'} by {briefing.confirmedBy}, {formatDateTime(briefing.confirmedAt)}</p>
-                <p className="text-slate-500">{briefing.status === 'CONFIRMED' ? 'The summary can now inform action.' : 'The corrected summary above replaces the AI draft.'}</p>
-                {briefing.status === 'CORRECTED' && (
-                  <details className="mt-2">
-                    <summary className="cursor-pointer text-[12px] font-medium text-indigo-700">Show the original AI draft</summary>
-                    <p className="mt-1 text-[12px] text-slate-500">{briefing.draft}</p>
-                  </details>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </section>
 
@@ -133,15 +106,6 @@ export default async function BriefingPage() {
           <Attention icon="clock" title="Overdue reviews" count={f.overdue.length} note="Cases past their deadline, which escalate automatically." href="/cases" linkText="Open cases">
             <ul className="divide-y divide-slate-100 text-[13px] text-slate-700">
               {f.overdue.map((x) => <li key={x.ref} className="py-2 first:pt-0 last:pb-0"><span className="font-medium text-slate-800">{x.ref}</span>, {x.title}</li>)}
-            </ul>
-          </Attention>
-          <Attention icon="sliders" title="Threshold change attempts" count={f.thresholdAttempts.length} note="Each one is logged and sent to internal audit." href="/thresholds" linkText="Open thresholds">
-            <ul className="divide-y divide-slate-100 text-[13px] text-slate-700">
-              {f.thresholdAttempts.map((a, i) => (
-                <li key={i} className="py-2 first:pt-0 last:pb-0">
-                  <span className="font-medium text-slate-800">{a.requestedBy}</span>, {a.label.toLowerCase()} from {a.oldValue} to {a.newValue}, {a.status.toLowerCase()}
-                </li>
-              ))}
             </ul>
           </Attention>
         </div>

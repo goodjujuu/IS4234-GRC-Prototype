@@ -14,7 +14,7 @@ import { requireUser } from '@/lib/session';
 
 export default async function CasePage({ params }) {
   const { id } = await params;
-  const user = await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  const user = await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   const [c, now] = await Promise.all([
     prisma.case.findUnique({ where: { id }, include: { employee: true, branch: true, events: { orderBy: { timestamp: 'asc' } }, disputes: { include: { employee: true } } } }),
     getNow(prisma),

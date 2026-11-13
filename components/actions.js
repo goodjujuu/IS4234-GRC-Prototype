@@ -5,9 +5,13 @@ import { useState } from 'react';
 import { Button, Callout, Field, inputClass } from '@/components/ui';
 
 async function post(url, body) {
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
-  const data = await res.json().catch(() => ({}));
-  return { ok: res.ok, data };
+  try {
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, data };
+  } catch {
+    return { ok: false, data: { error: 'Could not reach the server. Please try again.' } };
+  }
 }
 
 // A form that posts JSON to an API route, then refreshes the server-rendered page.
@@ -68,7 +72,7 @@ export function ActionButton({ url, body, children, variant = 'secondary', size 
     setResult(null);
     const { ok, data } = await post(url, body);
     setBusy(false);
-    setResult(ok ? (data.message ? { tone: resultTone, text: data.message } : null) : { tone: 'red', text: data.error || 'That did not work.' });
+    setResult(ok ? (data.message ? { tone: data.source === 'SIMULATED' ? 'amber' : resultTone, text: data.message } : null) : { tone: 'red', text: data.error || 'That did not work.' });
     router.refresh();
   }
 

@@ -18,7 +18,7 @@ function Chip({ href, active, children }) {
 }
 
 export default async function EmployeesPage({ searchParams }) {
-  await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  await requireUser(['CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   const { branch = '', level = '' } = await searchParams;
   const [scores, employees, branches, flags] = await Promise.all([
     latestScores(prisma),
