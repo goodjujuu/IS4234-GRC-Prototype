@@ -18,9 +18,8 @@ The login page lists one account per role, in the order of the walkthrough below
 | 1 | Maya Lindqvist | Employee, Branch 12 | Sees her own score, disputes a flag and reports pressure |
 | 2 | Daniel Okafor | Team lead, Branch 12 manager | Reviews Medium flags on his own team |
 | 3 | Priya Raman | Conduct risk team | Monitors the whole bank and reviews High, manager and target cases |
-| 4 | Rosalind Keane | Chief Risk Officer | Reviews cases escalated to the Chief Risk Officer |
-| 5 | Samuel Ito | Internal audit | Checks independently that detection is not being weakened |
-| 6 | Margaret Flynn | Audit committee | Oversees conduct risk for the board and decides appeals |
+| 4 | Samuel Ito | Internal audit | Checks independently that detection is not being weakened |
+| 5 | Margaret Flynn | Audit committee | Oversees conduct risk for the board and decides appeals |
 
 Use **Switch user** at the bottom of the sidebar to return to the login page.
 
@@ -47,23 +46,20 @@ The scenario follows one problem from the branch up to the board. Branch 12 had 
 4. On the manager and target case, read why it was raised, choose **Target review** as the outcome, give a reason and select **Record decision**. This sends the target for adjustment.
 5. Optionally, open **Cases**, select Maya's case under **High risk employees** and decide her dispute.
 
-### 4. Chief Risk Officer – Rosalind Keane (if time permits)
-
-1. On **Escalated Cases**, review any cases routed to the Chief Risk Officer. The queue may be empty in the starting demo state.
-2. Open **Thresholds** to inspect the fixed, read-only settings.
-
-### 5. Internal Audit – Samuel Ito (if time permits)
+### 4. Internal Audit – Samuel Ito (if time permits)
 
 1. On **Warning Signs**, inspect the unusually fast review alert and select **Acknowledge**.
 2. Under **Configuration settings**, select **Check settings** to compare current settings with the fixed baseline.
 
-### 6. Audit Committee – Margaret Flynn
+### 5. Audit Committee – Margaret Flynn
 
 1. On **Monthly Summary**, review the escalated cases, the branches with the highest Pressure Index, dismissals, speak-up reports and configuration integrity.
 2. Open a case under **Cases with their audit trail** to see every action with its time and who took it.
 3. Open **Speak-Up Reports** to read Maya's anonymous report. Only the audit committee can read report text.
 
 ## Other Features
+
+- **Escalation.** The routing logic sends overdue team-lead cases to conduct risk and overdue conduct-risk cases directly to the audit committee. The prototype has no scheduled deadline sweep.
 
 - **Fixed settings.** Thresholds and weights are read-only for every role. There is no proposal or approval workflow.
 

@@ -22,7 +22,7 @@ function detailFor(key, p) {
 const BAR = { HIGH: 'bg-red-400', MEDIUM: 'bg-amber-400', LOW: 'bg-emerald-400' };
 
 export default async function PressurePage() {
-  const user = await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  const user = await requireUser(['CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   const [{ pressure, config }, cases] = await Promise.all([
     getOverview(),
     prisma.case.findMany({ where: { kind: 'BRANCH_PRESSURE', status: { not: 'CLOSED' } } }),

@@ -14,7 +14,7 @@ function heatClass(z) {
 }
 
 export default async function OverviewPage() {
-  await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  await requireUser(['CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   const [{ heat, totals, topEmployees }, e] = await Promise.all([getOverview(), getEffectiveness()]);
   return (
     <div className="space-y-6">

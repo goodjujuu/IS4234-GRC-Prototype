@@ -9,7 +9,7 @@ function csv(value) {
 }
 
 export async function GET() {
-  const { error } = await apiUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  const { error } = await apiUser(['CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   if (error) return error;
   const cases = await prisma.case.findMany({ include: { employee: true, branch: true, events: { orderBy: { timestamp: 'asc' } } }, orderBy: { openedAt: 'asc' } });
   const header = ['Case', 'Kind', 'Level', 'Tier', 'Status', 'Outcome', 'Branch', 'Subject', 'Opened', 'Deadline', 'Closed', 'Event time', 'Event', 'Actor', 'Note'];

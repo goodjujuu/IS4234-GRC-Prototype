@@ -87,6 +87,11 @@ It preserves cases, case events, disputes, appeals, speak-up reports, scoring se
 briefing text and review decisions. Existing migrations remain unchanged. Do not run
 `npm run seed` when preserving demo progress.
 
+The `20261113100000_remove_cro_role` migration retires Chief Risk Officer accounts and their
+notifications. Any cases at that tier move to the audit committee with an appended case
+event, while preserving their status, deadlines, outcomes and evidence. Committee reviewers
+receive notifications for reassigned open cases. The application now has five roles.
+
 ## 6. Verify
 
 Open the Vercel-assigned URL (e.g. `https://is4234-grc-prototype.vercel.app`) and confirm the

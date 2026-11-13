@@ -7,7 +7,7 @@ import { HOME_BY_ROLE, getUser } from '@/lib/session';
 export default async function LoginPage() {
   const user = await getUser();
   if (user) redirect(HOME_BY_ROLE[user.role]);
-  const accounts = await prisma.user.findMany({ select: { email: true, name: true, title: true, role: true }, orderBy: { email: 'asc' } });
+  const accounts = await prisma.user.findMany({ where: { role: { in: Object.keys(HOME_BY_ROLE) } }, select: { email: true, name: true, title: true, role: true }, orderBy: { email: 'asc' } });
   return (
     <div className="min-h-screen px-4 py-10 sm:px-6 lg:py-16">
       <div className="mx-auto mb-10 max-w-5xl">

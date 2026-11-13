@@ -38,15 +38,14 @@ Every account uses the password `demo1234`. The login page also has one-click bu
 | Employee (High risk) | Maya Lindqvist | `maya.lindqvist@conductguard.demo` |
 | Team lead, Branch 12 | Daniel Okafor | `daniel.okafor@conductguard.demo` |
 | Conduct risk analyst | Priya Raman | `priya.raman@conductguard.demo` |
-| Chief Risk Officer | Rosalind Keane | `rosalind.keane@conductguard.demo` |
 | Internal auditor | Samuel Ito | `samuel.ito@conductguard.demo` |
 | Audit committee chair | Margaret Flynn | `margaret.flynn@conductguard.demo` |
 
 ## Demo scenario
 
 The step-by-step walkthrough is in [`USER_GUIDE.md`](USER_GUIDE.md). It follows one problem from the
-branch up to the board: Maya (employee), Daniel (team lead), Priya (conduct risk), Rosalind (Chief
-Risk Officer, optional), Samuel (internal audit, optional) and Margaret (audit committee).
+branch up to the board: Maya (employee), Daniel (team lead), Priya (conduct risk), Samuel
+(internal audit, optional) and Margaret (audit committee).
 
 `npm run seed` restores the exact starting state.
 

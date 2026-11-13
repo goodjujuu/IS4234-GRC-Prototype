@@ -55,7 +55,7 @@ model User {
   passwordHash  String
   name          String
   title         String
-  role          String         // EMPLOYEE | TEAM_LEAD | CONDUCT_RISK | CHIEF_RISK_OFFICER | INTERNAL_AUDIT | AUDIT_COMMITTEE
+  role          String         // EMPLOYEE | TEAM_LEAD | CONDUCT_RISK | INTERNAL_AUDIT | AUDIT_COMMITTEE
   employee      Employee?      @relation(fields: [employeeId], references: [id])
   employeeId    String?        @unique
   branch        Branch?        @relation(fields: [branchId], references: [id])
@@ -133,7 +133,7 @@ model Case {
   title              String
   summary            String
   riskLevel          String      // MEDIUM | HIGH
-  tier               String      // TEAM_LEAD | CONDUCT_RISK | CHIEF_RISK_OFFICER | AUDIT_COMMITTEE
+  tier               String      // TEAM_LEAD | CONDUCT_RISK | AUDIT_COMMITTEE
   status             String      @default("OPEN") // OPEN | IN_REVIEW | CLOSED
   assignee           String?
   outcome            String?     // CLEARED | COACHING | INVESTIGATION | TARGET_REVIEW (manager and target cases only)

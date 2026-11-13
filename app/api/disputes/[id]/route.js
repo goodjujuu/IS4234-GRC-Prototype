@@ -8,7 +8,7 @@ import { apiUser } from '@/lib/session';
 // is recorded as a false alarm. The employee can appeal any outcome to the audit committee.
 export async function POST(request, { params }) {
   const { id } = await params;
-  const { user, error } = await apiUser(['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'AUDIT_COMMITTEE']);
+  const { user, error } = await apiUser(['TEAM_LEAD', 'CONDUCT_RISK', 'AUDIT_COMMITTEE']);
   if (error) return error;
   const { action, note = '' } = await request.json();
   if (!['uphold', 'reject'].includes(action)) return NextResponse.json({ error: 'Unknown action.' }, { status: 400 });

@@ -4,7 +4,7 @@ import { buildPdf } from '@/lib/pdf';
 import { apiUser } from '@/lib/session';
 
 export async function GET() {
-  const { error } = await apiUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  const { error } = await apiUser(['CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   if (error) return error;
   const s = await getCommitteeSummary();
   const e = s.effectiveness;

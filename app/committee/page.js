@@ -6,7 +6,7 @@ import { getCommitteeSummary } from '@/lib/kri';
 import { requireUser } from '@/lib/session';
 
 export default async function CommitteePage() {
-  await requireUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  await requireUser(['CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   const s = await getCommitteeSummary();
   const e = s.effectiveness;
   const thisMonth = s.months[s.months.length - 1];

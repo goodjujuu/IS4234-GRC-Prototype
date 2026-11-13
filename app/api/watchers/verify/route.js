@@ -5,7 +5,7 @@ import { apiUser } from '@/lib/session';
 
 // Compare live settings with the fixed baseline and alert internal audit to differences.
 export async function POST() {
-  const { error } = await apiUser(['CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
+  const { error } = await apiUser(['CONDUCT_RISK', 'INTERNAL_AUDIT', 'AUDIT_COMMITTEE']);
   if (error) return error;
   const now = await getNow(prisma);
   const unexpected = await checkUnexpectedChanges(prisma, now);

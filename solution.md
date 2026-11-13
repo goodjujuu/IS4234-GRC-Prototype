@@ -2,8 +2,9 @@
 
 > Current prototype scope, 13 November 2026. Weights and thresholds are fixed and read-only.
 > Proposal submission, approval, rejection, justification and related reporting are removed.
-> This scope supersedes the proposal workflow described below. The Chief Risk Officer opens
-> escalated cases. Configuration checks compare live settings with `DEFAULT_CONFIG`, and
+> This scope supersedes the proposal workflow and six-role design described below. The Chief
+> Risk Officer role is removed, and overdue conduct-risk cases route directly to the audit
+> committee. Configuration checks compare live settings with `DEFAULT_CONFIG`, and
 > independent warning signs remain. Hash-chain logic and configuration-log displays are removed.
 > A targeted migration removes legacy proposal and configuration-log storage and obsolete records.
 > See `USER_GUIDE.md` for the current walkthrough.

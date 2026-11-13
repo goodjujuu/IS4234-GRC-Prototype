@@ -5,7 +5,7 @@ import { requireUser } from '@/lib/session';
 const LEVEL_UNITS = { level_medium: 'score', level_high: 'score', pressure_flag: 'index', branch_high_share: 'percent of staff' };
 
 export default async function ThresholdsPage() {
-  await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'INTERNAL_AUDIT']);
+  await requireUser(['TEAM_LEAD', 'CONDUCT_RISK', 'INTERNAL_AUDIT']);
   const config = await prisma.scoringConfig.findMany();
   const byKey = new Map(config.map((c) => [c.key, c]));
   const levels = ['level_medium', 'level_high', 'pressure_flag', 'branch_high_share'].map((k) => byKey.get(k)).filter(Boolean);

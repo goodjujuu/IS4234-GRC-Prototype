@@ -8,7 +8,7 @@ import { apiUser } from '@/lib/session';
 // Case actions. Routing rules are enforced here, and every change appends a CaseEvent.
 export async function POST(request, { params }) {
   const { id } = await params;
-  const { user, error } = await apiUser(['TEAM_LEAD', 'CONDUCT_RISK', 'CHIEF_RISK_OFFICER', 'AUDIT_COMMITTEE']);
+  const { user, error } = await apiUser(['TEAM_LEAD', 'CONDUCT_RISK', 'AUDIT_COMMITTEE']);
   if (error) return error;
   const { action, note = '', assignee, outcome, reason = '' } = await request.json();
 

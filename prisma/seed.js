@@ -58,7 +58,6 @@ const LOGINS = [
   { email: 'maya.lindqvist@conductguard.demo', name: 'Maya Lindqvist', title: 'Personal Banker, Branch 12', role: 'EMPLOYEE', employee: 'Maya Lindqvist' },
   { email: 'daniel.okafor@conductguard.demo', name: 'Daniel Okafor', title: 'Branch Manager, Branch 12', role: 'TEAM_LEAD', employee: 'Daniel Okafor', branch: 12 },
   { email: 'priya.raman@conductguard.demo', name: 'Priya Raman', title: 'Conduct Risk Analyst', role: 'CONDUCT_RISK' },
-  { email: 'rosalind.keane@conductguard.demo', name: 'Rosalind Keane', title: 'Chief Risk Officer', role: 'CHIEF_RISK_OFFICER' },
   { email: 'samuel.ito@conductguard.demo', name: 'Samuel Ito', title: 'Internal Auditor', role: 'INTERNAL_AUDIT' },
   { email: 'margaret.flynn@conductguard.demo', name: 'Margaret Flynn', title: 'Audit Committee Chair', role: 'AUDIT_COMMITTEE' },
 ];
