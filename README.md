@@ -62,8 +62,9 @@ branch up to the board: Maya (employee), Daniel (team lead), Priya (conduct risk
   resetting operational data.
 - Seed data is synthetic and deterministic, using a fixed random seed and a demo clock starting
   Monday 9 November 2026, 8:30 am. Actions tick the clock forward, so deadlines and windows give the same results on every run.
-- The AI draft calls Claude when `ANTHROPIC_API_KEY` is set, sending only aggregate facts and no
-  employee names. Without a key it uses a template, and the page labels it as simulated.
+- The AI draft calls Google Gemini when `GEMINI_API_KEY` is set, sending only aggregate facts and no
+  employee names. Without a key or when the request fails, it uses a labelled template and shows the reason.
+  `GEMINI_MODEL` optionally overrides the default `gemini-3.6-flash` model.
 
 ## Known limitations
 

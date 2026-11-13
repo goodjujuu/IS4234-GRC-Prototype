@@ -88,6 +88,6 @@ Then open http://localhost:3000.
 ## Known Limitations
 
 - Scores are indicators, not proof, and every flag has a named reviewer and a route to dispute and appeal.
-- The AI summary is simulated from a template unless an Anthropic model key is configured, and it is labelled as such.
+- Live AI summaries use Google Gemini when a server API key is configured. Otherwise, or when a request fails, a labelled template is shown with an explanation.
 - Data is synthetic, the briefing is shown on screen instead of being sent, and the daily scoring runs when the data is loaded instead of on a schedule.
 - Demo logins share one password and are not a production access model.

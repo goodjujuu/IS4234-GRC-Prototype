@@ -33,7 +33,7 @@ function Attention({ icon, title, count, note, href, linkText, children }) {
 
 export default async function BriefingPage() {
   const user = await requireUser(['CONDUCT_RISK', 'INTERNAL_AUDIT']);
-  const briefing = await prisma.briefing.findFirst({ orderBy: { createdAt: 'desc' } });
+  const briefing = await prisma.briefing.findFirst({ orderBy: [{ createdAt: 'desc' }, { id: 'desc' }] });
   const f = briefing.facts;
   const status = STATUS[briefing.status];
   const canAct = user.role === 'CONDUCT_RISK';
@@ -77,16 +77,17 @@ export default async function BriefingPage() {
           <div className="flex flex-wrap items-center gap-2">
             <Icon name="sparkles" className="h-4 w-4 text-indigo-600" />
             <p className="text-sm font-semibold text-indigo-950">What the figures suggest</p>
-            <Badge tone={briefing.source === 'AI_MODEL' ? 'indigo' : 'neutral'}>{briefing.source === 'AI_MODEL' ? 'AI draft' : 'Simulated AI draft'}</Badge>
+            <Badge tone={briefing.source === 'AI_MODEL' ? 'indigo' : 'neutral'}>{briefing.source === 'AI_MODEL' ? 'AI draft' : 'Template draft'}</Badge>
             <Badge tone={status.tone}>{status.text}</Badge>
           </div>
           <p className="mt-3 text-[15px] leading-relaxed text-slate-800">{briefing.summary}</p>
           <p className="mt-2 text-xs text-slate-500">
-            Written by AI from branch-level figures only, never employee names.
-            {briefing.source === 'SIMULATED' && ' No model key is configured, so this draft was built from a template over the figures on this page.'}
+            {briefing.source === 'AI_MODEL'
+              ? 'Generated from branch-level figures only, never employee names.'
+              : `Built from a template over the figures on this page. ${f.generation?.fallbackReason || 'Generate again to request a live AI summary.'}`}
           </p>
 
-          {briefing.status === 'PENDING' && canAct && <BriefingReview id={briefing.id} summary={briefing.summary} />}
+          {briefing.status === 'PENDING' && canAct && <BriefingReview key={briefing.id} id={briefing.id} summary={briefing.summary} />}
           {briefing.status === 'PENDING' && !canAct && <Callout tone="neutral" className="mt-3">The conduct risk team confirms or corrects this draft before anyone acts on it.</Callout>}
           {briefing.confirmedBy && (
             <div className="mt-4 flex items-start gap-2 rounded-xl border border-emerald-100 bg-white p-3 text-[13px]">
