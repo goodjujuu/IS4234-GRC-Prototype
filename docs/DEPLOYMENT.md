@@ -120,7 +120,7 @@ request shows **AI summary**, ready to read without confirmation or correction.
 Seeded briefings use a template until you generate a new one.
 
 The server calls Google's Gemini `generateContent` API with aggregate figures only.
-It uses a 45-second timeout and falls back to a template on missing credentials, quota
+It uses a 75-second timeout and falls back to a template on missing credentials, quota
 limits, blocked or incomplete responses, and connection failures. The reason is saved
 with the briefing and displayed on the page. Check project quota and model access in
 Google AI Studio if generation fails. Keys stay on the server and must not use a
