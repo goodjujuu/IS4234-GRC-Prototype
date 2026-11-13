@@ -217,37 +217,6 @@ model ScoringConfig {
   description String
 }
 
-// Legacy proposal storage retained for database compatibility; unused by the application.
-model ThresholdChangeRequest {
-  id            String    @id @default(cuid())
-  configKey     String
-  oldValue      Float
-  newValue      Float
-  reason        String
-  requestedBy   String
-  requesterRole String
-  flagsBefore   Int
-  flagsAfter    Int
-  status        String    @default("PENDING") // PENDING | APPROVED | REJECTED | BLOCKED
-  reviewedBy    String?
-  reviewNote    String?
-  createdAt     DateTime
-  reviewedAt    DateTime?
-}
-
-// Legacy configuration log retained for database compatibility; unused by the application.
-model ConfigChangeLog {
-  id          String   @id @default(cuid())
-  seq         Int      @unique
-  event       String   // PROPOSED | APPROVED | REJECTED | BLOCKED | SEEDED
-  change      String
-  changedBy   String
-  signedOffBy String?
-  prevHash    String?
-  hash        String
-  createdAt   DateTime
-}
-
 model WatcherAlert {
   id             String    @id @default(cuid())
   type           String    // UNAPPROVED_CHANGE | FLAG_VOLUME_DROP | FAST_REVIEWS (legacy alert types may remain stored)

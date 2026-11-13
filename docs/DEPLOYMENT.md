@@ -71,6 +71,22 @@ temporarily set to that database's connection string instead.
 If this database already held the earlier seven-module prototype, `migrate deploy` drops those
 tables and replaces them. They only ever held synthetic demo data.
 
+## Updating an existing ConductGuard database
+
+Apply committed migrations and regenerate the local Prisma Client without reseeding.
+
+```bash
+npx prisma migrate deploy
+npx prisma generate
+```
+
+The `20261113090000_remove_legacy_threshold_workflows` migration drops the unused proposal
+and configuration-log tables, deletes obsolete threshold-change and log-tampering alerts
+and their matching notifications, and removes `thresholdAttempts` from saved briefing facts.
+It preserves cases, case events, disputes, appeals, speak-up reports, scoring settings and
+briefing text and review decisions. Existing migrations remain unchanged. Do not run
+`npm run seed` when preserving demo progress.
+
 ## 6. Verify
 
 Open the Vercel-assigned URL (e.g. `https://is4234-grc-prototype.vercel.app`) and confirm the

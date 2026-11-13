@@ -58,9 +58,9 @@ Risk Officer, optional), Samuel (internal audit, optional) and Margaret (audit c
   CommonJS so `prisma/seed.js` runs the same engine as the app and cannot drift from it.
 - `lib/kri.js` is the single source of truth for dashboard and effectiveness numbers.
 - Weights and thresholds are read-only. Integrity checks compare database settings with
-  `DEFAULT_CONFIG` in `lib/scoring.js`. The legacy proposal and configuration-log tables remain
-  for database compatibility, but the proposal workflow and hash-chain logic are removed.
-  No database migration or reset is needed.
+  `DEFAULT_CONFIG` in `lib/scoring.js`. Proposal workflows, hash-chain logic and their legacy
+  tables are removed. Run `npx prisma migrate deploy` to apply the targeted cleanup without
+  resetting operational data.
 - Seed data is synthetic and deterministic, using a fixed random seed and a demo clock starting
   Monday 9 November 2026, 8:30 am. Actions tick the clock forward, so deadlines and windows give the same results on every run.
 - The AI draft calls Claude when `ANTHROPIC_API_KEY` is set, sending only aggregate facts and no

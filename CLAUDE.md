@@ -5,7 +5,7 @@
 > This scope supersedes the proposal workflow described below. The Chief Risk Officer opens
 > escalated cases. Configuration checks compare live settings with `DEFAULT_CONFIG`, and
 > independent warning signs remain. Hash-chain logic and configuration-log displays are removed.
-> Legacy proposal and configuration-log storage are retained for database compatibility.
+> A targeted migration removes legacy proposal and configuration-log storage and obsolete records.
 > See `USER_GUIDE.md` for the current walkthrough.
 
 This is the technology demonstrator for NUS IS4234 Group 26's report on the Wells Fargo

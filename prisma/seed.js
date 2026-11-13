@@ -165,8 +165,6 @@ async function wipe() {
   await prisma.employee.deleteMany();
   await prisma.branch.deleteMany();
   await prisma.scoringConfig.deleteMany();
-  await prisma.thresholdChangeRequest.deleteMany();
-  await prisma.configChangeLog.deleteMany();
   await prisma.watcherAlert.deleteMany();
   await prisma.briefing.deleteMany();
   await prisma.demoClock.deleteMany();
