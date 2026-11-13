@@ -371,8 +371,8 @@ async function main() {
 
   const previousPressure = await pressureAt(prisma, daysBefore(1), config);
   const facts = await buildBriefingFacts(prisma, { now: LOAD, pressure, previousPressure });
-  const draft = simulatedSummary(facts);
-  await prisma.briefing.create({ data: { asOf: LOAD, facts, draft, summary: draft, source: 'SIMULATED', createdAt: LOAD } });
+  const summary = simulatedSummary(facts);
+  await prisma.briefing.create({ data: { asOf: LOAD, facts, summary, source: 'SIMULATED', createdAt: LOAD } });
 
   const levels = table.reduce((n, r) => ({ ...n, [r.level]: (n[r.level] || 0) + 1 }), {});
   console.log(

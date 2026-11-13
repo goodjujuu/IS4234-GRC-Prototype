@@ -245,13 +245,7 @@ model Briefing {
   id          String    @id @default(cuid())
   asOf        DateTime
   facts       Json
-  draft       String    // original generated text, retained for existing database compatibility
   summary     String    // generated overview displayed immediately
   source      String    // AI_MODEL | SIMULATED
-  // Legacy review metadata retained for historical records, unused by the application.
-  status      String    @default("PENDING")
-  confirmedBy String?
-  confirmNote String?
-  confirmedAt DateTime?
   createdAt   DateTime
 }
